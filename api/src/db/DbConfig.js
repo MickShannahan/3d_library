@@ -1,5 +1,8 @@
 import mongoose from 'mongoose'
 import { logger } from '../utils/Logger.js'
+import dns from 'node:dns/promises';
+dns.setServers(['1.1.1.1', '8.8.8.8']);
+
 
 mongoose.connection.on('error', err => {
   logger.error('[DATABASE ERROR]:', err)
@@ -17,6 +20,7 @@ export class DbConnection {
       if (!connectionstring) {
         return logger.warn('Db not available, no CONNECTION_STRING')
       }
+      logger.info('connecting...', connectionstring)
       const status = await mongoose.connect(connectionstring)
       logger.info('[CONNECTION TO DB SUCCESSFUL]')
       return status

@@ -71,7 +71,7 @@ export class Startup {
 
     // NOTE SEND HTML 404 for any unknown routes
     app.use(
-      '*',
+      /.*/,
       (_, res, next) => {
         res.status(404)
         next()

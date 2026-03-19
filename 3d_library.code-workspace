@@ -8,5 +8,26 @@
       "name": "client",
       "path": "client"
     }
-  ]
+  ],
+  "settings": {
+    "workbench.colorCustomizations": {
+      "commandCenter.border": "#e7e7e799",
+      "editorGroup.border": "#712cf9",
+      "sash.hoverBorder": "#712cf9",
+      "sideBar.border": "#712cf9",
+      "statusBar.background": "#712cf9",
+      "statusBar.debuggingBackground": "#b4f92c",
+      "statusBar.debuggingForeground": "#15202b",
+      "statusBar.foreground": "#e7e7e7",
+      "statusBarItem.hoverBackground": "#925efa",
+      "statusBarItem.remoteBackground": "#712cf9",
+      "statusBarItem.remoteForeground": "#e7e7e7",
+      "tab.activeBorder": "#712cf9",
+      "titleBar.activeBackground": "#712cf9",
+      "titleBar.activeForeground": "#e7e7e7",
+      "titleBar.inactiveBackground": "#712cf999",
+      "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#712cf9"
+  }
 }

@@ -5,6 +5,10 @@ function loadPage(page) {
   return () => import(`./pages/${page}.vue`)
 }
 
+function loadComponent(component) {
+  return () => import(`./components/${component}.vue`)
+}
+
 const routes = [
   {
     path: '/',
@@ -20,6 +24,35 @@ const routes = [
     path: '/account',
     name: 'Account',
     component: loadPage('AccountPage'),
+    beforeEnter: authGuard
+  },
+  // 3D Library Routes
+  {
+    path: '/library',
+    name: 'Library',
+    component: loadComponent('ModelBrowser')
+  },
+  {
+    path: '/models/:id',
+    name: 'ModelDetail',
+    component: loadComponent('ModelDetail')
+  },
+  {
+    path: '/order',
+    name: 'OrderForm',
+    component: loadPage('OrderForm'),
+    beforeEnter: authGuard
+  },
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: loadPage('AdminDashboard'),
+    beforeEnter: authGuard
+  },
+  {
+    path: '/admin/upload',
+    name: 'ModelUploadForm',
+    component: loadPage('ModelUploadForm'),
     beforeEnter: authGuard
   }
 ]
