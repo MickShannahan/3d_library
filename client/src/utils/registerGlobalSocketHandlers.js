@@ -1,7 +1,7 @@
 import { logger } from "./Logger.js"
 
 async function registerSocketHandlers() {
-  // @ts-expect-error Glob import pattern
+  // @ts-ignore
   let handlers = import.meta.glob('../handlers/**/*.js')
   for (const fileName in handlers) {
     const handlerName = fileName

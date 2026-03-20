@@ -21,7 +21,7 @@ watch(theme, () => {
     <div class="container gap-2">
       <RouterLink :to="{ name: 'Home' }" class="d-flex align-items-center text-light">
         <img class="navbar-brand" alt="logo" src="/img/cw-logo.png" height="45" />
-        <b class="fs-5">3D Library</b>
+        <b class="fs-5">Vue Starter</b>
       </RouterLink>
       <!-- collapse button -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-links"
@@ -29,9 +29,13 @@ watch(theme, () => {
         <span class="mdi mdi-menu text-light"></span>
       </button>
       <!-- collapsing menu -->
-      <div class="collapse navbar-collapse" id="navbar-links">
+      <div class="collapse navbar-collapse " id="navbar-links">
         <ul class="navbar-nav">
-
+          <li>
+            <RouterLink :to="{ name: 'About' }" class="btn text-green selectable">
+              About
+            </RouterLink>
+          </li>
         </ul>
         <!-- LOGIN COMPONENT HERE -->
         <div class="ms-auto">
@@ -60,11 +64,5 @@ a {
   border-bottom: 2px solid var(--bs-success);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-}
-
-.btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
 }
 </style>

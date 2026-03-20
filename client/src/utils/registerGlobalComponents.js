@@ -1,5 +1,5 @@
 export async function registerGlobalComponents(root) {
-  // @ts-expect-error Glob import pattern
+  // @ts-ignore
   const components = import.meta.glob('../components/globals/*.vue')
   for (const fileName in components) {
     const componentName = fileName

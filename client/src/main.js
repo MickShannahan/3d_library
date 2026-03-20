@@ -2,7 +2,7 @@ import '@mdi/font/css/materialdesignicons.css'
 import '@/assets/scss/style.scss'
 import 'bootstrap'
 import { createApp } from 'vue'
-// @ts-expect-error Vue component type
+// @ts-ignore
 import App from './App.vue'
 import { registerGlobalComponents } from './utils/registerGlobalComponents.js'
 import './utils/registerGlobalSocketHandlers.js'

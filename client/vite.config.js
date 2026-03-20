@@ -3,25 +3,22 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import eslintPlugin from 'vite-plugin-eslint'
-import { templateCompilerOptions } from '@tresjs/core'
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue({
-      ...templateCompilerOptions,
-    }),
+    vue(),
     vueDevTools(),
     eslintPlugin({
       overrideConfigFile: 'eslint.config.js',
-    })
+    }),
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  assetsInclude: ['**/*.stl'],
   build: {
     sourcemap: false,
   },
