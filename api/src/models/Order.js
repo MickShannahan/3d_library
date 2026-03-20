@@ -20,9 +20,6 @@ export const OrderSchema = new Schema(
     status: { type: String, enum: ['queued', 'printed', 'shipped'], default: 'queued' },
     isPaid: { type: Boolean, default: false },
     shipDate: { type: Date },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
-    // NOTE If you wish to add additional properties do so here
   },
   { timestamps: true, toJSON: { virtuals: true } }
 )

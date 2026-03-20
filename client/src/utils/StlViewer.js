@@ -1,5 +1,27 @@
 import * as THREE from 'three'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
+import { logger } from './Logger.js'
+
+
+export class STL extends THREE.BufferGeometry {
+  constructor(path) {
+    super()
+    this.loader = new STLLoader()
+    this.data = null
+    this.loader.load(path, this.onLoad.bind(this), this.onProgress.bind(this), (error) => {
+      logger.error(error)
+    })
+  }
+
+  onLoad(modelData) {
+    logger.log('📦', this)
+    this.data = modelData
+  }
+
+  onProgress(progressData) {
+    logger.log('⌛', progressData)
+  }
+}
 
 export class StlViewer {
   constructor(containerElement, options = {}) {

@@ -34,31 +34,7 @@ watch(theme, () => {
       <!-- collapsing menu -->
       <div class="collapse navbar-collapse" id="navbar-links">
         <ul class="navbar-nav">
-          <li>
-            <RouterLink :to="{ name: 'Library' }" class="btn text-green selectable">
-              <i class="mdi mdi-library"></i> Library
-            </RouterLink>
-          </li>
-          <li v-if="AppState.user">
-            <RouterLink :to="{ name: 'OrderForm' }" class="btn text-green selectable">
-              <i class="mdi mdi-plus-circle"></i> Create Order
-            </RouterLink>
-          </li>
-          <li v-if="AppState.user">
-            <RouterLink :to="{ name: 'AdminDashboard' }" class="btn text-green selectable">
-              <i class="mdi mdi-clipboard-list"></i> Orders
-            </RouterLink>
-          </li>
-          <li v-if="AppState.user">
-            <RouterLink :to="{ name: 'ModelUploadForm' }" class="btn text-green selectable">
-              <i class="mdi mdi-upload"></i> Upload
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink :to="{ name: 'About' }" class="btn text-green selectable">
-              About
-            </RouterLink>
-          </li>
+
         </ul>
         <!-- LOGIN COMPONENT HERE -->
         <div class="ms-auto">
