@@ -26,3 +26,4 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+*/3d_files/*

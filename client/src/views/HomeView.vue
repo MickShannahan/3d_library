@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import Icon from '@/components/icons/Icon.vue';
+import ThreeDWindow from '@/components/ThreeDWindow.vue';
+
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <ThreeDWindow/>
 </template>
