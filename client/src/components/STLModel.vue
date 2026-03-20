@@ -1,5 +1,5 @@
 <script setup>
-import { Mesh, MeshNormalMaterial, Vector3 } from 'three';
+import { Mesh, MeshNormalMaterial } from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { shallowRef, watch } from 'vue';
 
@@ -7,7 +7,7 @@ const props = defineProps({
   src: String
 })
 const loader = new STLLoader()
-const geometry = shallowRef(null)
+const geometry = shallowRef < InstanceType < typeof Mesh > | null > (null)
 const material = new MeshNormalMaterial()
 
 watch(() => props.src, () => {

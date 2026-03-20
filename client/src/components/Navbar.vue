@@ -1,11 +1,8 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
 import { loadState, saveState } from '../utils/Store.js';
-import { AppState } from '../AppState.js';
 import Login from './Login.vue';
 
-const router = useRouter()
 const theme = ref(loadState('theme') || 'light')
 
 function toggleTheme() {

@@ -1,9 +1,5 @@
 <script setup>
 import ModelWindow from '@/components/ModelWindow.vue';
-import { STL } from '@/utils/StlViewer';
-import helmetPath from '../assets/3d_files/H1.stl'
-
-
 </script>
 
 
