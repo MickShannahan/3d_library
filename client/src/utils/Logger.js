@@ -1,7 +1,6 @@
-import { dev } from '../env.js'
 
 function log(type, content) {
-  if (dev) {
+  if (window.location.origin.includes('localhost')) {
     // eslint-disable-next-line no-console
     console[type](`[${type}] ${new Date().toLocaleTimeString()}\n`, ...content)
   } else {

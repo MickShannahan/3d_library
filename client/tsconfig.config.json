@@ -9,7 +9,10 @@
   "compilerOptions": {
     "composite": true,
     "types": [
-      "node"
-    ]
+      "node",
+      "three"
+    ],
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
   }
 }

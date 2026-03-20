@@ -23,6 +23,6 @@ export default defineConfig({
     port: 8080
   },
   optimizeDeps: {
-    include: ['three', '@tresjs/core', '@tresjs/cientos']
+    include: ['three', '@tresjs/core']
   }
 })
