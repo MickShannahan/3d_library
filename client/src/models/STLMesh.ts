@@ -8,7 +8,7 @@ export class STLMesh extends THREE.Mesh {
   progress: number
   loaded: Promise<this>
 
-  constructor(path: string = '') {
+  constructor(path: string = '', fixedSize?= 0) {
     super()
     this.progress = 0
     this.loaded = new Promise<this>((resolve, reject) => {
@@ -16,6 +16,12 @@ export class STLMesh extends THREE.Mesh {
         path,
         (bufferGeo) => {
           this.geometry = bufferGeo
+          if (fixedSize) {
+            this.geometry.computeBoundingBox()
+            const currentSize = this.geometry.boundingBox.max.y - this.geometry.boundingBox.min.y
+            const scaleFactor = fixedSize / currentSize
+            this.scale.set(scaleFactor, scaleFactor, scaleFactor)
+          }
           resolve(this)
         },
         (modelProgress) => {

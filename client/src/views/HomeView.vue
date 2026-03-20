@@ -7,9 +7,11 @@ import { shallowRef } from 'vue';
 
 const meshes = shallowRef([])
 
-function onSelectedFiles(files : FileList){
+async function onSelectedFiles(files : File[]){
   logger.log('📂',files)
-  const stlMeshes = Array(...files).map(f => new STLMesh(URL.createObjectURL(f)))
+  const stlMeshes = files.map(f => new STLMesh(URL.createObjectURL(f)))
+  await Promise.all(stlMeshes.map(s => s.loaded))
+  logger.log(stlMeshes)
   meshes.value = stlMeshes
 }
 
