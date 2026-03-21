@@ -9,7 +9,11 @@ const meshes = shallowRef([])
 
 async function onSelectedFiles(files : File[]){
   logger.log('📂',files)
-  const stlMeshes = files.map(f => new STLMesh(URL.createObjectURL(f)))
+  const stlMeshes = files.map(f => {
+    return new STLMesh(URL.createObjectURL(f), {
+      objectName : f.name
+    })
+  })
   await Promise.all(stlMeshes.map(s => s.loaded))
   logger.log(stlMeshes)
   meshes.value = stlMeshes

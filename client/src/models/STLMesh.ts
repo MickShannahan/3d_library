@@ -4,22 +4,34 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 
 const loader = new STLLoader()
 
+interface STLMeshOptions {
+  objectName?: string
+  resize?: number
+  material?: THREE.Material
+}
+
 export class STLMesh extends THREE.Mesh {
   progress: number
   loaded: Promise<this>
+  defaultMaterial: THREE.Material
 
-  constructor(path: string = '', fixedSize?= 0) {
+  constructor(path: string = '', options: STLMeshOptions = {}) {
     super()
+    const { objectName, resize, material } = options
     this.progress = 0
+    this.name = objectName || path
+    this.material = material || new THREE.MeshNormalMaterial()
+    this.defaultMaterial = this.material
+
     this.loaded = new Promise<this>((resolve, reject) => {
       loader.load(
         path,
         (bufferGeo) => {
           this.geometry = bufferGeo
-          if (fixedSize) {
+          if (resize) {
             this.geometry.computeBoundingBox()
             const currentSize = this.geometry.boundingBox.max.y - this.geometry.boundingBox.min.y
-            const scaleFactor = fixedSize / currentSize
+            const scaleFactor = resize / currentSize
             this.scale.set(scaleFactor, scaleFactor, scaleFactor)
           }
           resolve(this)

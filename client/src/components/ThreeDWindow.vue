@@ -2,27 +2,46 @@
 import { TresCanvas } from '@tresjs/core';
 import ThreeDCamera from './ThreeDCamera.vue';
 import { STLMesh } from '@/models/STLMesh';
-import { nextTick, ref, useTemplateRef, watch } from 'vue';
+import { nextTick, ref, shallowRef, useTemplateRef, watch } from 'vue';
 import * as THREE from 'three'
 import { logger } from '@/utils/Logger';
 
 const props = defineProps({
   meshes: {type: Array<STLMesh>, default: ()=> []}
 })
-const tresGroupElm = useTemplateRef('tres-group-elm')
+// const tresGroupElm = useTemplateRef('tres-group-elm')
 const groupScale = ref([1,1,1])
+const groupPosition = ref([0,0,0])
 const targetScale = ref(10)
 
+const activeMesh = shallowRef(null)
+
 watch(()=> props.meshes, async  ()=>{
-  await nextTick()
-  const box = new THREE.Box3().setFromObject(tresGroupElm.value)
-  const size = box.getSize(new THREE.Vector3())
-  logger.log(size)
-  const maxDimension = Math.max(size.x, size.y, size.z)
-  const scaledFactor = targetScale.value / maxDimension
-  logger.log(scaledFactor)
-  // groupScale.value = new THREE.Vector3(scaledFactor, scaledFactor, scaledFactor)
+  const group = new THREE.Group()
+  group.add(...props.meshes)
+
+  const box = new THREE.Box3().setFromObject(group)
+  const boxSize = box.getSize(new THREE.Vector3())
+  const maxBoxDimension = Math.max(boxSize.x, boxSize.y, boxSize.z)
+  const scaleFactor = targetScale.value / maxBoxDimension
+  groupScale.value = [scaleFactor, scaleFactor, scaleFactor]
+  group.scale.set(scaleFactor, scaleFactor, scaleFactor)
+  box.setFromObject(group)
+
+  const center = box.getCenter(new THREE.Vector3())
+  const bottomOffset = -box.min.y
+  groupPosition.value = [-center.x, bottomOffset, -center.z]
+
 })
+
+
+function clickTest(clickedThing){
+  const meshClicked : STLMesh = clickedThing.object
+  activeMesh.value = meshClicked
+  logger.log(meshClicked.name)
+}
+
+const BackSide = THREE.BackSide
 
 </script>
 
@@ -32,11 +51,12 @@ watch(()=> props.meshes, async  ()=>{
   <TresCanvas clear-color="#16161d">
     <ThreeDCamera/>
 
-    <TresGroup ref="tres-group-elm" :scale="{x: groupScale[0], y:groupScale[1], z: groupScale[2]}">
-      <primitive v-for="mesh in meshes" :object="mesh" :key="mesh.uuid">
-        <TresMeshNormalMaterial/>
+      <primitive v-for="mesh in meshes" :object="mesh" :key="mesh.uuid" :scale="groupScale" :position="groupPosition" @click="clickTest">
+        <TresMeshNormalMaterial :transparent="true" />
+        <TresMesh v-if="mesh == activeMesh" :args="[mesh.geometry]" :scale="[1.01, 1.01, 1.01]">
+          <TresMeshNormalMaterial :side="BackSide"/>
+        </TresMesh>
       </primitive>
-    </TresGroup>
   </TresCanvas>
 </template>
 

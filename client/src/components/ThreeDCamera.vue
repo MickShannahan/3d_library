@@ -11,6 +11,8 @@ const {camera, renderer} = useTres()
 <template>
   <TresPerspectiveCamera :position="[10,10,10]" :look-at="[0,0,0]"/>
   <TresOrbitControls v-if="camera" :args="[camera, renderer?.domElement]"/>
+  <TresAmbientLight :intensity="1.5" :cast-shadow="true"/>
+  <TresDirectionalLight :intensity="1"/>
   <TresGridHelper/>
   <TresAxesHelper/>
 </template>
