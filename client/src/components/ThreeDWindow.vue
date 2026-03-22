@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { TresCanvas } from '@tresjs/core';
+import { TresCanvas, extend } from '@tresjs/core';
+import normalMat from '@/assets/matcaps/normal_highlight_mat_512.png'
 import ThreeDCamera from './ThreeDCamera.vue';
 import { STLMesh } from '@/models/STLMesh';
 import { nextTick, ref, shallowRef, useTemplateRef, watch } from 'vue';
@@ -41,21 +42,30 @@ function clickTest(clickedThing){
   logger.log(meshClicked.name)
 }
 
-const BackSide = THREE.BackSide
+function clickOut(){
+  logger.log('🔳')
+  activeMesh.value = null
+}
 
+const matcapTexture = new THREE.TextureLoader().load(normalMat)
+matcapTexture.colorSpace = THREE.SRGBColorSpace
+class MyMeshNormalMaterial extends THREE.MeshMatcapMaterial{
+  constructor(){
+    super({matcap: matcapTexture})
+  }
+} 
+extend({MyMeshNormalMaterial})
 </script>
 
 
 <template>
-
-  <TresCanvas clear-color="#16161d">
-    <ThreeDCamera/>
+  <TresCanvas clear-color="#16161d" @pointermissed="clickOut">
+    <ThreeDCamera />
 
       <primitive v-for="mesh in meshes" :object="mesh" :key="mesh.uuid" :scale="groupScale" :position="groupPosition" @click="clickTest">
-        <TresMeshNormalMaterial :transparent="true" />
-        <TresMesh v-if="mesh == activeMesh" :args="[mesh.geometry]" :scale="[1.01, 1.01, 1.01]">
-          <TresMeshNormalMaterial :side="BackSide"/>
-        </TresMesh>
+        <TresMyMeshNormalMaterial v-if="mesh == activeMesh"/>
+        <TresMeshNormalMaterial  v-else />
+        <!-- <TresMeshBasicMaterial color="white" transparent="true" opacity=".25"/> -->
       </primitive>
   </TresCanvas>
 </template>
