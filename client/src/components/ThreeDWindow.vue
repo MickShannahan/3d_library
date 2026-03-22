@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { TresCanvas, extend } from '@tresjs/core';
-import normalMat from '@/assets/matcaps/normal_highlight_mat_512.png'
+import normalMat from '@/assets/matcaps/normal_highlight_2_mat_512.png'
 import ThreeDCamera from './ThreeDCamera.vue';
 import { STLMesh } from '@/models/STLMesh';
 import { nextTick, ref, shallowRef, useTemplateRef, watch } from 'vue';
