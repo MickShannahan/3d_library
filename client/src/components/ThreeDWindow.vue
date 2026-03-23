@@ -5,7 +5,7 @@ import { STLMesh } from '@/models/STLMesh';
 import { ref, shallowRef, useTemplateRef, watch } from 'vue';
 import * as THREE from 'three'
 import { logger } from '@/utils/Logger';
-import { MeshNormalHighlightMaterial } from '@/utils/Materials';
+import { MeshGreyRainboxMaterial, MeshNormalHighlightMaterial, MeshPurpleRainboxMaterial } from '@/utils/Materials';
 import { rotate } from '@/utils/3Dtransforms';
 
 const cameraElm = useTemplateRef('camera')
@@ -55,7 +55,7 @@ function resetCamera(){
 }
 
 
-extend({MeshNormalHighlightMaterial})
+extend({MeshGreyRainboxMaterial, MeshPurpleRainboxMaterial})
 </script>
 
 
@@ -71,8 +71,8 @@ extend({MeshNormalHighlightMaterial})
 
         
         <primitive v-for="mesh in meshes" :object="mesh" :key="mesh.uuid" :scale="groupScale" :position="groupPosition" @click="clickTest">
-          <TresMeshNormalHighlightMaterial v-if="mesh == activeMesh"/>
-          <TresMeshNormalMaterial  v-else />
+          <TresMeshGreyRainboxMaterial v-if="mesh !== activeMesh"/>
+          <TresMeshPurpleRainboxMaterial  v-else />
         </primitive>
         
         
