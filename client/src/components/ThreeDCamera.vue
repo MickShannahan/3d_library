@@ -2,8 +2,10 @@
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js'
 import { extend, useTres } from '@tresjs/core';
 import * as THREE from 'three'
-import { ref, useTemplateRef } from 'vue';
+import { onMounted, ref, toRaw, useTemplateRef } from 'vue';
 import { logger } from '@/utils/Logger';
+import { nextTick } from 'vue';
+import { cameraState } from '@/utils/CameraState';
 
 
 const {camera, renderer} = useTres()
@@ -20,6 +22,13 @@ function pointCamera(point : number[] = [0,0,0]){
 
 defineExpose({
   pointCamera
+})
+
+onMounted( async ()=>{
+  await nextTick()
+  const rawControls = toRaw(orbitControls.value)
+  rawControls.addEventListener('start', ()=> cameraState.isPanning = true)
+  rawControls.addEventListener('end', ()=> cameraState.isPanning = false)
 })
 
 extend({OrbitControls})
