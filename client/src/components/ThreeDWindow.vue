@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { TresCanvas, extend } from '@tresjs/core';
-import normalMat from '@/assets/matcaps/normal_highlight_2_mat_512.png'
 import ThreeDCamera from './ThreeDCamera.vue';
 import { STLMesh } from '@/models/STLMesh';
-import { nextTick, ref, shallowRef, useTemplateRef, watch } from 'vue';
+import { ref, shallowRef, useTemplateRef, watch } from 'vue';
 import * as THREE from 'three'
 import { logger } from '@/utils/Logger';
+import { MeshNormalHighlightMaterial } from '@/utils/Materials';
+
+const cameraElm = useTemplateRef('camera')
 
 const props = defineProps({
   meshes: {type: Array<STLMesh>, default: ()=> []}
 })
-// const tresGroupElm = useTemplateRef('tres-group-elm')
 const groupScale = ref([1,1,1])
 const groupPosition = ref([0,0,0])
 const targetScale = ref(10)
@@ -18,6 +19,7 @@ const targetScale = ref(10)
 const activeMesh = shallowRef(null)
 
 watch(()=> props.meshes, async  ()=>{
+  logger.log('👁️')
   const group = new THREE.Group()
   group.add(...props.meshes)
 
@@ -33,7 +35,7 @@ watch(()=> props.meshes, async  ()=>{
   const bottomOffset = -box.min.y
   groupPosition.value = [-center.x, bottomOffset, -center.z]
 
-})
+}, {immediate: true})
 
 
 function clickTest(clickedThing){
@@ -47,23 +49,24 @@ function clickOut(){
   activeMesh.value = null
 }
 
-const matcapTexture = new THREE.TextureLoader().load(normalMat)
-matcapTexture.colorSpace = THREE.SRGBColorSpace
-class MyMeshNormalMaterial extends THREE.MeshMatcapMaterial{
-  constructor(){
-    super({matcap: matcapTexture})
-  }
-} 
-extend({MyMeshNormalMaterial})
+function resetCamera(){
+  cameraElm.value.pointCamera()
+}
+
+extend({MeshNormalHighlightMaterial})
 </script>
 
 
 <template>
+  <div class="position-fixed top-0 right-0">
+    Howdy
+    <button @click="resetCamera" class="btn btn-primary">👁️</button>
+  </div>
   <TresCanvas clear-color="#16161d" @pointermissed="clickOut">
-    <ThreeDCamera />
+    <ThreeDCamera  ref="camera"/>
 
       <primitive v-for="mesh in meshes" :object="mesh" :key="mesh.uuid" :scale="groupScale" :position="groupPosition" @click="clickTest">
-        <TresMyMeshNormalMaterial v-if="mesh == activeMesh"/>
+        <TresMeshNormalHighlightMaterial v-if="mesh == activeMesh"/>
         <TresMeshNormalMaterial  v-else />
         <!-- <TresMeshBasicMaterial color="white" transparent="true" opacity=".25"/> -->
       </primitive>
