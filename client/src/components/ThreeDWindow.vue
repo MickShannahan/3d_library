@@ -6,6 +6,7 @@ import { ref, shallowRef, useTemplateRef, watch } from 'vue';
 import * as THREE from 'three'
 import { logger } from '@/utils/Logger';
 import { MeshNormalHighlightMaterial } from '@/utils/Materials';
+import { rotate } from '@/utils/3Dtransforms';
 
 const cameraElm = useTemplateRef('camera')
 
@@ -53,6 +54,7 @@ function resetCamera(){
   cameraElm.value.pointCamera()
 }
 
+
 extend({MeshNormalHighlightMaterial})
 </script>
 
@@ -62,14 +64,19 @@ extend({MeshNormalHighlightMaterial})
     Howdy
     <button @click="resetCamera" class="btn btn-primary">👁️</button>
   </div>
-  <TresCanvas clear-color="#16161d" @pointermissed="clickOut">
+  <TresCanvas clear-color="#16161d" @pointermissed="clickOut" >
     <ThreeDCamera  ref="camera"/>
+    <!-- Full World Rotate -->
+      <TresGroup :rotation="[rotate(-90), 0,0]">
 
-      <primitive v-for="mesh in meshes" :object="mesh" :key="mesh.uuid" :scale="groupScale" :position="groupPosition" @click="clickTest">
-        <TresMeshNormalHighlightMaterial v-if="mesh == activeMesh"/>
-        <TresMeshNormalMaterial  v-else />
-        <!-- <TresMeshBasicMaterial color="white" transparent="true" opacity=".25"/> -->
-      </primitive>
+        
+        <primitive v-for="mesh in meshes" :object="mesh" :key="mesh.uuid" :scale="groupScale" :position="groupPosition" @click="clickTest">
+          <TresMeshNormalHighlightMaterial v-if="mesh == activeMesh"/>
+          <TresMeshNormalMaterial  v-else />
+        </primitive>
+        
+        
+      </TresGroup>
   </TresCanvas>
 </template>
 
