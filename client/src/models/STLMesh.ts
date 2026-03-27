@@ -45,6 +45,7 @@ export class STLMesh extends THREE.Mesh {
         },
         (modelProgress) => {
           this.progress = modelProgress.loaded / modelProgress.total
+          this.dispatchEvent({ type: 'progress', value: this.progress })
         },
         (err) => {
           logger.error(err)

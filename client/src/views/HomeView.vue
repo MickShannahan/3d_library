@@ -14,6 +14,9 @@ async function onSelectedFiles(files : File[]){
       objectName : f.name
     })
   })
+  stlMeshes.forEach(stl => stl.addEventListener('progress', (v)=>{
+    logger.log(stl.name, v)
+  }))
   await Promise.all(stlMeshes.map(s => s.loaded))
   logger.log(stlMeshes)
   meshes.value = stlMeshes
