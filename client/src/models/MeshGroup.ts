@@ -19,6 +19,7 @@ export class MeshGroup extends Group {
   groupRotation?: VectorCoordinates
   startingScale?: number
   loaded: boolean
+  previewImages: string[]
 
   constructor(meshes, options: MeshGroupOptions = {}) {
     super()
@@ -28,6 +29,7 @@ export class MeshGroup extends Group {
     this.groupRotation = options.groupRotation ?? new Vector3(0, 0, 0)
     this.startingScale = options.startingScale ?? 10
     this.loaded = false
+    this.previewImages = []
     meshes.forEach(m => this.add(m))
     this.initialize()
   }

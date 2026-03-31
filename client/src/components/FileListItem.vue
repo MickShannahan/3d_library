@@ -43,7 +43,11 @@ async function destroyMesh(){
 <template>
   <article :class="{active: fileSelected}" @click="handleFileClick" class="px-1 rounded">
     <div class="d-flex justify-content-between align-items-center">
-      <div> <i class="bi bi-box text-primary"></i> {{ file.name }}</div>
+      <div> 
+        <i class="bi bi-box text-primary"></i>
+        <img v-if="file.previewImages[0]" :src="file.previewImages[1]" alt="">
+         {{ file.name }}
+        </div>
 
       <div>
         <button v-if="file.visible" @click.stop="hideMesh"><i class="bi bi-eye-slash"></i></button>
@@ -79,5 +83,9 @@ article.active{
 
 .progress{
   height: 3px;
+}
+
+img{
+  height: 25px;
 }
 </style>

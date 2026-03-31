@@ -44,6 +44,16 @@ class MeshService {
     AppState.loadedMeshGroups.splice(AppState.loadedMeshGroups.indexOf(uuid), 1)
   }
 
+  hideAllMeshes() {
+    const meshesToHide = AppState.meshGroups.flatMap(mg => mg.meshes)
+    meshesToHide.forEach(m => m.visible = false)
+  }
+
+  showAllMeshes() {
+    const meshesToHide = AppState.meshGroups.flatMap(mg => mg.meshes)
+    meshesToHide.forEach(m => m.visible = true)
+  }
+
 
 }
 

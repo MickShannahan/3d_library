@@ -6,6 +6,7 @@ import { AppState } from '@/AppState';
 import { getModelCenter } from '@/utils/3Dtransforms';
 import { logger } from '@/utils/Logger';
 import { markRaw } from 'vue';
+import { meshService } from '@/services/MeshService';
 
 const {camera} = defineProps({
   camera: ThreeDCamera
@@ -36,6 +37,20 @@ function faceCameraToAxis(axisPosition: number[]){
   pointTowardModel()
 } 
 
+function snap360Shots(){
+  camera.snap360(AppState.meshGroups[0], 15, 8)
+}
+
+async function snap360AllParts(){
+  let meshes = AppState.meshGroups[0].meshes
+  for(const mesh of meshes){
+    meshService.hideAllMeshes()
+    mesh.visible = true
+    await camera.snap360(mesh, 15, 3)
+  }
+  meshService.showAllMeshes()
+}
+
 
 </script>
 
@@ -47,10 +62,15 @@ function faceCameraToAxis(axisPosition: number[]){
   <button @click="faceCameraToAxis([0,0,15])"><i class="bi bi-front text-red"></i>x</button>
   <button @click="faceCameraToAxis([15,0,0])"><i class="mdi bi-front text-green"></i>y</button>
   <button @click="faceCameraToAxis([0,15,0])"><i class="mdi bi-front text-cyan"></i>z</button>
+  <span class="spacer"></span>
+  <button @click="snap360Shots"><i class="mdi mdi-rotate-3d"></i></button>
+  <button @click="snap360AllParts"><i class="mdi mdi-rotate-360"></i> <i class="bi bi-boxes"></i></button>
 </section>
 </template>
 
 
 <style lang="scss" scoped>
-
+.spacer{
+  border-right: 1px solid rgba(var(--bs-light-rgb),.1)
+}
 </style>

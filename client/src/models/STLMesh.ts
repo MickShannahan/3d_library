@@ -16,6 +16,7 @@ export class STLMesh extends THREE.Mesh {
   progress: number
   loaded: Promise<this>
   defaultMaterial: THREE.Material
+  previewImages: string[]
 
   constructor(path: string = '', options: STLMeshOptions = {}) {
     super()
@@ -24,6 +25,7 @@ export class STLMesh extends THREE.Mesh {
     this.name = objectName || path
     this.material = material || new THREE.MeshNormalMaterial()
     this.defaultMaterial = this.material
+    this.previewImages = []
 
     const ogCast = super.raycast.bind(this)
     this.raycast = (caster, intersects) => {
