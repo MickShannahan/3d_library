@@ -1,35 +1,37 @@
 <script setup lang="ts">
-import { TresCanvas, extend } from '@tresjs/core';
+import { TresCanvas, extend, useLoop } from '@tresjs/core';
 import ThreeDCamera from './ThreeDCamera.vue';
 import { STLMesh } from '@/models/STLMesh';
 import { computed, ref, shallowRef, useTemplateRef, watch } from 'vue';
 import * as THREE from 'three'
 import { logger } from '@/utils/Logger';
 import { MeshGreyRainboxMaterial, MeshNormalHighlightMaterial, MeshPurpleRainboxMaterial } from '@/utils/Materials';
-import { rotate } from '@/utils/3Dtransforms';
+import { getModelCenter, rotate } from '@/utils/3Dtransforms';
 import { AppState } from '@/AppState';
 import { meshService } from '@/services/MeshService';
+import AnimatedGroup from './Meshes/AnimatedGroup.vue';
+import BottomToolBar from './ToolBars/BottomToolBar.vue';
+import CameraControls from './ToolBars/CameraControls.vue';
 
-const cameraElm = useTemplateRef('camera')
+const camera = useTemplateRef('camera')
+
 
 const meshGroups = computed(()=> AppState.meshGroups.filter(mg => AppState.loadedMeshGroups.includes(mg.uuid)))
-const selectedMeshIds = computed(()=> AppState.selectedMeshIds)
 
-
-function handleClickMesh(event){
-  const clickedMesh = event.object
-  const heldShift = event.shiftKey
-  meshService.selectMeshId(clickedMesh.uuid, !heldShift)
-  logger.log(heldShift)
-}
 
 function clickOut(){
   meshService.clearSelectedMeshIds()
 }
 
-function resetCamera(){
-  cameraElm.value.pointCamera()
-}
+watch(()=> AppState.loadedMeshGroups.length, (last)=>{
+  const lastLoadedGroup = AppState.meshGroups[last-1]
+  logger.log('loaded mesh group', lastLoadedGroup)
+  if(!lastLoadedGroup) return
+  const lastLoadCenter = getModelCenter(lastLoadedGroup)
+  camera.value.pointCamera(lastLoadCenter)
+})
+
+
 
 
 extend({MeshGreyRainboxMaterial, MeshPurpleRainboxMaterial})
@@ -37,23 +39,13 @@ extend({MeshGreyRainboxMaterial, MeshPurpleRainboxMaterial})
 
 
 <template>
-  <div class="position-fixed top-0 right-0">
-    Howdy
-    <button @click="resetCamera" class="btn btn-primary">👁️</button>
-  </div>
-  <TresCanvas clear-color="#16161d" @pointermissed="clickOut" >
-    <ThreeDCamera  ref="camera"/>
-    <!-- Full World Rotate -->
-      <TresGroup v-for="meshGroup in meshGroups" :rotation="[rotate(-90), 0,0]">
+  <BottomToolBar>
+    <CameraControls :camera/>
+  </BottomToolBar>
 
-        
-        <primitive v-for="mesh in meshGroup.meshes" :object="mesh" :key="mesh.uuid"   @click="handleClickMesh">
-          <TresMeshGreyRainboxMaterial v-if="selectedMeshIds.includes(mesh.uuid)"/>
-          <TresMeshPurpleRainboxMaterial  v-else />
-        </primitive>
-        
-        
-      </TresGroup>
+  <TresCanvas clear-color="#16161d" @pointermissed="clickOut" :fps-limit="5" >
+    <ThreeDCamera  ref="camera"/>
+    <AnimatedGroup v-for="meshGroup in meshGroups" :meshGroup/>
   </TresCanvas>
 </template>
 

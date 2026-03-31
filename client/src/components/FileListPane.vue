@@ -29,7 +29,7 @@ function handleSelectedFiles(files){
       <FilePicker @selectedFiles="handleSelectedFiles"/>
     </div>
 
-    <FileListGroup v-for="group in fileGroups" :key="group.uuid" class="mt-2">
+    <FileListGroup v-for="group in fileGroups" :key="group.uuid" class="mt-2" :group>
       <FileListItem v-for="file in group.meshes" :file :key="file.uuid"/>
     </FileListGroup>
     

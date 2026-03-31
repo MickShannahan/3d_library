@@ -26,7 +26,7 @@ export class MeshGroup extends Group {
     this.order = options.order ?? 0
     this.visible = options.visible ?? true
     this.groupRotation = options.groupRotation ?? new Vector3(0, 0, 0)
-    this.startingScale = options.startingScale ?? 5
+    this.startingScale = options.startingScale ?? 10
     this.loaded = false
     meshes.forEach(m => this.add(m))
     this.initialize()
@@ -46,8 +46,9 @@ export class MeshGroup extends Group {
     const center = box.getCenter(new THREE.Vector3())
     const bottomOffset = -box.min.y
     this.position.set(-center.x, bottomOffset, -center.z)
-    logger.log('mesh group loaded and scaled', this.meshes)
+    logger.log('mesh group loaded and scaled', this)
     AppState.loadedMeshGroups.push(this.uuid)
+
   }
 
 }

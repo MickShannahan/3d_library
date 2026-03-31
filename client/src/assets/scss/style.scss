@@ -13,6 +13,15 @@ main {
   font-size: 14px;
 }
 
+button {
+  background-color: unset;
+  border: unset;
+
+  &:hover {
+    background-color: rgba(var(--bs-primary-rgb), .2);
+  }
+}
+
 #pop-toast-container {
   display: flex;
   flex-direction: column;
