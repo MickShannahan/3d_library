@@ -1,25 +1,21 @@
 <script setup lang="ts">
+import FileListPane from '@/components/FileListPane.vue';
 import FilePicker from '@/components/FilePicker.vue';
 import ThreeDWindow from '@/components/ThreeDWindow.vue';
+import { MeshGroup } from '@/models/MeshGroup';
 import { STLMesh } from '@/models/STLMesh';
+import { meshService } from '@/services/MeshService';
 import { logger } from '@/utils/Logger';
-import { shallowRef } from 'vue';
-
-const meshes = shallowRef([])
 
 async function onSelectedFiles(files : File[]){
   logger.log('📂',files)
-  const stlMeshes = files.map(f => {
-    return new STLMesh(URL.createObjectURL(f), {
-      objectName : f.name
-    })
-  })
-  stlMeshes.forEach(stl => stl.addEventListener('progress', (v)=>{
-    logger.log(stl.name, v)
-  }))
+
+  // stlMeshes.forEach(stl => stl.addEventListener('progress', (v)=>{
+  //   logger.log(stl.name, v)
+  // }))
   await Promise.all(stlMeshes.map(s => s.loaded))
   logger.log(stlMeshes)
-  meshes.value = stlMeshes
+  meshService.addMeshGroups(stlMeshes)
 }
 
 </script>
@@ -27,11 +23,9 @@ async function onSelectedFiles(files : File[]){
 <template>
   <div class="flex-grow-1 d-flex flex-column position-relative">
     <section class="side-menu">
-      <div class="pane border rounded p-2">
-        <FilePicker @selectedFile="onSelectedFiles"/>
-      </div>
+      <FileListPane/>
     </section>
-    <ThreeDWindow :meshes/>
+    <ThreeDWindow />
     <section>
 
     </section>

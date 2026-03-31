@@ -1,18 +1,53 @@
 import { VectorCoordinates } from "@tresjs/core"
 import { STLMesh } from "./STLMesh"
-import { Vector3 } from "three"
+import * as THREE from 'three'
+import { Vector3, Group } from "three"
+import { logger } from "@/utils/Logger"
+import { AppState } from "@/AppState"
+
+interface MeshGroupOptions {
+  order?: number
+  visible?: boolean
+  groupRotation?: VectorCoordinates
+  startingScale?: number
+}
 
 
-export class MeshGroup {
+export class MeshGroup extends Group {
   meshes: STLMesh[]
-  order: number
-  visible: boolean
-  groupRotation: VectorCoordinates
+  order?: number
+  groupRotation?: VectorCoordinates
+  startingScale?: number
+  loaded: boolean
 
-  constructor(meshes, { order, visible, groupRotation }) {
+  constructor(meshes, options: MeshGroupOptions = {}) {
+    super()
     this.meshes = meshes
-    this.order = order ?? 0
-    this.visible = visible ?? true
-    this.groupRotation = groupRotation ?? new Vector3(0, 0, 0)
+    this.order = options.order ?? 0
+    this.visible = options.visible ?? true
+    this.groupRotation = options.groupRotation ?? new Vector3(0, 0, 0)
+    this.startingScale = options.startingScale ?? 5
+    this.loaded = false
+    meshes.forEach(m => this.add(m))
+    this.initialize()
   }
+
+  async initialize() {
+    const loadedMeshes = this.meshes.map(m => m.loaded)
+    await Promise.all(loadedMeshes)
+    this.loaded = true
+    const box = new THREE.Box3().setFromObject(this)
+    const boxSize = box.getSize(new THREE.Vector3())
+    const maxBoxDimension = Math.max(boxSize.x, boxSize.y, boxSize.z)
+    const scaleFactor = this.startingScale / maxBoxDimension
+    this.scale.set(scaleFactor, scaleFactor, scaleFactor)
+    box.setFromObject(this)
+
+    const center = box.getCenter(new THREE.Vector3())
+    const bottomOffset = -box.min.y
+    this.position.set(-center.x, bottomOffset, -center.z)
+    logger.log('mesh group loaded and scaled', this.meshes)
+    AppState.loadedMeshGroups.push(this.uuid)
+  }
+
 }
