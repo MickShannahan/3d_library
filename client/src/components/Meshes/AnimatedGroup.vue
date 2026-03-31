@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { AppState } from '@/AppState';
 import { MeshGroup } from '@/models/MeshGroup';
 import { meshService } from '@/services/MeshService';
-import { lerp, rotate } from '@/utils/3Dtransforms';
+import { lerp } from '@/utils/3Dtransforms';
 import { logger } from '@/utils/Logger';
 import { useLoop } from '@tresjs/core';
 import { Euler, Vector3 } from 'three';
-import { computed, markRaw, onMounted, shallowRef, useTemplateRef, watch } from 'vue';
+import { onMounted, shallowRef } from 'vue';
+import AnimatedMesh from './AnimatedMesh.vue';
 
 const {onRender} = useLoop()
 
@@ -46,9 +46,6 @@ onRender(({delta})=>{
 })
 
 
-const selectedMeshIds = computed(()=> AppState.selectedMeshIds)
-
-
 function handleClickMesh(event){
   const clickedMesh = event.object
   const heldShift = event.shiftKey
@@ -62,10 +59,7 @@ function handleClickMesh(event){
 
 <template>
       <TresGroup :rotation="localRotation" :scale="localScale" :position="localPosition">
-        <primitive v-for="mesh in meshGroup.meshes" :object="markRaw(mesh)" :key="mesh.uuid"   @click="handleClickMesh">
-          <TresMeshGreyRainboxMaterial v-if="selectedMeshIds.includes(mesh.uuid)"/>
-          <TresMeshPurpleRainboxMaterial  v-else />
-        </primitive>
+        <AnimatedMesh v-for="mesh in meshGroup.meshes" :mesh="mesh" :key="mesh.uuid" @click="handleClickMesh"/>
       </TresGroup>
 </template>
 

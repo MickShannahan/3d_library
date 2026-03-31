@@ -24,7 +24,7 @@ function handleSelectedFiles(files){
 
 
 <template>
-  <section id="file-list-pane" class="glass-pane border rounded m-2 p-2">
+  <section id="file-list-pane" class="glass-pane border rounded rounded-3 p-2">
     <div class="">
       <FilePicker @selectedFiles="handleSelectedFiles"/>
     </div>

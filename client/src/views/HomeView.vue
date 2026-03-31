@@ -22,9 +22,6 @@ async function onSelectedFiles(files : File[]){
 
 <template>
   <div class="flex-grow-1 d-flex flex-column position-relative">
-    <section class="side-menu">
-      <FileListPane/>
-    </section>
     <ThreeDWindow />
     <section>
 
@@ -33,10 +30,6 @@ async function onSelectedFiles(files : File[]){
 </template>
 
 <style lang="scss">
-.side-menu{
-  position: absolute;
-  z-index: 1;
-}
 
 
 </style>

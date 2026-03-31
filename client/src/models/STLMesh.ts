@@ -17,6 +17,10 @@ export class STLMesh extends THREE.Mesh {
   loaded: Promise<this>
   defaultMaterial: THREE.Material
   previewImages: string[]
+  silhouette: boolean
+  targetRotation = new THREE.Euler()
+  targetPosition = new THREE.Vector3()
+  targetScale = new THREE.Vector3(1, 1, 1)
 
   constructor(path: string = '', options: STLMeshOptions = {}) {
     super()
@@ -26,6 +30,7 @@ export class STLMesh extends THREE.Mesh {
     this.material = material || new THREE.MeshNormalMaterial()
     this.defaultMaterial = this.material
     this.previewImages = []
+    this.silhouette = false
 
     const ogCast = super.raycast.bind(this)
     this.raycast = (caster, intersects) => {

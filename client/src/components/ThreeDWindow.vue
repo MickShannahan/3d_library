@@ -12,6 +12,9 @@ import { meshService } from '@/services/MeshService';
 import AnimatedGroup from './Meshes/AnimatedGroup.vue';
 import BottomToolBar from './ToolBars/BottomToolBar.vue';
 import CameraControls from './ToolBars/CameraControls.vue';
+import FileListPane from './FileListPane.vue';
+import ToolBar from './ToolBars/ToolBar.vue';
+import MeshToolsPane from './ToolBars/MeshToolsPane.vue';
 
 const camera = useTemplateRef('camera')
 
@@ -34,11 +37,17 @@ watch(()=> AppState.loadedMeshGroups.length, (last)=>{
 
 
 
-extend({MeshGreyRainboxMaterial, MeshPurpleRainboxMaterial})
+extend({MeshGreyRainboxMaterial})
 </script>
 
 
 <template>
+    <ToolBar :position="['top','left']" class="d-flex flex-column gap-2">
+      <FileListPane/>
+      <MeshToolsPane/>
+    </ToolBar>
+
+
   <BottomToolBar>
     <CameraControls :camera/>
   </BottomToolBar>

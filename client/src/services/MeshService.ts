@@ -44,14 +44,14 @@ class MeshService {
     AppState.loadedMeshGroups.splice(AppState.loadedMeshGroups.indexOf(uuid), 1)
   }
 
-  hideAllMeshes() {
+  hideAllMeshes(onlySilhouette = false) {
     const meshesToHide = AppState.meshGroups.flatMap(mg => mg.meshes)
-    meshesToHide.forEach(m => m.visible = false)
+    meshesToHide.forEach(m => onlySilhouette ? m.silhouette = true : m.visible = false)
   }
 
-  showAllMeshes() {
+  showAllMeshes(onlySilhouette = false) {
     const meshesToHide = AppState.meshGroups.flatMap(mg => mg.meshes)
-    meshesToHide.forEach(m => m.visible = true)
+    meshesToHide.forEach(m => onlySilhouette ? m.silhouette = false : m.visible = true)
   }
 
 

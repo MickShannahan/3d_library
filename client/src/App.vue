@@ -14,7 +14,7 @@ import { RouterLink, RouterView } from 'vue-router'
     <RouterView/>
   </main>
 
-  <svg xmlns="http://www.w3.org/2000/svg" role="presentation" className="d-none">
+  <svg xmlns="http://www.w3.org/2000/svg" role="presentation" class="d-none">
           <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox">
             <feTurbulence type="fractalNoise" baseFrequency="0.001 0.005" numOctaves="1" seed="17" result="turbulence" />
             <feComponentTransfer in="turbulence" result="mapped">
