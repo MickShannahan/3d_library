@@ -10,6 +10,7 @@ import custom4Path from '@/assets/matcaps/custom_4_mat_512.png'
 import darkGreyPath from '@/assets/matcaps/dark_grey_mat.png'
 import darkPurplePath from '@/assets/matcaps/dark_purple_mat.jpg'
 import goobertPath from '@/assets/matcaps/goobert_mat.png'
+import goobertPurplePath from '@/assets/matcaps/goobert_purple_mat.png'
 import normalLighterPath from '@/assets/matcaps/normal_lighter_mat_512.png'
 import normalNegativePath from '@/assets/matcaps/normal_negative_mat_512.png'
 import purplePath from '@/assets/matcaps/purple_mat_512.png'
@@ -38,6 +39,7 @@ export const MeshCustom4Material = createMatcapMaterial(custom4Path)
 export const MeshDarkGreyMaterial = createMatcapMaterial(darkGreyPath)
 export const MeshDarkPurpleMaterial = createMatcapMaterial(darkPurplePath)
 export const MeshGoobertMaterial = createMatcapMaterial(goobertPath)
+export const MeshGoobertPurpleMaterial = createMatcapMaterial(goobertPurplePath)
 export const MeshNormalLighterMaterial = createMatcapMaterial(normalLighterPath)
 export const MeshNormalNegativeMaterial = createMatcapMaterial(normalNegativePath)
 export const MeshPurpleMaterial = createMatcapMaterial(purplePath)
@@ -53,6 +55,7 @@ extend({
   MeshDarkGreyMaterial,
   MeshDarkPurpleMaterial,
   MeshGoobertMaterial,
+  MeshGoobertPurpleMaterial,
   MeshPurpleMaterial,
   MeshWaterMaterial
 })

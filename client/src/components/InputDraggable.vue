@@ -12,7 +12,7 @@ const props = defineProps({
   step: {type: Number, default: 1},
   pixels: {type: Number, default: 6}
 })
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'input'])
 
 const mousePosition = reactive({x: 0, y:0})
 const isDragging = ref(false)

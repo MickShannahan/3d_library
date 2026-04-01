@@ -38,7 +38,7 @@ function faceCameraToAxis(axisPosition: number[]){
 } 
 
 function snap360Shots(){
-  camera.snap360(AppState.meshGroups[0], 15, 8)
+  camera.snap360(AppState.meshGroups[0], 15, 32)
 }
 
 async function snap360AllParts(){

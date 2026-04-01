@@ -30,7 +30,8 @@ button {
 }
 
 .glass-pane {
-  background-color: rgba(var(--bs-body-bg-rgb), .15);
+  background-color: rgba(var(--bs-body-bg-rgb), .2);
+  box-shadow: inset 0px 2px 4px rgba(var(--bs-light-rgb), .1), inset 0px -2px 4px rgba(var(--bs-dark-rgb), .1);
   position: relative;
 
   &::before {
@@ -45,5 +46,8 @@ button {
 }
 
 .glass-pane.border {
-  border: 1px outset rgba(var(--bs-light-rgb), .2)
+  border-top: 1px outset rgba(var(--bs-light-rgb), .3) !important;
+  border-left: 1px outset rgba(var(--bs-light-rgb), .2) !important;
+  border-right: 1px outset rgba(var(--bs-light-rgb), .2) !important;
+  border-bottom: 1px outset rgba(var(--bs-light-rgb), .1) !important;
 }
