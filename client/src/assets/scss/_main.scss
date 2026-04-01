@@ -177,26 +177,26 @@
   }
 }
 
-input,
-textarea,
-select {
-  &:not(:placeholder-shown) {
-    &:valid {
-      outline: solid 1px transparentize($success, .65);
-      outline-offset: -2px;
-    }
+// input,
+// textarea,
+// select {
+//   &:not(:placeholder-shown) {
+//     &:valid {
+//       outline: solid 1px transparentize($success, .65);
+//       outline-offset: -2px;
+//     }
 
-    &:invalid {
-      outline: solid 1px transparentize($danger, .65);
-      outline-offset: -2px;
-    }
-  }
-}
+//     &:invalid {
+//       outline: solid 1px transparentize($danger, .65);
+//       outline-offset: -2px;
+//     }
+//   }
+// }
 
-form:invalid button[type="submit"] {
-  color: var(--bs-btn-disabled-color);
-  pointer-events: none;
-  background-color: var(--bs-btn-disabled-bg);
-  border-color: var(--bs-btn-disabled-border-color);
-  opacity: var(--bs-btn-disabled-opacity);
-}
+// form:invalid button[type="submit"] {
+//   color: var(--bs-btn-disabled-color);
+//   pointer-events: none;
+//   background-color: var(--bs-btn-disabled-bg);
+//   border-color: var(--bs-btn-disabled-border-color);
+//   opacity: var(--bs-btn-disabled-opacity);
+// }
