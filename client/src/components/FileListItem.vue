@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AppState } from '@/AppState';
-import { STLMesh } from '@/models/STLMesh';
+import { PartMesh } from '@/models/PartMesh';
 import { meshService } from '@/services/MeshService';
 import { logger } from '@/utils/Logger';
 import { Pop } from '@/utils/Pop';
@@ -9,7 +9,7 @@ import { watch, onMounted, ref, computed } from 'vue';
 
 
 const props = defineProps({
-  file: STLMesh,
+  file: PartMesh,
   accent: {type: String, default: 'blue'}
 })
 const emit = defineEmits(['dragstart'])

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MeshGroup } from '@/models/MeshGroup';
+import { Model } from '@/models/Model';
 import { ref, watch } from 'vue';
 import {Collapse} from 'bootstrap'
 import { getModelBottom, getModelCenter, resetGroupBase, rotate, rotateGroupX } from '@/utils/3Dtransforms';
@@ -8,7 +8,7 @@ import { meshService } from '@/services/MeshService';
 import ModalWrapper from './ModalWrapper.vue';
 
 const {group} = defineProps({
-  group: MeshGroup
+  group: Model
 })
 const collapsed = ref(false)
 

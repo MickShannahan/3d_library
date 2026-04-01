@@ -1,15 +1,15 @@
 import { reactive } from "vue";
-import { MeshGroup } from "./models/MeshGroup";
+import { Model } from "./models/Model";
 import { UUID } from "crypto";
-import { STLMesh } from "./models/STLMesh";
+import { PartMesh } from "./models/PartMesh";
 import { PartGroup } from "./models/PartGroup";
 
 interface AppState {
-  meshGroups: MeshGroup[]
+  meshGroups: Model[]
   selectedMeshIds: string[]
   loadedMeshGroups: string[]
   scaleModelsBy: 0,
-  draggingMesh: STLMesh
+  draggingMesh: PartMesh
   draggingFromPartGroup: PartGroup | null
 }
 

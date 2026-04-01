@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MeshGroup } from '@/models/MeshGroup';
+import { Model } from '@/models/Model';
 import { meshService } from '@/services/MeshService';
 import { lerp } from '@/utils/3Dtransforms';
 import { useLoop } from '@tresjs/core';
@@ -10,7 +10,7 @@ import AnimatedMesh from './AnimatedMesh.vue';
 const {onRender} = useLoop()
 
 const {meshGroup} = defineProps({
-  meshGroup: MeshGroup
+  meshGroup: Model
 })
 const localRotation = shallowRef(new Euler())
 const localPosition = shallowRef(new Vector3())

@@ -8,8 +8,8 @@ import { cameraState } from '@/utils/CameraState';
 import { getModelCenter, getModelZoom, lerp, rotate } from '@/utils/3Dtransforms';
 import { cropSquareFromCanvas } from '@/utils/CanvasUtils';
 import { logger } from '@/utils/Logger';
-import { MeshGroup } from '@/models/MeshGroup';
-import { STLMesh } from '@/models/STLMesh';
+import { Model } from '@/models/Model';
+import { PartMesh } from '@/models/PartMesh';
 
 
 const {camera, renderer} = useTres()
@@ -51,9 +51,9 @@ function positionCamera(position: THREE.Vector3 | number[]) {
   targetPosition.value = coords
 }
 
-async function snap360(focusModel: MeshGroup | STLMesh, zoom: number = 15, shots: number = 8){
+async function snap360(focusModel: Model | PartMesh, zoom: number = 15, shots: number = 8){
   lerpCamera.value = false
-  const focusCenter = focusModel instanceof MeshGroup ? 
+  const focusCenter = focusModel instanceof Model ? 
   getModelCenter(...focusModel.meshes) :
   getModelCenter(focusModel)
 

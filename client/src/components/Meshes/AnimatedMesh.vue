@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AppState } from '@/AppState';
-import { STLMesh } from '@/models/STLMesh';
+import { PartMesh } from '@/models/PartMesh';
 import { lerp } from '@/utils/3Dtransforms';
 import { useLoop } from '@tresjs/core';
 import { Euler, Vector3 } from 'three';
@@ -9,7 +9,7 @@ import { computed, markRaw, onMounted, shallowRef } from 'vue';
 const { onRender } = useLoop()
 
 const { mesh } = defineProps({
-  mesh: STLMesh
+  mesh: PartMesh
 })
 
 const localRotation = shallowRef(new Euler())

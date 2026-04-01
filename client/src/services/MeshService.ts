@@ -1,17 +1,17 @@
 import { AppState } from "@/AppState"
-import { MeshGroup } from "@/models/MeshGroup"
-import { STLMesh } from "@/models/STLMesh"
+import { Model } from "@/models/Model"
+import { PartMesh } from "@/models/PartMesh"
 import { logger } from "@/utils/Logger"
 import { markRaw } from "vue"
 
 
 class MeshService {
 
-  addMeshGroups(newMeshGroups: MeshGroup | STLMesh[]) {
-    if (newMeshGroups instanceof MeshGroup) {
+  addMeshGroups(newMeshGroups: Model | PartMesh[]) {
+    if (newMeshGroups instanceof Model) {
       AppState.meshGroups = [...AppState.meshGroups, newMeshGroups]
     } else {
-      AppState.meshGroups = [...AppState.meshGroups, new MeshGroup(newMeshGroups)]
+      AppState.meshGroups = [...AppState.meshGroups, new Model(newMeshGroups)]
     }
   }
 
@@ -29,7 +29,7 @@ class MeshService {
     AppState.selectedMeshIds.push(...meshIds)
   }
 
-  destroyMesh(mesh: STLMesh) {
+  destroyMesh(mesh: PartMesh) {
     const group = AppState.meshGroups.find(g => g.meshes.includes(mesh))
     group.meshes.splice(group.meshes.indexOf(mesh), 1)
     if (group.meshes.length == 0) {

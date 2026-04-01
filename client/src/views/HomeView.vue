@@ -2,8 +2,8 @@
 import FileListPane from '@/components/FileListPane.vue';
 import FilePicker from '@/components/FilePicker.vue';
 import ThreeDWindow from '@/components/ThreeDWindow.vue';
-import { MeshGroup } from '@/models/MeshGroup';
-import { STLMesh } from '@/models/STLMesh';
+import { Model } from '@/models/Model';
+import { PartMesh } from '@/models/PartMesh';
 import { meshService } from '@/services/MeshService';
 import { logger } from '@/utils/Logger';
 

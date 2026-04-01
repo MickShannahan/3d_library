@@ -5,13 +5,13 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 
 const loader = new STLLoader()
 
-interface STLMeshOptions {
+interface PartMeshOptions {
   objectName?: string
   resize?: number
   material?: THREE.Material
 }
 
-export class STLMesh extends THREE.Mesh {
+export class PartMesh extends THREE.Mesh {
   progress: number
   loaded: Promise<this>
   defaultMaterial: THREE.Material
@@ -21,7 +21,7 @@ export class STLMesh extends THREE.Mesh {
   targetPosition = new THREE.Vector3()
   targetScale = new THREE.Vector3(1, 1, 1)
 
-  constructor(path: string = '', options: STLMeshOptions = {}) {
+  constructor(path: string = '', options: PartMeshOptions = {}) {
     super()
     const { objectName, resize, material } = options
     this.progress = 0

@@ -1,12 +1,12 @@
 import { VectorCoordinates } from "@tresjs/core"
-import { STLMesh } from "./STLMesh"
+import { PartMesh } from "./PartMesh"
 import * as THREE from 'three'
 import { Vector3, Group } from "three"
 import { logger } from "@/utils/Logger"
 import { AppState } from "@/AppState"
 import { PartGroup } from "./PartGroup"
 
-interface MeshGroupOptions {
+interface ModelOptions {
   order?: number
   visible?: boolean
   groupRotation?: VectorCoordinates
@@ -14,8 +14,8 @@ interface MeshGroupOptions {
 }
 
 
-export class MeshGroup extends Group {
-  meshes: STLMesh[]
+export class Model extends Group {
+  meshes: PartMesh[]
   order?: number
   groupRotation?: VectorCoordinates
   startingScale?: number
@@ -23,7 +23,7 @@ export class MeshGroup extends Group {
   previewImages: string[]
   partGroups: PartGroup[]
 
-  constructor(meshes, options: MeshGroupOptions = {}) {
+  constructor(meshes, options: ModelOptions = {}) {
     super()
     this.meshes = meshes
     this.order = options.order ?? 0

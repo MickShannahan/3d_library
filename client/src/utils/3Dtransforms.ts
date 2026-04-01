@@ -1,13 +1,13 @@
 import { Box3, BufferGeometry, Object3D, Vector3, Sphere, Matrix4, Quaternion } from "three";
 import { toRaw } from "vue";
 import { logger } from "./Logger";
-import { MeshGroup } from "@/models/MeshGroup";
-import { STLMesh } from "@/models/STLMesh";
+import { Model } from "@/models/Model";
+import { PartMesh } from "@/models/PartMesh";
 
 // Module-level WeakMaps — completely outside Vue's reactive system, never proxied
 const geometryBoxCache = new WeakMap<BufferGeometry, Box3>()
 type GroupBoxEntry = { box: Box3, rx: number, ry: number, rz: number, sx: number, sy: number, sz: number }
-const groupBoxCache = new WeakMap<MeshGroup, GroupBoxEntry>()
+const groupBoxCache = new WeakMap<Model, GroupBoxEntry>()
 
 function getGeometryBox(geometry: BufferGeometry): Box3 {
   if (!geometryBoxCache.has(geometry)) {
@@ -17,8 +17,8 @@ function getGeometryBox(geometry: BufferGeometry): Box3 {
   return geometryBoxCache.get(geometry)!
 }
 
-export function getGroupBox(group: MeshGroup): Box3 {
-  const raw = toRaw(group) as MeshGroup
+export function getGroupBox(group: Model): Box3 {
+  const raw = toRaw(group) as Model
   const r = raw.rotation, s = raw.scale
   const cached = groupBoxCache.get(raw)
   if (cached && cached.rx === r.x && cached.ry === r.y && cached.rz === r.z
@@ -27,7 +27,7 @@ export function getGroupBox(group: MeshGroup): Box3 {
   }
   const box = new Box3()
   const matrix = new Matrix4().compose(new Vector3(), new Quaternion().setFromEuler(r), s)
-  raw.meshes.forEach((m: STLMesh) => {
+  raw.meshes.forEach((m: PartMesh) => {
     const geomBox = getGeometryBox(toRaw(m).geometry).clone()
     geomBox.applyMatrix4(matrix)
     box.union(geomBox)
@@ -60,9 +60,9 @@ export function getModelCenter(...models: Object3D[]) {
   return box.getCenter(new Vector3())
 }
 
-export function getModelZoom(model: MeshGroup | STLMesh, camera) {
+export function getModelZoom(model: Model | PartMesh, camera) {
   const zoomBox = new Box3()
-  if (model instanceof MeshGroup) {
+  if (model instanceof Model) {
     model.meshes.forEach(m => zoomBox.expandByObject(m))
   } else {
     zoomBox.setFromObject(model)
@@ -81,7 +81,7 @@ export function getModelBottom(...models: Object3D[]) {
   return box.min.y
 }
 
-export function resetGroupBase(group: MeshGroup) {
+export function resetGroupBase(group: Model) {
   const combinedBox = getGroupBox(group)
   group.position.y = -combinedBox.min.y
 }

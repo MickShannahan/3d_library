@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TresCanvas, extend, useLoop } from '@tresjs/core';
 import ThreeDCamera from './ThreeDCamera.vue';
-import { STLMesh } from '@/models/STLMesh';
+import { PartMesh } from '@/models/PartMesh';
 import { computed, ref, shallowRef, useTemplateRef, watch } from 'vue';
 import * as THREE from 'three'
 import { logger } from '@/utils/Logger';

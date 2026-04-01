@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { logger } from '@/utils/Logger';
 import FilePicker from './FilePicker.vue';
-import { STLMesh } from '@/models/STLMesh';
+import { PartMesh } from '@/models/PartMesh';
 import { computed, ref } from 'vue';
 import { meshService } from '@/services/MeshService';
 import { AppState } from '@/AppState';
@@ -9,21 +9,21 @@ import FileListGroup from './FileListGroup.vue';
 import FileListItem from './FileListItem.vue';
 import FileListPartGrouper from './FileListPartGrouper.vue';
 import FileListPartGroupItem from './FileListPartGroupItem.vue';
-import { MeshGroup } from '@/models/MeshGroup';
+import { Model } from '@/models/Model';
 
 const fileGroups = computed(()=> AppState.meshGroups)
 
 function handleSelectedFiles(files){
   logger.log('📂', files)
     const stlMeshes = files.map(f => {
-    return new STLMesh(URL.createObjectURL(f), {
+    return new PartMesh(URL.createObjectURL(f), {
       objectName : f.name
     })
   })
   meshService.addMeshGroups(stlMeshes)
 }
 
-function ungroupedMeshes(group: MeshGroup){
+function ungroupedMeshes(group: Model){
   const groupedIds = group.partGroups.flatMap(pg => pg.partIds)
   return group.meshes.filter(m => !groupedIds.includes(m.uuid))
 }
