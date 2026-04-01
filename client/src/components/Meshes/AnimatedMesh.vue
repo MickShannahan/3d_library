@@ -12,8 +12,6 @@ const { mesh } = defineProps({
   mesh: STLMesh
 })
 
-const emit = defineEmits(['click'])
-
 const localRotation = shallowRef(new Euler())
 const localPosition = shallowRef(new Vector3())
 const localScale = shallowRef(new Vector3(1, 1, 1))
@@ -52,17 +50,12 @@ onRender(({ delta }) => {
   )
 })
 
-function clickedMesh(ev){
-  if(!mesh.visible) return
-  emit('click', ev)
-}
-
 const selectedMeshIds = computed(() => AppState.selectedMeshIds)
 </script>
 
 <template>
   <TresGroup :rotation="localRotation" :position="localPosition" :scale="localScale">
-    <primitive :object="markRaw(mesh)" @click="clickedMesh">
+    <primitive :object="markRaw(mesh)">
       <TresMeshGreyRainboxMaterial v-if="selectedMeshIds.includes(mesh.uuid)"/>
       <TresMeshBasicMaterial v-else-if="mesh.silhouette" color="black" :transparent="true" :opacity=".2"/>
       <TresMeshPurpleRainboxMaterial v-else />

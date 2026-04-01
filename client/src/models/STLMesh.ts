@@ -1,4 +1,3 @@
-import { cameraState } from '@/utils/CameraState'
 import { logger } from '@/utils/Logger.js'
 import * as THREE from 'three'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
@@ -32,11 +31,7 @@ export class STLMesh extends THREE.Mesh {
     this.previewImages = []
     this.silhouette = false
 
-    const ogCast = super.raycast.bind(this)
-    this.raycast = (caster, intersects) => {
-      if (!this.visible) return null
-      return cameraState.isPanning ? null : ogCast(caster, intersects)
-    }
+    this.raycast = () => null 
 
     this.loaded = new Promise<this>((resolve, reject) => {
       loader.load(

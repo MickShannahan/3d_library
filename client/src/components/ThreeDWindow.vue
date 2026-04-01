@@ -16,16 +16,13 @@ import FileListPane from './FileListPane.vue';
 import ToolBar from './ToolBars/ToolBar.vue';
 import MeshToolsPane from './ToolBars/MeshToolsPane.vue';
 import StatsWindow from './StatsWindow.vue'
+import SceneClickHandler from './SceneClickHandler.vue'
 
 const camera = useTemplateRef('camera')
 
 
 const meshGroups = computed(()=> AppState.meshGroups.filter(mg => AppState.loadedMeshGroups.includes(mg.uuid)))
 
-
-function clickOut(){
-  meshService.clearSelectedMeshIds()
-}
 
 watch(()=> AppState.loadedMeshGroups.length, (last)=>{
   const lastLoadedGroup = AppState.meshGroups[last-1]
@@ -53,10 +50,11 @@ extend({MeshGreyRainboxMaterial})
     <CameraControls :camera/>
   </BottomToolBar>
 
-  <TresCanvas clear-color="#16161d" @pointermissed="clickOut"  :fps-limit="60">
+  <TresCanvas clear-color="#16161d" :fps-limit="60">
     <ThreeDCamera  ref="camera"/>
     <AnimatedGroup v-for="meshGroup in meshGroups" :meshGroup/>
     <StatsWindow/>
+    <SceneClickHandler/>
   </TresCanvas>
 </template>
 

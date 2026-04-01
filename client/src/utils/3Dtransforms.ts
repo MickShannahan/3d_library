@@ -1,7 +1,40 @@
-import { Box3, Object3D, Vector3, Sphere, Matrix4, Quaternion } from "three";
+import { Box3, BufferGeometry, Object3D, Vector3, Sphere, Matrix4, Quaternion } from "three";
+import { toRaw } from "vue";
 import { logger } from "./Logger";
 import { MeshGroup } from "@/models/MeshGroup";
 import { STLMesh } from "@/models/STLMesh";
+
+// Module-level WeakMaps — completely outside Vue's reactive system, never proxied
+const geometryBoxCache = new WeakMap<BufferGeometry, Box3>()
+type GroupBoxEntry = { box: Box3, rx: number, ry: number, rz: number, sx: number, sy: number, sz: number }
+const groupBoxCache = new WeakMap<MeshGroup, GroupBoxEntry>()
+
+function getGeometryBox(geometry: BufferGeometry): Box3 {
+  if (!geometryBoxCache.has(geometry)) {
+    geometry.computeBoundingBox()
+    geometryBoxCache.set(geometry, geometry.boundingBox!.clone())
+  }
+  return geometryBoxCache.get(geometry)!
+}
+
+export function getGroupBox(group: MeshGroup): Box3 {
+  const raw = toRaw(group) as MeshGroup
+  const r = raw.rotation, s = raw.scale
+  const cached = groupBoxCache.get(raw)
+  if (cached && cached.rx === r.x && cached.ry === r.y && cached.rz === r.z
+    && cached.sx === s.x && cached.sy === s.y && cached.sz === s.z) {
+    return cached.box
+  }
+  const box = new Box3()
+  const matrix = new Matrix4().compose(new Vector3(), new Quaternion().setFromEuler(r), s)
+  raw.meshes.forEach((m: STLMesh) => {
+    const geomBox = getGeometryBox(toRaw(m).geometry).clone()
+    geomBox.applyMatrix4(matrix)
+    box.union(geomBox)
+  })
+  groupBoxCache.set(raw, { box, rx: r.x, ry: r.y, rz: r.z, sx: s.x, sy: s.y, sz: s.z })
+  return box
+}
 
 
 export function rotate(degrees: number) {
@@ -49,17 +82,6 @@ export function getModelBottom(...models: Object3D[]) {
 }
 
 export function resetGroupBase(group: MeshGroup) {
-  const combinedBox = new Box3()
-  const matrix = new Matrix4().compose(
-    new Vector3(),
-    new Quaternion().setFromEuler(group.rotation),
-    group.scale
-  )
-  group.meshes.forEach(m => {
-    m.geometry.computeBoundingBox()
-    const geomBox = m.geometry.boundingBox.clone()
-    geomBox.applyMatrix4(matrix)
-    combinedBox.union(geomBox)
-  })
+  const combinedBox = getGroupBox(group)
   group.position.y = -combinedBox.min.y
 }

@@ -2,7 +2,6 @@
 import { MeshGroup } from '@/models/MeshGroup';
 import { meshService } from '@/services/MeshService';
 import { lerp } from '@/utils/3Dtransforms';
-import { logger } from '@/utils/Logger';
 import { useLoop } from '@tresjs/core';
 import { Euler, Vector3 } from 'three';
 import { onMounted, shallowRef } from 'vue';
@@ -46,20 +45,13 @@ onRender(({delta})=>{
 })
 
 
-function handleClickMesh(event){
-  const clickedMesh = event.object
-  const heldShift = event.shiftKey
-  meshService.selectMeshId(clickedMesh.uuid, !heldShift)
-  logger.log(heldShift)
-}
-
 
 </script>
 
 
 <template>
       <TresGroup :rotation="localRotation" :scale="localScale" :position="localPosition">
-        <AnimatedMesh v-for="mesh in meshGroup.meshes" :mesh="mesh" :key="mesh.uuid" @click="handleClickMesh"/>
+        <AnimatedMesh v-for="mesh in meshGroup.meshes" :mesh="mesh" :key="mesh.uuid"/>
       </TresGroup>
 </template>
 
