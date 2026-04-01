@@ -113,8 +113,15 @@ extend({OrbitControls})
 <template>
   <TresPerspectiveCamera :position="[10,10,10]" :look-at="[0,0,0]"/>
   <TresOrbitControls ref="orbit-controls" v-if="camera" :args="[camera, renderer?.domElement]" />
-  <TresAmbientLight :intensity="1.5" :cast-shadow="true"/>
-  <TresDirectionalLight :intensity="1"/>
+
+  <!-- <TresAmbientLight :intensity="1.4" :cast-shadows="true"/> -->
+<!-- 
+  <TresDirectionalLight :position="[12, 18, 10]" :intensity="3.5" color="#fff4e0" :cast-shadow="true"/>
+
+  <TresDirectionalLight :position="[-10, 6, 8]" :intensity="1.2" color="#ddeeff" />
+
+  <TresDirectionalLight :position="[-4, 12, -14]" :intensity="10.5" color="pink" /> -->
+
   <TresGridHelper/>
   <TresAxesHelper/>
 </template>

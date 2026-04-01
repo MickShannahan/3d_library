@@ -45,6 +45,19 @@ export const MeshNormalNegativeMaterial = createMatcapMaterial(normalNegativePat
 export const MeshPurpleMaterial = createMatcapMaterial(purplePath)
 export const MeshWaterMaterial = createMatcapMaterial(waterPath)
 
+// Standard materials — react to scene lights
+function createStandardMaterial(options: THREE.MeshStandardMaterialParameters) {
+  return class extends THREE.MeshStandardMaterial {
+    constructor() {
+      super(options)
+    }
+  }
+}
+
+export const MeshSteelMaterial = createStandardMaterial({ color: 0xccccdd, roughness: 0.25, metalness: 0.85 })
+export const MeshPlasticMaterial = createStandardMaterial({ color: 0x8888ff, roughness: 0.6, metalness: 0.0 })
+export const MeshSelectedMaterial = createStandardMaterial({ color: 0x44aaff, roughness: 0.4, metalness: 0.3, emissive: 0x112244 })
+
 extend({
   MeshIridescentMaterial,
   MeshNormalHighlightMaterial,
@@ -57,5 +70,6 @@ extend({
   MeshGoobertMaterial,
   MeshGoobertPurpleMaterial,
   MeshPurpleMaterial,
-  MeshWaterMaterial
+  MeshWaterMaterial,
+  MeshPlasticMaterial
 })
