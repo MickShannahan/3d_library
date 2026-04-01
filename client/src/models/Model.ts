@@ -20,7 +20,7 @@ export class Model extends Group {
   groupRotation?: VectorCoordinates
   startingScale?: number
   loaded: boolean
-  previewImages: string[]
+  images: string[]
   partGroups: PartGroup[]
 
   constructor(meshes, options: ModelOptions = {}) {
@@ -31,7 +31,7 @@ export class Model extends Group {
     this.groupRotation = options.groupRotation ?? new Vector3(0, 0, 0)
     this.startingScale = options.startingScale ?? 10
     this.loaded = false
-    this.previewImages = []
+    this.images = []
     this.partGroups = []
     meshes.forEach(m => this.add(m))
     this.initialize()
@@ -53,6 +53,16 @@ export class Model extends Group {
     this.position.set(-center.x, bottomOffset, -center.z)
     logger.log('mesh group loaded and scaled', this)
     AppState.loadedMeshGroups.push(this.uuid)
+  }
+
+  toObject() {
+    return {
+      name: this.name,
+      id: this.id,
+      meshes: this.meshes,
+      partGroups: this.partGroups,
+      images: this.images
+    }
   }
 
 }

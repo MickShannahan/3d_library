@@ -2,10 +2,10 @@
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js'
 import { extend, useLoop, useTres } from '@tresjs/core';
 import * as THREE from 'three'
-import { onMounted, ref, render, shallowRef, toRaw, useTemplateRef } from 'vue';
+import { onMounted, shallowRef, toRaw, useTemplateRef } from 'vue';
 import { nextTick } from 'vue';
 import { cameraState } from '@/utils/CameraState';
-import { getModelCenter, getModelZoom, lerp, rotate } from '@/utils/3Dtransforms';
+import { getMeshesCenter, getModelZoom, lerp, rotate } from '@/utils/3Dtransforms';
 import { cropSquareFromCanvas } from '@/utils/CanvasUtils';
 import { logger } from '@/utils/Logger';
 import { Model } from '@/models/Model';
@@ -53,9 +53,7 @@ function positionCamera(position: THREE.Vector3 | number[]) {
 
 async function snap360(focusModel: Model | PartMesh, zoom: number = 15, shots: number = 8){
   lerpCamera.value = false
-  const focusCenter = focusModel instanceof Model ? 
-  getModelCenter(...focusModel.meshes) :
-  getModelCenter(focusModel)
+  const focusCenter = getMeshesCenter(focusModel)
 
   const zoomDistance = getModelZoom(focusModel, camera)
 
@@ -83,7 +81,7 @@ async function snap360(focusModel: Model | PartMesh, zoom: number = 15, shots: n
     await new Promise(res => requestAnimationFrame(res))
     capturedImages.push(cropSquareFromCanvas(renderer.domElement))
   }
-  focusModel.previewImages = capturedImages
+  focusModel.images = capturedImages
 
   lerpCamera.value = true
 }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Camera, Group } from 'three';
+import { Camera, Group, Vector3 } from 'three';
 import CamComponent from '../ThreeDCamera.vue'
 import ThreeDCamera from '../ThreeDCamera.vue';
 import { AppState } from '@/AppState';
-import { getModelCenter } from '@/utils/3Dtransforms';
+import { getGroupBox, getMeshesCenter } from '@/utils/3Dtransforms';
 import { logger } from '@/utils/Logger';
 import { markRaw } from 'vue';
 import { meshService } from '@/services/MeshService';
@@ -19,7 +19,7 @@ function resetCamera(){
 }
 
 function pointTowardModel(){
-  const modelCenter = getModelCenter(...AppState.meshGroups.flatMap(g => g.meshes))
+  const modelCenter = getMeshesCenter(AppState.meshGroups[0])
   camera.pointCamera(modelCenter)
 }
 
@@ -27,7 +27,7 @@ function faceCameraToAxis(axisPosition: number[]){
   const invert = doubleClick ? -1 : 1
   doubleClick = true
   setTimeout(()=> doubleClick = false, 200)
-  const modelCenter = getModelCenter(...AppState.meshGroups.flatMap(g => g.meshes))
+  const modelCenter = getMeshesCenter(AppState.meshGroups[0])
   const adjustedPosition = [
     axisPosition[0] ? axisPosition[0] * invert: modelCenter.x ,
     axisPosition[1] ? axisPosition[1] * invert: modelCenter.y ,

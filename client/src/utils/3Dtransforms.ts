@@ -17,23 +17,45 @@ function getGeometryBox(geometry: BufferGeometry): Box3 {
   return geometryBoxCache.get(geometry)!
 }
 
-export function getGroupBox(group: Model): Box3 {
+export function getGroupBox(group: Model | PartMesh): Box3 {
   const raw = toRaw(group) as Model
   const r = raw.rotation, s = raw.scale
-  const cached = groupBoxCache.get(raw)
-  if (cached && cached.rx === r.x && cached.ry === r.y && cached.rz === r.z
-    && cached.sx === s.x && cached.sy === s.y && cached.sz === s.z) {
-    return cached.box
-  }
   const box = new Box3()
   const matrix = new Matrix4().compose(new Vector3(), new Quaternion().setFromEuler(r), s)
   raw.meshes.forEach((m: PartMesh) => {
-    const geomBox = getGeometryBox(toRaw(m).geometry).clone()
+    const mRaw = toRaw(m)
+    const geomBox = getGeometryBox(mRaw.geometry).clone()
     geomBox.applyMatrix4(matrix)
+    const meshPosTransformed = new Vector3().copy(mRaw.position).applyMatrix4(matrix)
+    geomBox.translate(meshPosTransformed)
     box.union(geomBox)
   })
-  groupBoxCache.set(raw, { box, rx: r.x, ry: r.y, rz: r.z, sx: s.x, sy: s.y, sz: s.z })
   return box
+}
+
+export function getMeshBox(target: Model | PartMesh | Object3D[]): Box3 {
+  if (target instanceof Model) {
+    // For world space center (camera functions)
+    const box = new Box3()
+    target.meshes.forEach((m: PartMesh) => {
+      box.expandByObject(toRaw(m))
+    })
+    return box
+  } else if (target instanceof PartMesh) {
+    const box = new Box3()
+    box.setFromObject(target)
+    return box
+  } else {
+    const box = new Box3()
+    const meshArray = Array.isArray(target) ? target : [target]
+    meshArray.forEach(m => box.expandByObject(m))
+    return box
+  }
+}
+
+export function getMeshesCenter(target: Model | PartMesh | Object3D[]): Vector3 {
+  const box = getMeshBox(target)
+  return box.getCenter(new Vector3())
 }
 
 
@@ -53,12 +75,6 @@ export function lerp(current: number, target: number, speed: number) {
   return current + (target - current) * speed
 }
 
-export function getModelCenter(...models: Object3D[]) {
-  const box = new Box3()
-  logger.log(models)
-  models.forEach(m => box.expandByObject(m))
-  return box.getCenter(new Vector3())
-}
 
 export function getModelZoom(model: Model | PartMesh, camera) {
   const zoomBox = new Box3()

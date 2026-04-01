@@ -2,7 +2,7 @@
 import { Model } from '@/models/Model';
 import { ref, watch } from 'vue';
 import {Collapse} from 'bootstrap'
-import { getModelBottom, getModelCenter, resetGroupBase, rotate, rotateGroupX } from '@/utils/3Dtransforms';
+import { getModelBottom, resetGroupBase, rotate } from '@/utils/3Dtransforms';
 import { logger } from '@/utils/Logger';
 import { meshService } from '@/services/MeshService';
 import ModalWrapper from './ModalWrapper.vue';
@@ -44,7 +44,7 @@ function rename(){
         <span @doubleClick.stop="rename"> {{ group.name  || 'unamed'}}</span>
       </div>
       <div class="d-flex">
-        <button v-if="group.previewImages.length" data-bs-toggle="modal" data-bs-target="#model-image-preview"><i class="bi bi-grid"></i></button>
+        <button v-if="group.images.length" data-bs-toggle="modal" data-bs-target="#model-image-preview"><i class="bi bi-grid"></i></button>
         <button class="" @click.stop="rotateGroup">
           <i class="mdi mdi-format-rotate-90"></i>
         </button>
@@ -62,7 +62,7 @@ function rename(){
 
   <ModalWrapper id="model-image-preview">
     <div class="d-flex flex-wrap gap-1">
-      <img v-for="img in group.previewImages" :src="img" height="200" alt="">
+      <img v-for="img in group.images" :src="img" height="200" alt="">
     </div>
   </ModalWrapper>
 

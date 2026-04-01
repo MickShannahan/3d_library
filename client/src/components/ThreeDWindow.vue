@@ -2,13 +2,14 @@
 import { TresCanvas, extend, useLoop } from '@tresjs/core';
 import ThreeDCamera from './ThreeDCamera.vue';
 import { PartMesh } from '@/models/PartMesh';
-import { computed, ref, shallowRef, useTemplateRef, watch } from 'vue';
+import { computed, ref, shallowRef, useTemplateRef, watch, nextTick } from 'vue';
 import * as THREE from 'three'
 import { logger } from '@/utils/Logger';
 import { MeshGreyRainboxMaterial, MeshNormalHighlightMaterial, MeshPurpleRainboxMaterial } from '@/utils/Materials';
-import { getModelCenter, rotate } from '@/utils/3Dtransforms';
+import { getGroupBox, getMeshesCenter, getModelCenter, rotate } from '@/utils/3Dtransforms';
 import { AppState } from '@/AppState';
 import { meshService } from '@/services/MeshService';
+
 import AnimatedGroup from './Meshes/AnimatedGroup.vue';
 import BottomToolBar from './ToolBars/BottomToolBar.vue';
 import CameraControls from './ToolBars/CameraControls.vue';
@@ -24,15 +25,13 @@ const camera = useTemplateRef('camera')
 const meshGroups = computed(()=> AppState.meshGroups.filter(mg => AppState.loadedMeshGroups.includes(mg.uuid)))
 
 
-watch(()=> AppState.loadedMeshGroups.length, (last)=>{
-  const lastLoadedGroup = AppState.meshGroups[last-1]
-  logger.log('loaded mesh group', lastLoadedGroup)
-  if(!lastLoadedGroup) return
-  const lastLoadCenter = getModelCenter(lastLoadedGroup)
-  camera.value.pointCamera(lastLoadCenter)
+watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
+    const lastLoadedGroup = AppState.meshGroups[last-1]
+    if(!lastLoadedGroup) return
+    const meshCenter = getMeshesCenter(lastLoadedGroup)
+    camera.value.positionCamera(new THREE.Vector3(meshCenter.x, meshCenter.y, 15))
+    camera.value.pointCamera(meshCenter)
 })
-
-
 
 
 extend({MeshGreyRainboxMaterial})

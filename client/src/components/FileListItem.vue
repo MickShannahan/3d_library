@@ -67,7 +67,7 @@ function handleDragEnd(){
       <div> 
         <i v-if="file.progress == 1" :class="`bi bi-box text-${accent}`"></i>
         <i v-else :class="`mdi mdi-loading mdi-spin text-${accent}`"></i>
-        <img v-if="file.previewImages[0]" :src="file.previewImages[0]" alt="">
+        <img v-if="file.images[0]" :src="file.images[0]" alt="">
          {{ file.name }}
         </div>
 

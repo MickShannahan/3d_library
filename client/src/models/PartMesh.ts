@@ -15,7 +15,7 @@ export class PartMesh extends THREE.Mesh {
   progress: number
   loaded: Promise<this>
   defaultMaterial: THREE.Material
-  previewImages: string[]
+  images: string[]
   silhouette: boolean
   targetRotation = new THREE.Euler()
   targetPosition = new THREE.Vector3()
@@ -28,10 +28,10 @@ export class PartMesh extends THREE.Mesh {
     this.name = objectName || path
     this.material = material || new THREE.MeshNormalMaterial()
     this.defaultMaterial = this.material
-    this.previewImages = []
+    this.images = []
     this.silhouette = false
 
-    this.raycast = () => null 
+    this.raycast = () => null
 
     this.loaded = new Promise<this>((resolve, reject) => {
       loader.load(
@@ -56,6 +56,15 @@ export class PartMesh extends THREE.Mesh {
         }
       )
     })
+  }
+
+
+  toObject() {
+    return {
+      name: this.name,
+      id: this.id,
+      images: this.images
+    }
   }
 }
 
