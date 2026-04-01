@@ -4,14 +4,18 @@ import { STLMesh } from '@/models/STLMesh';
 import { meshService } from '@/services/MeshService';
 import { logger } from '@/utils/Logger';
 import { Pop } from '@/utils/Pop';
+import { string } from 'three/tsl';
 import { watch, onMounted, ref, computed } from 'vue';
 
 
 const props = defineProps({
-  file: STLMesh
+  file: STLMesh,
+  accent: {type: String, default: 'blue'}
 })
+const emit = defineEmits(['dragstart'])
 const fileSelected = computed(()=> AppState.selectedMeshIds.includes(props.file.uuid))
 const progressLoaded = ref(0)
+const accentColor = ref(`rgba(var(--bs-${props.accent}-rgb),.2)`)
 
 onMounted(()=>{
   props.file.addEventListener('progress', handleFileProgress)
@@ -37,15 +41,33 @@ async function destroyMesh(){
   meshService.destroyMesh(props.file)
 }
 
+function handleDragStart(){
+  AppState.draggingMesh = props.file
+  emit('dragstart', props.file)
+}
+
+function handleDragEnd(){
+  // If draggingFromPartGroup is still set, the drag didn't land in any PartGroup drop zone
+  // so remove this mesh from its source group
+  if(AppState.draggingFromPartGroup){
+    const ids = AppState.draggingFromPartGroup.partIds
+    const idx = ids.indexOf(props.file.uuid)
+    if(idx !== -1) ids.splice(idx, 1)
+  }
+  AppState.draggingMesh = null
+  AppState.draggingFromPartGroup = null
+}
+
 </script>
 
 
 <template>
-  <article :class="{active: fileSelected}" @click="handleFileClick" class="px-1 rounded">
+  <article :class="{active: fileSelected}" @click="handleFileClick" @dragstart.stop="handleDragStart" @dragend="handleDragEnd" class="px-1 rounded" draggable="true">
     <div class="d-flex justify-content-between align-items-center">
       <div> 
-        <i class="bi bi-box text-primary"></i>
-        <img v-if="file.previewImages[0]" :src="file.previewImages[1]" alt="">
+        <i v-if="file.progress == 1" :class="`bi bi-box text-${accent}`"></i>
+        <i v-else :class="`mdi mdi-loading mdi-spin text-${accent}`"></i>
+        <img v-if="file.previewImages[0]" :src="file.previewImages[0]" alt="">
          {{ file.name }}
         </div>
 
@@ -78,7 +100,7 @@ article{
 }
 
 article.active{
-  background-color: rgba(var(--bs-primary-rgb),.2);
+  background-color: v-bind(accentColor);
 }
 
 .progress{

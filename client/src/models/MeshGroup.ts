@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { Vector3, Group } from "three"
 import { logger } from "@/utils/Logger"
 import { AppState } from "@/AppState"
+import { PartGroup } from "./PartGroup"
 
 interface MeshGroupOptions {
   order?: number
@@ -20,6 +21,7 @@ export class MeshGroup extends Group {
   startingScale?: number
   loaded: boolean
   previewImages: string[]
+  partGroups: PartGroup[]
 
   constructor(meshes, options: MeshGroupOptions = {}) {
     super()
@@ -30,6 +32,7 @@ export class MeshGroup extends Group {
     this.startingScale = options.startingScale ?? 10
     this.loaded = false
     this.previewImages = []
+    this.partGroups = []
     meshes.forEach(m => this.add(m))
     this.initialize()
   }
@@ -50,7 +53,6 @@ export class MeshGroup extends Group {
     this.position.set(-center.x, bottomOffset, -center.z)
     logger.log('mesh group loaded and scaled', this)
     AppState.loadedMeshGroups.push(this.uuid)
-
   }
 
 }

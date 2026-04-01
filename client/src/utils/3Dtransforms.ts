@@ -1,4 +1,4 @@
-import { Box3, Mesh, Object3D, Vector3, Matrix4, Quaternion, Sphere } from "three";
+import { Box3, Object3D, Vector3, Sphere, Matrix4, Quaternion } from "three";
 import { logger } from "./Logger";
 import { MeshGroup } from "@/models/MeshGroup";
 import { STLMesh } from "@/models/STLMesh";
@@ -55,13 +55,11 @@ export function resetGroupBase(group: MeshGroup) {
     new Quaternion().setFromEuler(group.rotation),
     group.scale
   )
-
   group.meshes.forEach(m => {
     m.geometry.computeBoundingBox()
     const geomBox = m.geometry.boundingBox.clone()
     geomBox.applyMatrix4(matrix)
     combinedBox.union(geomBox)
   })
-
   group.position.y = -combinedBox.min.y
 }

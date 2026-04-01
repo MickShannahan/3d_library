@@ -34,6 +34,7 @@ export class STLMesh extends THREE.Mesh {
 
     const ogCast = super.raycast.bind(this)
     this.raycast = (caster, intersects) => {
+      if (!this.visible) return null
       return cameraState.isPanning ? null : ogCast(caster, intersects)
     }
 

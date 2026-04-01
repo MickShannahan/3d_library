@@ -54,7 +54,6 @@ class MeshService {
     meshesToHide.forEach(m => onlySilhouette ? m.silhouette = false : m.visible = true)
   }
 
-
 }
 
 export const meshService = new MeshService()

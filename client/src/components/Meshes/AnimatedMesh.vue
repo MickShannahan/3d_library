@@ -52,12 +52,17 @@ onRender(({ delta }) => {
   )
 })
 
+function clickedMesh(ev){
+  if(!mesh.visible) return
+  emit('click', ev)
+}
+
 const selectedMeshIds = computed(() => AppState.selectedMeshIds)
 </script>
 
 <template>
   <TresGroup :rotation="localRotation" :position="localPosition" :scale="localScale">
-    <primitive :object="markRaw(mesh)" @click="emit('click', $event)">
+    <primitive :object="markRaw(mesh)" @click="clickedMesh">
       <TresMeshGreyRainboxMaterial v-if="selectedMeshIds.includes(mesh.uuid)"/>
       <TresMeshBasicMaterial v-else-if="mesh.silhouette" color="black" :transparent="true" :opacity=".2"/>
       <TresMeshPurpleRainboxMaterial v-else />

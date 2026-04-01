@@ -15,6 +15,7 @@ import CameraControls from './ToolBars/CameraControls.vue';
 import FileListPane from './FileListPane.vue';
 import ToolBar from './ToolBars/ToolBar.vue';
 import MeshToolsPane from './ToolBars/MeshToolsPane.vue';
+import StatsWindow from './StatsWindow.vue'
 
 const camera = useTemplateRef('camera')
 
@@ -52,9 +53,10 @@ extend({MeshGreyRainboxMaterial})
     <CameraControls :camera/>
   </BottomToolBar>
 
-  <TresCanvas clear-color="#16161d" @pointermissed="clickOut" :fps-limit="5" >
+  <TresCanvas clear-color="#16161d" @pointermissed="clickOut"  :fps-limit="60">
     <ThreeDCamera  ref="camera"/>
     <AnimatedGroup v-for="meshGroup in meshGroups" :meshGroup/>
+    <StatsWindow/>
   </TresCanvas>
 </template>
 

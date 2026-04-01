@@ -2,6 +2,10 @@
 import { ref, useTemplateRef,watch } from 'vue';
 import {Modal} from 'bootstrap'
 
+defineProps({
+  type: {type: String, default: 'area'}
+})
+
 const emit = defineEmits(['selectedFiles'])
 
 const fileInputElm = useTemplateRef('file-input')
@@ -42,13 +46,17 @@ function clickInput(){
 
 <template>
 
-  <button class="btn add-files-btn" @click="clickInput">
+  <button v-if="type == 'area'" class="btn add-files-btn" @click="clickInput">
     <div>
       Click to Add Files <i class="mdi mdi-plus"></i>
     </div>
     <div>
       <small>or drag files here</small>
     </div>
+  </button>
+
+  <button v-else class="btn btn-primary">
+    <i class="bi bi-file-plus"></i>
   </button>
 
   <Teleport to="body">

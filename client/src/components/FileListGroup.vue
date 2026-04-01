@@ -40,7 +40,7 @@ function rename(){
     <div @click="selectGroup" class="group-header ps-2 mt-1 d-flex justify-content-between align-items-center">
 
       <div class="w-75">
-        <i class="bi bi-boxes me-1"></i>
+        <i class="mdi mdi-printer-3d me-1"></i>
         <span @doubleClick.stop="rename"> {{ group.name  || 'unamed'}}</span>
       </div>
       <div class="d-flex">
@@ -91,5 +91,9 @@ button{
   &:hover{
     background-color: rgba(var(--bs-light-rgb),.2);
   }
+}
+
+.mdi-printer-3d::before{
+  transform: rotate(180deg);
 }
 </style>
