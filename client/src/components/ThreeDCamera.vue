@@ -10,12 +10,16 @@ import { cropSquareFromCanvas } from '@/utils/CanvasUtils';
 import { logger } from '@/utils/Logger';
 import { Model } from '@/models/Model';
 import { PartMesh } from '@/models/PartMesh';
+import { MeshImage } from '@/models/MeshImage';
+import { meshService } from '@/services/MeshService';
 
 
 const {camera, renderer} = useTres()
 const orbitControls = useTemplateRef<OrbitControls>('orbit-controls')
 const { onRender } = useLoop()
 
+const showGrid = shallowRef(true)
+const showAxes = shallowRef(true)
 const targetPosition = shallowRef(new THREE.Vector3(10, 10, 10))
 const targetLookAt = shallowRef(new THREE.Vector3(0, 0, 0))
 const lerpCamera = shallowRef(true)
@@ -51,7 +55,10 @@ function positionCamera(position: THREE.Vector3 | number[]) {
   targetPosition.value = coords
 }
 
-async function snap360(focusModel: Model | PartMesh, zoom: number = 15, shots: number = 8){
+async function snap360(focusModel: Model | PartMesh, shots: number = 8){
+  meshService.clearSelectedMeshIds()
+  showAxes.value = false
+  showGrid.value = false
   lerpCamera.value = false
   const focusCenter = getMeshesCenter(focusModel)
 
@@ -61,7 +68,7 @@ async function snap360(focusModel: Model | PartMesh, zoom: number = 15, shots: n
   const capturedImages = []
 
   rawControls.target.copy(focusCenter)
-  camera.value.position.set(focusCenter.x, focusCenter.y + 5, focusCenter.z + zoomDistance)
+  camera.value.position.set(focusCenter.x, focusCenter.y + 2, focusCenter.z + zoomDistance)
   rawControls.update()
   await new Promise(res => setTimeout(res, 50))  
 
@@ -73,16 +80,24 @@ async function snap360(focusModel: Model | PartMesh, zoom: number = 15, shots: n
     const angle = rotate(deg)
     camera.value.position.set(
       focusCenter.x + zoomDistance * Math.sin(angle),
-      focusCenter.y + 5,
+      focusCenter.y + 2,
       focusCenter.z + zoomDistance * Math.cos(angle)
     )
     rawControls.target.copy(focusCenter)
     rawControls.update()
     await new Promise(res => requestAnimationFrame(res))
-    capturedImages.push(cropSquareFromCanvas(renderer.domElement))
+    const imageData = cropSquareFromCanvas(renderer.domElement)
+    capturedImages.push(new MeshImage({
+      data: imageData,
+      angle: Math.round(deg),
+      modelName: focusModel.name,
+      type: 'base64'
+    }))
   }
   focusModel.images = capturedImages
 
+   showAxes.value = true
+  showGrid.value = true
   lerpCamera.value = true
 }
 
@@ -101,6 +116,7 @@ onMounted( async ()=>{
     targetPosition.value = camera.value.position.clone()
     targetLookAt.value = rawControls.target.clone()
   })
+  cameraState.cameraRef = { snap360, pointCamera, positionCamera }
 })
 
 extend({OrbitControls})
@@ -120,8 +136,8 @@ extend({OrbitControls})
 
   <TresDirectionalLight :position="[-4, 12, -14]" :intensity="10.5" color="pink" /> -->
 
-  <TresGridHelper/>
-  <TresAxesHelper/>
+  <TresGridHelper v-if="showGrid"/>
+  <TresAxesHelper v-if="showAxes"/>
 </template>
 
 

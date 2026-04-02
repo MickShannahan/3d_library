@@ -3,6 +3,7 @@ import { Model } from "./models/Model";
 import { UUID } from "crypto";
 import { PartMesh } from "./models/PartMesh";
 import { PartGroup } from "./models/PartGroup";
+import { Job } from "./models/Job";
 
 interface AppState {
   meshGroups: Model[]
@@ -11,6 +12,7 @@ interface AppState {
   scaleModelsBy: 0,
   draggingMesh: PartMesh
   draggingFromPartGroup: PartGroup | null
+  jobs: Job[]
 }
 
 export const AppState = reactive<AppState>({
@@ -19,5 +21,6 @@ export const AppState = reactive<AppState>({
   loadedMeshGroups: [],
   scaleModelsBy: 0,
   draggingMesh: null,
-  draggingFromPartGroup: null
+  draggingFromPartGroup: null,
+  jobs: []
 })

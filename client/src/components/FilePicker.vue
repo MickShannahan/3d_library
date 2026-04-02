@@ -55,7 +55,7 @@ function clickInput(){
     </div>
   </button>
 
-  <button v-else class="btn btn-primary">
+  <button v-else class="btn btn-primary" @click="clickInput">
     <i class="bi bi-file-plus"></i>
   </button>
 

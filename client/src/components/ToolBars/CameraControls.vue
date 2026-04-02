@@ -38,7 +38,7 @@ function faceCameraToAxis(axisPosition: number[]){
 } 
 
 function snap360Shots(){
-  camera.snap360(AppState.meshGroups[0], 15, 32)
+  camera.snap360(AppState.meshGroups[0], 60)
 }
 
 async function snap360AllParts(){
@@ -46,7 +46,7 @@ async function snap360AllParts(){
   for(const mesh of meshes){
     meshService.hideAllMeshes()
     mesh.visible = true
-    await camera.snap360(mesh, 15, 3)
+    await camera.snap360(mesh, 3)
   }
   meshService.showAllMeshes()
 }

@@ -1,6 +1,7 @@
 import { logger } from '@/utils/Logger.js'
 import * as THREE from 'three'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
+import { MeshImage } from './MeshImage'
 
 
 const loader = new STLLoader()
@@ -15,7 +16,7 @@ export class PartMesh extends THREE.Mesh {
   progress: number
   loaded: Promise<this>
   defaultMaterial: THREE.Material
-  images: string[]
+  images: MeshImage[]
   silhouette: boolean
   targetRotation = new THREE.Euler()
   targetPosition = new THREE.Vector3()

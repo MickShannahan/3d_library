@@ -18,6 +18,7 @@ import ToolBar from './ToolBars/ToolBar.vue';
 import MeshToolsPane from './ToolBars/MeshToolsPane.vue';
 import StatsWindow from './StatsWindow.vue'
 import SceneClickHandler from './SceneClickHandler.vue'
+import JobsPane from './JobsPane.vue'
 
 const camera = useTemplateRef('camera')
 
@@ -48,6 +49,8 @@ extend({MeshGreyRainboxMaterial})
   <BottomToolBar>
     <CameraControls :camera/>
   </BottomToolBar>
+
+  <JobsPane/>
 
   <TresCanvas clear-color="#16161d" :fps-limit="60">
     <ThreeDCamera  ref="camera"/>

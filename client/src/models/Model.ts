@@ -5,6 +5,7 @@ import { Vector3, Group } from "three"
 import { logger } from "@/utils/Logger"
 import { AppState } from "@/AppState"
 import { PartGroup } from "./PartGroup"
+import { MeshImage } from "./MeshImage"
 
 interface ModelOptions {
   order?: number
@@ -20,7 +21,7 @@ export class Model extends Group {
   groupRotation?: VectorCoordinates
   startingScale?: number
   loaded: boolean
-  images: string[]
+  images: MeshImage[]
   partGroups: PartGroup[]
 
   constructor(meshes, options: ModelOptions = {}) {
@@ -55,7 +56,7 @@ export class Model extends Group {
     AppState.loadedMeshGroups.push(this.uuid)
   }
 
-  toObject() {
+  toData() {
     return {
       name: this.name,
       id: this.id,

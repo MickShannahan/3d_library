@@ -6,6 +6,9 @@ import { getModelBottom, resetGroupBase, rotate } from '@/utils/3Dtransforms';
 import { logger } from '@/utils/Logger';
 import { meshService } from '@/services/MeshService';
 import ModalWrapper from './ModalWrapper.vue';
+import { Pop } from '@/utils/Pop';
+import { imageUploadService } from '@/services/ImageUploadService';
+import { modelsService } from '@/services/ModelsService';
 
 const {group} = defineProps({
   group: Model
@@ -31,6 +34,24 @@ function rename(){
   logger.log('rename')
 }
 
+async function testUpload(){
+  try {
+    await imageUploadService.uploadImages(group.images)
+  } catch (error) {
+    Pop.error(error)
+    logger.error(error)
+  }
+}
+
+async function createModel(){
+  try {
+    await modelsService.createModel(group)
+  } catch (error) {
+    Pop.error(error)
+    logger.error(error)
+  }
+}
+
 </script>
 
 
@@ -44,6 +65,7 @@ function rename(){
         <span @doubleClick.stop="rename"> {{ group.name  || 'unamed'}}</span>
       </div>
       <div class="d-flex">
+        <button @click="createModel"><i class="mdi mdi-shimmer"></i></button>
         <button v-if="group.images.length" data-bs-toggle="modal" data-bs-target="#model-image-preview"><i class="bi bi-grid"></i></button>
         <button class="" @click.stop="rotateGroup">
           <i class="mdi mdi-format-rotate-90"></i>
@@ -61,8 +83,9 @@ function rename(){
   </section>
 
   <ModalWrapper id="model-image-preview">
+  <button @click="testUpload">Test Upload</button>
     <div class="d-flex flex-wrap gap-1">
-      <img v-for="img in group.images" :src="img" height="200" alt="">
+      <img v-for="img in group.images" :src="img.data" height="200" alt="">
     </div>
   </ModalWrapper>
 

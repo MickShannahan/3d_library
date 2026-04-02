@@ -13,6 +13,7 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@tresjs/core": "^5.7.0",
+    "axios": "^1.14.0",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "stats.js": "^0.17.0",

@@ -15,6 +15,11 @@ import normalLighterPath from '@/assets/matcaps/normal_lighter_mat_512.png'
 import normalNegativePath from '@/assets/matcaps/normal_negative_mat_512.png'
 import purplePath from '@/assets/matcaps/purple_mat_512.png'
 import waterPath from '@/assets/matcaps/water_mat.png'
+import lilacPath from '@/assets/matcaps/lilac_mat.png'
+import diamondPath from '@/assets/matcaps/diamond_mat.png'
+import metalPath from '@/assets/matcaps/brushed_metal_mat.png'
+import bubblePath from '@/assets/matcaps/bubble_mat.png'
+import innerPurpleGlowPath from '@/assets/matcaps/purple_inner_glow.png'
 import { extend } from '@tresjs/core'
 
 const loader = new THREE.TextureLoader()
@@ -44,6 +49,11 @@ export const MeshNormalLighterMaterial = createMatcapMaterial(normalLighterPath)
 export const MeshNormalNegativeMaterial = createMatcapMaterial(normalNegativePath)
 export const MeshPurpleMaterial = createMatcapMaterial(purplePath)
 export const MeshWaterMaterial = createMatcapMaterial(waterPath)
+export const MeshLilacMaterial = createMatcapMaterial(lilacPath)
+export const MeshDiamondMaterial = createMatcapMaterial(diamondPath)
+export const MeshBrushedMetalMaterial = createMatcapMaterial(metalPath)
+export const MeshBubbleMaterial = createMatcapMaterial(bubblePath)
+export const MeshPurpleInnerGlowMaterial = createMatcapMaterial(innerPurpleGlowPath)
 
 // Standard materials — react to scene lights
 function createStandardMaterial(options: THREE.MeshStandardMaterialParameters) {
@@ -71,5 +81,10 @@ extend({
   MeshGoobertPurpleMaterial,
   MeshPurpleMaterial,
   MeshWaterMaterial,
-  MeshPlasticMaterial
+  MeshPlasticMaterial,
+  MeshLilacMaterial,
+  MeshDiamondMaterial,
+  MeshBrushedMetalMaterial,
+  MeshBubbleMaterial,
+  MeshPurpleInnerGlowMaterial
 })

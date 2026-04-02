@@ -4,9 +4,11 @@ import { socketProvider } from './SocketProvider.js'
 import { Startup } from './Startup.js'
 import { DbConnection } from './db/DbConfig.js'
 import { logger } from './utils/Logger.js'
+import fileUpload from 'express-fileupload'
 
 // create server & socketServer
 const app = express()
+app.use(fileUpload())
 const port = process.env.PORT || 3000
 
 if (process.env.NODE_ENV == 'dev') {

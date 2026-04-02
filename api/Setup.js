@@ -5,6 +5,8 @@ import { dirname, join } from 'path'
 import BaseController from './src/utils/BaseController.js'
 import { logger } from './src/utils/Logger.js'
 import { createOpenAPISpec } from './src/utils/openAPI.js'
+import dns from 'node:dns'
+dns.setServers(['8.8.8.8', '1.1.1.1'])
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

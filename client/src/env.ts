@@ -1,0 +1,1 @@
+export const baseURL = window.origin.includes('localhost') ? 'http://localhost:3000' : ''
