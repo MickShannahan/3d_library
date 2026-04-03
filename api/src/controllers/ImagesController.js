@@ -12,7 +12,8 @@ export class ImagesController extends BaseController {
 
   async uploadImages(req, res, next) {
     try {
-      const images = req.files.images
+      let images = req.files.images
+      images = images.length ? images : [images]
       const processImages = []
       for (let image of images) {
         const processed = await sharpService.processImageToWebP(image)
@@ -28,8 +29,8 @@ export class ImagesController extends BaseController {
   async uploadImagesToGif(req, res, next) {
     try {
       const images = req.files.images
-      const imageName = req.params.imageName
-      const processed = await sharpService.processImageSequenceToGif(images)
+      const imageName = req.query.imageName
+      const processed = await sharpService.processImageSequenceToGif(images, imageName)
       const url = await azureService.uploadFile(processed)
       res.send({ url })
     } catch (error) {

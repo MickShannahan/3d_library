@@ -9,15 +9,20 @@ import { AppState } from '@/AppState'
         <div class="d-flex align-items-center gap-2">
 
           <span class="job-icon">
-            <span v-if="job.status === 'complete'" class="text-success">✓</span>
-            <span v-else-if="job.status === 'error'" class="text-danger">✗</span>
-            <span v-else-if="job.status === 'active' && job.indeterminate" class="spinner-border spinner-border-sm" />
-            <span v-else class="text-muted">○</span>
+            <span v-if="job.status === 'complete'" class="text-success"><i class="bi bi-check-circle"></i></span>
+            <span v-else-if="job.status === 'error'" class="text-danger"><i class="bi bi-x-circle"></i></span>
+            <span v-else-if="job.status === 'active' && job.indeterminate" ><i class="mdi mdi-loader mdi-spin"></i></span>
+            <span v-else class="text-muted"><i class="bi bi-circle"></i></span>
           </span>
 
           <span :class="{ 'text-muted': job.status === 'pending', 'text-danger': job.status === 'error' }">
             {{ job.label }}
           </span>
+        </div>
+
+        <div v-if="job.description" class="ps-3 text-secondary">
+          <i class="mdi mdi-cog mdi-spin"></i>
+          {{ job.description }}
         </div>
 
         <div v-if="job.status === 'active' && !job.indeterminate" class="progress" style="height: 4px;">

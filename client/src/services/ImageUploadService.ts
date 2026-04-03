@@ -5,13 +5,27 @@ import { MeshImage } from "@/models/MeshImage"
 class ImageUploadService {
 
 
-  async uploadImages(images: MeshImage[], onProgress) {
+  async uploadImagesToGif(images: MeshImage[], onProgress) {
     const blobs = await this.base64ToBlob(...images.map(i => i.data))
     const formData = new FormData()
     images.forEach((img, i) => formData.append('images', blobs[i], `${img.modelName}_angle_${img.angle}`))
     const res = await api.post('upload/images/gif?imageName=turnaround', formData,
       {
         onUploadProgress: onProgress
+      })
+    logger.log('💌', res.data)
+    return res.data
+  }
+
+  async uploadImages(images: MeshImage[], onProgress) {
+    const blobs = await this.base64ToBlob(...images.map(i => i.data))
+    const formData = new FormData()
+    images.forEach((img, i) => formData.append('images', blobs[i], `${img.modelName}_angle_${img.angle}`))
+    const res = await api.post('upload/images', formData,
+      {
+        onUploadProgress: (progressEv) => {
+          onProgress((progressEv.loaded / progressEv.total) * 100)
+        }
       })
     logger.log('💌', res.data)
     return res.data

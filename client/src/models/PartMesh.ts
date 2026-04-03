@@ -2,32 +2,39 @@ import { logger } from '@/utils/Logger.js'
 import * as THREE from 'three'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 import { MeshImage } from './MeshImage'
+import { generateId } from '@/utils/GenerateId'
 
 
 const loader = new STLLoader()
 
 interface PartMeshOptions {
+  _id?: string
   objectName?: string
   resize?: number
   material?: THREE.Material
+  src?: string
 }
 
 export class PartMesh extends THREE.Mesh {
+  _id: string
   progress: number
   loaded: Promise<this>
   defaultMaterial: THREE.Material
   images: MeshImage[]
   silhouette: boolean
+  src: string
   targetRotation = new THREE.Euler()
   targetPosition = new THREE.Vector3()
   targetScale = new THREE.Vector3(1, 1, 1)
 
-  constructor(path: string = '', options: PartMeshOptions = {}) {
+  constructor(options: PartMeshOptions = {}) {
     super()
-    const { objectName, resize, material } = options
+    const { objectName, resize, material, src, _id } = options
+    this._id = _id ?? generateId()
     this.progress = 0
-    this.name = objectName || path
-    this.material = material || new THREE.MeshNormalMaterial()
+    this.name = objectName ?? src
+    this.src = src
+    this.material = material ?? new THREE.MeshNormalMaterial()
     this.defaultMaterial = this.material
     this.images = []
     this.silhouette = false
@@ -36,7 +43,7 @@ export class PartMesh extends THREE.Mesh {
 
     this.loaded = new Promise<this>((resolve, reject) => {
       loader.load(
-        path,
+        this.src,
         (bufferGeo) => {
           this.geometry = bufferGeo
           if (resize) {
@@ -60,11 +67,12 @@ export class PartMesh extends THREE.Mesh {
   }
 
 
-  toObject() {
+  toData() {
     return {
-      name: this.name,
       id: this.id,
-      images: this.images
+      name: this.name,
+      images: this.images,
+      src: this.src
     }
   }
 }

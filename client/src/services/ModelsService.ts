@@ -1,13 +1,13 @@
 import { logger } from "@/utils/Logger"
 import { api } from "./AxiosService"
 import { Model } from "@/models/Model"
-import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js'
+import { STLExporter } from "three/examples/jsm/Addons.js"
 import { Job } from "@/models/Job"
 import { AppState } from "@/AppState"
 import { cameraState } from "@/utils/CameraState"
 import { imageUploadService } from "./ImageUploadService"
 
-const exporter = new GLTFExporter()
+const exporter = new STLExporter()
 
 class ModelsService {
 
@@ -18,7 +18,7 @@ class ModelsService {
         label: 'Capturing 360 turnaround',
         indeterminate: true,
         run: async () => {
-          await cameraState.cameraRef.snap360(model)
+          await cameraState.cameraRef.snap360(model, 32)
         }
       }),
 
@@ -27,40 +27,52 @@ class ModelsService {
         indeterminate: true,
         run: async () => {
           for (const part of model.meshes) {
-            await cameraState.cameraRef.snap360(part)
+            await cameraState.cameraRef.snap360(part, 2, true)
           }
         }
       }),
 
       new Job({
-        label: 'Uploading images',
+        label: 'Uploading Model Images',
         indeterminate: false,
         run: async (onProgress) => {
-          const allImages = [
-            ...model.images,
-            ...model.meshes.flatMap(m => m.images)
-          ]
-          await imageUploadService.uploadImages(allImages, onProgress)
+          const cover = await imageUploadService.uploadImages([model.images[0]], onProgress)
+          const gif = await imageUploadService.uploadImagesToGif(model.images, onProgress)
+          model.turnAroundImage = gif
+          model.coverImage = cover
+          model.images = []
+          logger.log(cover, gif)
+        }
+      }),
+
+      new Job({
+        label: 'Uploading Part Images',
+        indeterminate: false,
+        run: async (onProgress) => {
+          const images = model.meshes.flatMap(m => m.images)
+          const uploaded = await imageUploadService.uploadImages(images, onProgress)
+          model.meshes.forEach(mesh => {
+            mesh.images = uploaded.filter(img => img.includes(mesh.name))
+          })
+          logger.log(model.meshes)
         }
       }),
 
       new Job({
         label: 'Uploading meshes',
         indeterminate: false,
-        run: async (onProgress) => {
-          const meshForm = new FormData()
+        run: async (onProgress, jobCtx) => {
+          let meshCount = model.meshes.length
+          let totalProgress = 0
           for (const mesh of model.meshes) {
-            await new Promise((res, rej): void => {
-              exporter.parse(mesh, (gltf) => {
-                const blob = new Blob([JSON.stringify(gltf)], { type: 'model/gltf+json' })
-                meshForm.append('meshes', blob, mesh.name)
-                res(null)
-              }, rej)
-            })
+            jobCtx.description = `${mesh.name}`
+            const meshForm = new FormData()
+            const data = exporter.parse(mesh, { binary: true })
+            const blob = new Blob([data])
+            meshForm.append('meshes', blob, mesh.name)
+            const res = await api.post('upload/meshes', meshForm)
+            onProgress((++totalProgress / meshCount) * 100)
           }
-          await api.post('upload/meshes', meshForm, {
-            onUploadProgress: (e) => onProgress((e.loaded / e.total) * 100)
-          })
         }
       }),
 
@@ -68,7 +80,9 @@ class ModelsService {
         label: 'Saving model',
         indeterminate: false,
         run: async (onProgress) => {
-          const res = await api.post('api/models', model.toData(), {
+          const modelData = model.toData()
+          logger.log('🗿📦', modelData)
+          const res = await api.post('api/models', modelData, {
             onUploadProgress: (e) => onProgress((e.loaded / e.total) * 100)
           })
           logger.log(res.data)
@@ -78,6 +92,7 @@ class ModelsService {
     ]
 
     for (const job of AppState.jobs) {
+      logger.log('🦧', job.label)
       await job.execute()
     }
 

@@ -65,8 +65,8 @@ async function createModel(){
         <span @doubleClick.stop="rename"> {{ group.name  || 'unamed'}}</span>
       </div>
       <div class="d-flex">
-        <button @click="createModel"><i class="mdi mdi-shimmer"></i></button>
-        <button v-if="group.images.length" data-bs-toggle="modal" data-bs-target="#model-image-preview"><i class="bi bi-grid"></i></button>
+        <button @click.stop="createModel"><i class="mdi mdi-shimmer"></i></button>
+        <button v-if="group.images.length" @click.stop data-bs-toggle="modal" data-bs-target="#model-image-preview"><i class="bi bi-grid"></i></button>
         <button class="" @click.stop="rotateGroup">
           <i class="mdi mdi-format-rotate-90"></i>
         </button>

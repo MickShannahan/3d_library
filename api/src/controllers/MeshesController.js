@@ -12,10 +12,11 @@ export class MeshesController extends BaseController {
   async uploadMeshes(req, res, next) {
     try {
       const meshes = req.files.meshes
-      for (let mesh of meshes) {
-        console.log(mesh)
+      const allMeshes = meshes.length ? meshes : [meshes]
+      for (let mesh of allMeshes) {
+        console.log('uploaded', mesh.name)
       }
-      res.send(`uploading ${meshes.length}`)
+      res.send({ msg: `uploading ${allMeshes.map(m => m.name + '\n')}` })
     } catch (error) {
       next(error)
     }

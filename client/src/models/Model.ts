@@ -6,35 +6,44 @@ import { logger } from "@/utils/Logger"
 import { AppState } from "@/AppState"
 import { PartGroup } from "./PartGroup"
 import { MeshImage } from "./MeshImage"
+import { generateId } from "@/utils/GenerateId"
 
 interface ModelOptions {
+  _id?: string
+  meshes?: PartMesh[]
   order?: number
   visible?: boolean
   groupRotation?: VectorCoordinates
   startingScale?: number
+  coverImage?: string
+  turnAroundImage?: string
 }
 
-
 export class Model extends Group {
+  _id: string
   meshes: PartMesh[]
   order?: number
   groupRotation?: VectorCoordinates
   startingScale?: number
   loaded: boolean
   images: MeshImage[]
+  coverImage: string
+  turnAroundImage: string
   partGroups: PartGroup[]
 
-  constructor(meshes, options: ModelOptions = {}) {
+  constructor(options: ModelOptions = {}) {
     super()
-    this.meshes = meshes
+    this._id = options._id ?? generateId()
+    this.meshes = options.meshes
     this.order = options.order ?? 0
     this.visible = options.visible ?? true
     this.groupRotation = options.groupRotation ?? new Vector3(0, 0, 0)
     this.startingScale = options.startingScale ?? 10
     this.loaded = false
     this.images = []
+    this.coverImage = options.coverImage ?? ''
+    this.turnAroundImage = options.turnAroundImage ?? ''
     this.partGroups = []
-    meshes.forEach(m => this.add(m))
     this.initialize()
   }
 
@@ -60,7 +69,7 @@ export class Model extends Group {
     return {
       name: this.name,
       id: this.id,
-      meshes: this.meshes,
+      meshes: this.meshes.map(m => m.toData()),
       partGroups: this.partGroups,
       images: this.images
     }

@@ -55,11 +55,17 @@ function positionCamera(position: THREE.Vector3 | number[]) {
   targetPosition.value = coords
 }
 
-async function snap360(focusModel: Model | PartMesh, shots: number = 8){
+async function snap360(focusModel: Model | PartMesh, shots: number = 8, hideOtherParts = false){
   meshService.clearSelectedMeshIds()
   showAxes.value = false
   showGrid.value = false
   lerpCamera.value = false
+
+  if(hideOtherParts){
+    meshService.hideAllMeshes()
+    focusModel.visible = true
+  }
+
   const focusCenter = getMeshesCenter(focusModel)
 
   const zoomDistance = getModelZoom(focusModel, camera)
@@ -99,6 +105,7 @@ async function snap360(focusModel: Model | PartMesh, shots: number = 8){
    showAxes.value = true
   showGrid.value = true
   lerpCamera.value = true
+  if(hideOtherParts) meshService.showAllMeshes()
 }
 
 defineExpose({

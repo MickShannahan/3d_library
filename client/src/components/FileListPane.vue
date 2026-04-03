@@ -16,7 +16,8 @@ const fileGroups = computed(()=> AppState.meshGroups)
 function handleSelectedFiles(files){
   logger.log('📂', files)
     const stlMeshes = files.map(f => {
-    return new PartMesh(URL.createObjectURL(f), {
+    return new PartMesh({
+      src: URL.createObjectURL(f), 
       objectName : f.name
     })
   })
