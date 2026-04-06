@@ -25,5 +25,7 @@ export const ModelSchema = new Schema({
   partGroups: [{ type: PartGroupSchema }],
   coverImage: { type: String },
   turnAroundImage: { type: String },
-  images: [{ type: String }]
+  images: [{ type: String }],
+  author: { type: Schema.ObjectId, ref: 'Author', required: false },
+  tags: [{ type: String, maxlength: 25, lowercase: true }]
 }, { timestamps: true, toJSON: { virtuals: true } })

@@ -30,4 +30,15 @@ app.directive('doubleClick', {
   },
 })
 
+app.directive('tooltip', {
+  mounted: (el: Element, binding, vnode) => {
+    el.style.position = 'relative'
+    el.classList.add('glass-popup')
+    el.setAttribute('data-tooltip', binding.value)
+  },
+  updated: (el: Element, binding) => {
+    el.setAttribute('data-tooltip', binding.value)
+  }
+})
+
 app.mount('#app')

@@ -21,7 +21,7 @@ class ImageUploadService {
     return res.data
   }
 
-  async uploadImages(images: MeshImage[], onProgress, query): Promise<string[]> {
+  async uploadImages(images: MeshImage[], onProgress?, query?): Promise<string[]> {
     const blobs = await this.base64ToBlob(...images.map(i => i.data))
     const formData = new FormData()
     images.forEach((img, i) => formData.append('images', blobs[i], `${img.modelName}_angle_${img.angle}`))

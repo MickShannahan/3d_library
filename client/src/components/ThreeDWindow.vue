@@ -19,6 +19,7 @@ import MeshToolsPane from './ToolBars/MeshToolsPane.vue';
 import StatsWindow from './StatsWindow.vue'
 import SceneClickHandler from './SceneClickHandler.vue'
 import JobsPane from './JobsPane.vue'
+import { delay } from '@/utils/Delay';
 
 const camera = useTemplateRef('camera')
 
@@ -29,6 +30,7 @@ const meshGroups = computed(()=> AppState.meshGroups.filter(mg => AppState.loade
 watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
     const lastLoadedGroup = AppState.meshGroups[last-1]
     if(!lastLoadedGroup) return
+    await delay(250)
     const meshCenter = getMeshesCenter(lastLoadedGroup)
     camera.value.positionCamera(new THREE.Vector3(meshCenter.x, meshCenter.y, 15))
     camera.value.pointCamera(meshCenter)

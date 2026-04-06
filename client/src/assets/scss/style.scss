@@ -51,3 +51,30 @@ button {
   border-right: 1px outset rgba(var(--bs-light-rgb), .2) !important;
   border-bottom: 1px outset rgba(var(--bs-light-rgb), .1) !important;
 }
+
+
+.glass-popup::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(-100% - 1em);
+  left: 50%;
+  transform: scale(0) translate(-50%, -50%);
+  transform-origin: center;
+  pointer-events: none;
+  line-break: loose;
+  min-width: 6ch;
+  max-width: 12ch;
+  padding: .25em .5em;
+  border-radius: 12px;
+  background-color: rgba(var(--bs-dark-rgb), .4);
+  backdrop-filter: blur(10px);
+  border-top: 1px outset rgba(var(--bs-light-rgb), .3) !important;
+  border-left: 1px outset rgba(var(--bs-light-rgb), .2) !important;
+  border-right: 1px outset rgba(var(--bs-light-rgb), .2) !important;
+  border-bottom: 1px outset rgba(var(--bs-light-rgb), .1) !important;
+}
+
+.glass-popup:hover::after {
+  transform: scale(1) translate(-50%, -50%);
+  transition: all .1s .4s ease;
+}

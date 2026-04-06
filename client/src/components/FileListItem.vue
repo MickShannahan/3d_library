@@ -72,8 +72,8 @@ function handleDragEnd(){
         </div>
 
       <div>
-        <button v-if="file.visible" @click.stop="hideMesh"><i class="bi bi-eye-slash"></i></button>
-        <button v-else @click.stop="hideMesh"><i class="bi bi-eye"></i></button>
+        <button v-if="file.visible" @click.stop="hideMesh"><i class="bi bi-eye"></i></button>
+        <button v-else @click.stop="hideMesh"><i class="bi bi-eye-slash text-secondary"></i></button>
         <button @click.stop="destroyMesh"><i class="bi bi-trash3"></i></button>
       </div>
     </div>

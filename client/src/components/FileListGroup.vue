@@ -35,14 +35,6 @@ function rename(){
   editingName.value = false
 }
 
-async function testUpload(){
-  try {
-    await imageUploadService.uploadImages(group.images)
-  } catch (error) {
-    Pop.error(error)
-    logger.error(error)
-  }
-}
 
 async function createModel(){
   try {
@@ -69,9 +61,7 @@ async function createModel(){
         </div>
       </div>
       <div class="d-flex">
-        <button @click.stop="createModel"><i class="mdi mdi-shimmer"></i></button>
-        <button v-if="group.images.length" @click.stop data-bs-toggle="modal" data-bs-target="#model-image-preview"><i class="bi bi-grid"></i></button>
-        <button class="" @click.stop="rotateGroup">
+        <button class="" @click.stop="rotateGroup" v-tooltip="'flip model base'">
           <i class="mdi mdi-format-rotate-90"></i>
         </button>
       </div>
@@ -86,12 +76,6 @@ async function createModel(){
     </section>
   </section>
 
-  <ModalWrapper :id="`model-image-preview`">
-  <button @click="testUpload">Test Upload</button>
-    <div class="d-flex flex-wrap gap-1">
-      <img v-for="img in group.images" :src="img.data" height="200" alt="">
-    </div>
-  </ModalWrapper>
 
 </template>
 
