@@ -12,7 +12,7 @@ const config = {
 class AzureService {
 
   async uploadFile(file, folder = '', containerName = '3dmodels') {
-    const blobName = `${folder ? folder + '/' : ''}${file.name}${file.extension}`
+    const blobName = `${folder ? folder + '/' : ''}${file.name}${file.extension ? file.extension : ''}`
     console.log('upload', blobName, folder, containerName, file)
     const container = azureClient.getContainerClient(containerName)
     const blockBlob = container.getBlockBlobClient(blobName)

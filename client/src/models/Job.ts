@@ -1,5 +1,13 @@
 type JobStatus = 'pending' | 'active' | 'complete' | 'error'
 
+import { reactive } from 'vue'
+
+export interface SubJob {
+  name: string
+  progress: number
+  status: JobStatus
+}
+
 interface JobOptions {
   label: string
   indeterminate?: boolean
@@ -13,6 +21,7 @@ export class Job {
   progress: number
   indeterminate: boolean
   error: string | null
+  subJobs: SubJob[]
   private _run: (onProgress: (percent: number) => void, job: typeof this) => Promise<void>
 
   constructor(options: JobOptions) {
@@ -22,7 +31,14 @@ export class Job {
     this.progress = 0
     this.indeterminate = options.indeterminate ?? true
     this.error = null
+    this.subJobs = []
     this._run = options.run
+  }
+
+  createSubJob(name: string): SubJob {
+    const subJob = reactive({ name, progress: 0, status: 'pending' as JobStatus })
+    this.subJobs.push(subJob)
+    return this.subJobs[this.subJobs.length - 1]
   }
 
   async execute() {

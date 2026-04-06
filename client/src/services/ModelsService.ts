@@ -2,102 +2,96 @@ import { logger } from "@/utils/Logger"
 import { api } from "./AxiosService"
 import { Model } from "@/models/Model"
 import { STLExporter } from "three/examples/jsm/Addons.js"
-import { Job } from "@/models/Job"
-import { AppState } from "@/AppState"
 import { cameraState } from "@/utils/CameraState"
 import { imageUploadService } from "./ImageUploadService"
+import { jobsService } from "./JobService"
 
 const exporter = new STLExporter()
 
 class ModelsService {
 
   async createModel(model: Model) {
-    AppState.jobs = [
 
-      new Job({
-        label: 'Capturing 360 turnaround',
-        indeterminate: true,
-        run: async () => {
-          await cameraState.cameraRef.snap360(model, 32)
-        }
-      }),
+    jobsService
+      .addJobToQueue('Capturing 360 turnaround', async () => {
+        await cameraState.cameraRef.snap360(model, 32)
+      }, { indeterminate: true })
 
-      new Job({
-        label: `Capturing ${model.meshes.length} part images`,
-        indeterminate: true,
-        run: async () => {
-          for (const part of model.meshes) {
-            await cameraState.cameraRef.snap360(part, 2, true)
-          }
-        }
-      }),
+      .addJobToQueue(`Capturing ${model.meshes.length} part images`, async () => {
+        for (const part of model.meshes) await cameraState.cameraRef.snap360(part, 2, true)
+      }, { indeterminate: true })
 
-      new Job({
-        label: 'Uploading Model Images',
-        indeterminate: false,
-        run: async (onProgress) => {
-          const cover = await imageUploadService.uploadImages([model.images[0]], onProgress)
-          const gif = await imageUploadService.uploadImagesToGif(model.images, onProgress)
-          model.turnAroundImage = gif
-          model.coverImage = cover
-          model.images = []
-          logger.log(cover, gif)
-        }
-      }),
+      .addJobToQueue('Uploading Model Images', async (onProgress, job) => {
+        const coverSubJob = job.createSubJob('Cover image')
+        const gifSubJob = job.createSubJob('Turnaround GIF')
 
-      new Job({
-        label: 'Uploading Part Images',
-        indeterminate: false,
-        run: async (onProgress) => {
-          const images = model.meshes.flatMap(m => m.images)
-          const uploaded = await imageUploadService.uploadImages(images, onProgress)
-          model.meshes.forEach(mesh => {
-            mesh.images = uploaded.filter(img => img.includes(mesh.name))
+        coverSubJob.status = 'active'
+        const [cover] = await imageUploadService.uploadImages([model.images[0]], (p) => { coverSubJob.progress = p }, { folder: model.name })
+        coverSubJob.status = 'complete'
+        model.coverImage = cover
+
+        gifSubJob.status = 'active'
+        const { url } = await imageUploadService.uploadImagesToGif(model.images, (p) => { gifSubJob.progress = p }, { folder: model.folderRef, imageName: `${model.name}_turnaround` })
+        gifSubJob.status = 'complete'
+        model.turnAroundImage = url
+        model.images = []
+
+        onProgress(100)
+      })
+
+      .addJobToQueue('Uploading Part Images', async (onProgress, job) => {
+        const images = model.meshes.flatMap(m => m.images)
+        const subJobs = model.meshes.map(mesh => ({ mesh, subJob: job.createSubJob(mesh.name) }))
+
+        let totalDone = 0
+        const totalImages = model.meshes.length
+
+        await Promise.all(subJobs.map(async ({ mesh, subJob }) => {
+          subJob.status = 'active'
+          const meshImages = mesh.images
+          const uploaded = await imageUploadService.uploadImages(
+            meshImages,
+            (p) => { subJob.progress = p },
+            { folder: model.folderRef }
+          )
+          mesh.images.forEach(img => {
+            const url = uploaded.find(u => u.includes(mesh.name) && u.includes(img.angle))
+            if (url) { img.data = url; img.type = url.slice(url.lastIndexOf('.')) }
           })
-          logger.log(model.meshes)
-        }
-      }),
+          subJob.status = 'complete'
+          onProgress((++totalDone / totalImages) * 100)
+        }))
+      })
 
-      new Job({
-        label: 'Uploading meshes',
-        indeterminate: false,
-        run: async (onProgress, jobCtx) => {
-          let meshCount = model.meshes.length
-          let totalProgress = 0
-          for (const mesh of model.meshes) {
-            jobCtx.description = `${mesh.name}`
-            const meshForm = new FormData()
-            const data = exporter.parse(mesh, { binary: true })
-            const blob = new Blob([data])
-            meshForm.append('meshes', blob, mesh.name)
-            const res = await api.post('upload/meshes', meshForm)
-            onProgress((++totalProgress / meshCount) * 100)
-          }
-        }
-      }),
-
-      new Job({
-        label: 'Saving model',
-        indeterminate: false,
-        run: async (onProgress) => {
-          const modelData = model.toData()
-          logger.log('🗿📦', modelData)
-          const res = await api.post('api/models', modelData, {
-            onUploadProgress: (e) => onProgress((e.loaded / e.total) * 100)
+      .addJobToQueue('Uploading Meshes', async (onProgress, job) => {
+        const meshCount = model.meshes.length
+        let done = 0
+        await Promise.all(model.meshes.map(async (mesh) => {
+          const subJob = job.createSubJob(mesh.name)
+          subJob.status = 'active'
+          const form = new FormData()
+          form.append('meshes', new Blob([exporter.parse(mesh, { binary: true })]), mesh.name)
+          await api.post('upload/meshes', form, {
+            params: { folder: model.folderRef },
+            onUploadProgress: e => { subJob.progress = (e.loaded / e.total) * 95 }
           })
-          logger.log(res.data)
-        }
-      }),
+          subJob.progress = 100
+          subJob.status = 'complete'
+          onProgress((++done / meshCount) * 100)
+        }))
+      })
 
-    ]
+      .addJobToQueue('Saving model', async (onProgress) => {
+        const modelData = model.toData()
+        logger.log('🗿📦', modelData)
+        await api.post('api/models', modelData, {
+          onUploadProgress: e => onProgress((e.loaded / e.total) * 100)
+        })
+      })
 
-    for (const job of AppState.jobs) {
-      logger.log('🦧', job.label)
-      await job.execute()
-    }
-
+    await jobsService.runQueue()
   }
-}
 
+}
 
 export const modelsService = new ModelsService()

@@ -14,6 +14,7 @@ const {group} = defineProps({
   group: Model
 })
 const collapsed = ref(false)
+const editingName = ref(false)
 
 watch(collapsed, (value)=>{
   const elm = Collapse.getOrCreateInstance(`#file-list-collapse-${group.uuid}`)
@@ -27,11 +28,11 @@ function rotateGroup(){
 }
 
 function selectGroup(){
-  meshService.selectGroupOfMeshId(group.meshes.map(m => m.uuid))
+  meshService.selectGroupOfMeshId(group.meshes.map(m => m._id || m.uuid))
 }
 
 function rename(){
-  logger.log('rename')
+  editingName.value = false
 }
 
 async function testUpload(){
@@ -62,7 +63,10 @@ async function createModel(){
 
       <div class="w-75">
         <i class="mdi mdi-printer-3d me-1"></i>
-        <span @doubleClick.stop="rename"> {{ group.name  || 'unamed'}}</span>
+        <span v-if="!editingName" v-doubleClick.stop="()=> editingName = true"> {{ group.name  || 'unamed'}}</span>
+        <div v-else class="input-group">
+          <input @blur="rename" type="text" minlength="3" maxlength="50" required v-model="group.name" class="form-control">
+        </div>
       </div>
       <div class="d-flex">
         <button @click.stop="createModel"><i class="mdi mdi-shimmer"></i></button>
@@ -82,7 +86,7 @@ async function createModel(){
     </section>
   </section>
 
-  <ModalWrapper id="model-image-preview">
+  <ModalWrapper :id="`model-image-preview`">
   <button @click="testUpload">Test Upload</button>
     <div class="d-flex flex-wrap gap-1">
       <img v-for="img in group.images" :src="img.data" height="200" alt="">

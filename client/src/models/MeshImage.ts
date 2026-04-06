@@ -2,7 +2,7 @@
 
 export class MeshImage {
   data: string
-  angle: number | string
+  angle: string
   modelName: string
   type: string
 

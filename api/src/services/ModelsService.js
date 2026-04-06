@@ -3,8 +3,7 @@ import { dbContext } from "../db/DbContext.js"
 
 class ModelsService {
   async createModel(modelData) {
-    const model = await dbContext.Models.create(modelData)
-    return model
+    return await dbContext.Models.findOneAndUpdate({ _id: modelData._id }, modelData, { upsert: true, new: true })
   }
 }
 

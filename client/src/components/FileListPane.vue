@@ -38,7 +38,7 @@ function ungroupedMeshes(group: Model){
       <FilePicker @selectedFiles="handleSelectedFiles" :type="fileGroups.length == 0 ? 'area':'button'"/>
     </div>
 
-    <FileListGroup v-for="group in fileGroups" :key="group.uuid" class="mt-2" :group>
+    <FileListGroup v-for="group in fileGroups" :key="group.uuid"  :group>
 
       <FileListItem v-for="file in ungroupedMeshes(group)" :file :key="file.uuid"/>
 

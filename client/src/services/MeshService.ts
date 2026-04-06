@@ -7,6 +7,8 @@ import { markRaw } from "vue"
 
 class MeshService {
 
+  private _recentlyHiddenMeshes: PartMesh[] = []
+
   addMeshGroups(newMeshGroups: Model | PartMesh[]) {
     if (newMeshGroups instanceof Model) {
       AppState.meshGroups = [...AppState.meshGroups, newMeshGroups]
@@ -44,14 +46,40 @@ class MeshService {
     AppState.loadedMeshGroups.splice(AppState.loadedMeshGroups.indexOf(uuid), 1)
   }
 
+  hideMesh(mesh: PartMesh, onlySilhouette = false) {
+    this._recentlyHiddenMeshes.push(mesh)
+    onlySilhouette ? mesh.silhouette = true : mesh.visible = false
+  }
+
+  showMesh(mesh: PartMesh, onlySilhouette = false) {
+    this._recentlyHiddenMeshes = this._recentlyHiddenMeshes.filter(m => m != mesh)
+    onlySilhouette ? mesh.silhouette = false : mesh.visible = true
+  }
+
+  toggleVisibility(mesh: PartMesh, onlySilhouette = false) {
+    if (mesh.visible) {
+      this.hideMesh(mesh, onlySilhouette)
+    } else {
+      this.showMesh(mesh, onlySilhouette)
+    }
+  }
+
   hideAllMeshes(onlySilhouette = false) {
     const meshesToHide = AppState.meshGroups.flatMap(mg => mg.meshes)
-    meshesToHide.forEach(m => onlySilhouette ? m.silhouette = true : m.visible = false)
+    meshesToHide.forEach(m => {
+      if (m.visible == true) this._recentlyHiddenMeshes.push(m)
+      onlySilhouette ? m.silhouette = true : m.visible = false
+    })
   }
 
   showAllMeshes(onlySilhouette = false) {
     const meshesToHide = AppState.meshGroups.flatMap(mg => mg.meshes)
     meshesToHide.forEach(m => onlySilhouette ? m.silhouette = false : m.visible = true)
+  }
+
+  reshowHiddenMeshes(onlySilhouette = false) {
+    this._recentlyHiddenMeshes.forEach(m => onlySilhouette ? m.silhouette = false : m.visible = true)
+    this._recentlyHiddenMeshes = []
   }
 
 }

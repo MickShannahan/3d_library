@@ -1,6 +1,6 @@
 import BaseController from '../utils/BaseController.js'
 import { sharpService } from '../services/SharpService.js'
-import { azureService } from '../services/AzureService.js'
+import { uploadService } from '../services/UploadService.js'
 
 export class ImagesController extends BaseController {
   constructor() {
@@ -12,15 +12,11 @@ export class ImagesController extends BaseController {
 
   async uploadImages(req, res, next) {
     try {
-      let images = req.files.images
-      images = images.length ? images : [images]
-      const processImages = []
-      for (let image of images) {
-        const processed = await sharpService.processImageToWebP(image)
-        processImages.push(processed)
-      }
-      const uploadedUrls = await azureService.uploadBulkFiles(processImages)
-      res.send(uploadedUrls)
+      const urls = await uploadService.uploadFiles(req.files.images, {
+        processor: (file) => sharpService.processImageToWebP(file),
+        folder: req.query.folder
+      })
+      res.send(urls)
     } catch (error) {
       next(error)
     }
@@ -28,10 +24,12 @@ export class ImagesController extends BaseController {
 
   async uploadImagesToGif(req, res, next) {
     try {
-      const images = req.files.images
-      const imageName = req.query.imageName
-      const processed = await sharpService.processImageSequenceToGif(images, imageName)
-      const url = await azureService.uploadFile(processed)
+      const imageName = req.query.imageName || req.files.images[0]?.name
+      const url = await uploadService.uploadFileSequence(
+        req.files.images,
+        (images) => sharpService.processImageSequenceToGif(images, imageName),
+        { folder: req.query.folder }
+      )
       res.send({ url })
     } catch (error) {
       next(error)

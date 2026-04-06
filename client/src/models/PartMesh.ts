@@ -69,7 +69,7 @@ export class PartMesh extends THREE.Mesh {
 
   toData() {
     return {
-      id: this.id,
+      _id: this._id,
       name: this.name,
       images: this.images,
       src: this.src

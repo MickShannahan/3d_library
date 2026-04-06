@@ -13,7 +13,7 @@ const rotateStep = ref(90)
 const positionEditable = ref(new Vector3(0,0,0))
 
 function quickRotate(x,y,z){
-  const meshes = AppState.meshGroups.flatMap(mg => mg.meshes).filter(m => AppState.selectedMeshIds.includes(m.uuid))
+  const meshes = AppState.meshGroups.flatMap(mg => mg.meshes).filter(m => AppState.selectedMeshIds.includes(m._id))
   meshes.forEach(m => {
     m.targetRotation.x += rotate(x)
     m.targetRotation.y += rotate(y)
@@ -22,7 +22,7 @@ function quickRotate(x,y,z){
 }
 
 function resetRotation(){
-    const meshes = AppState.meshGroups.flatMap(mg => mg.meshes).filter(m => AppState.selectedMeshIds.includes(m.uuid))
+    const meshes = AppState.meshGroups.flatMap(mg => mg.meshes).filter(m => AppState.selectedMeshIds.includes(m._id))
   meshes.forEach(m => {
     m.targetRotation.x = 0
     m.targetRotation.y = 0
@@ -32,7 +32,7 @@ function resetRotation(){
 
 function handleUpdatePosition(x,y,z){
   positionEditable.value = new Vector3(x,y,z)
-    const meshes = AppState.meshGroups.flatMap(mg => mg.meshes).filter(m => AppState.selectedMeshIds.includes(m.uuid))
+    const meshes = AppState.meshGroups.flatMap(mg => mg.meshes).filter(m => AppState.selectedMeshIds.includes(m._id))
   meshes.forEach(m => {
     m.targetPosition = new Vector3(positionEditable.value.x, positionEditable.value.y, positionEditable.value.z)
   })
@@ -78,21 +78,21 @@ function handleUpdatePosition(x,y,z){
               <div class="d-flex">
                 <label>x</label>
                 <div class="d-flex justify-content-between">
-                  <InputDraggable direction="horizontal" :min="-100" :max="100" v-model="positionEditable.x" @update:modelValue="(v)=>handleUpdatePosition(v,positionEditable.y,positionEditable.z)" :step=".5"/>
+                  <InputDraggable direction="horizontal" :min="-100" :max="100" v-model="positionEditable.x" @update:modelValue="(v)=>handleUpdatePosition(v,positionEditable.y,positionEditable.z)" :step="1"/>
                 </div>
                 <label></label>
               </div>
               <div class="d-flex">
                 <label>y</label>
                 <div class="d-flex justify-content-between">
-                  <InputDraggable direction="horizontal" :min="-100" :max="100" v-model="positionEditable.y" @update:modelValue="(v)=>handleUpdatePosition(positionEditable.x,v,positionEditable.z)" :step=".5"/>
+                  <InputDraggable direction="horizontal" :min="-100" :max="100" v-model="positionEditable.y" @update:modelValue="(v)=>handleUpdatePosition(positionEditable.x,v,positionEditable.z)" :step="1"/>
                 </div>
                 <label></label>
               </div>
               <div class="d-flex">
                 <label>z</label>
                 <div class="d-flex justify-content-between">
-                  <InputDraggable direction="horizontal" :min="-100" :max="100" v-model="positionEditable.z" @update:modelValue="(v)=>handleUpdatePosition(positionEditable.x,positionEditable.y,v)" :step=".5"/>
+                  <InputDraggable direction="horizontal" :min="-100" :max="100" v-model="positionEditable.z" @update:modelValue="(v)=>handleUpdatePosition(positionEditable.x,positionEditable.y,v)" :step="1"/>
                 </div>
                 <label></label>
               </div>

@@ -44,6 +44,7 @@ export class Model extends Group {
     this.coverImage = options.coverImage ?? ''
     this.turnAroundImage = options.turnAroundImage ?? ''
     this.partGroups = []
+    this.meshes.forEach(m => this.add(m))
     this.initialize()
   }
 
@@ -61,17 +62,23 @@ export class Model extends Group {
     const center = box.getCenter(new THREE.Vector3())
     const bottomOffset = -box.min.y
     this.position.set(-center.x, bottomOffset, -center.z)
-    logger.log('mesh group loaded and scaled', this)
+    logger.log('🗿❇️', this)
     AppState.loadedMeshGroups.push(this.uuid)
+  }
+
+  get folderRef() {
+    return this.name + '_' + this._id
   }
 
   toData() {
     return {
+      _id: this._id,
       name: this.name,
-      id: this.id,
       meshes: this.meshes.map(m => m.toData()),
       partGroups: this.partGroups,
-      images: this.images
+      images: this.images,
+      coverImage: this.coverImage,
+      turnAroundImage: this.turnAroundImage
     }
   }
 

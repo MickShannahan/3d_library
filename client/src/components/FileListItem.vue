@@ -13,7 +13,7 @@ const props = defineProps({
   accent: {type: String, default: 'blue'}
 })
 const emit = defineEmits(['dragstart'])
-const fileSelected = computed(()=> AppState.selectedMeshIds.includes(props.file.uuid))
+const fileSelected = computed(()=> AppState.selectedMeshIds.includes(props.file._id))
 const progressLoaded = ref(0)
 const accentColor = ref(`rgba(var(--bs-${props.accent}-rgb),.2)`)
 
@@ -28,11 +28,11 @@ function handleFileProgress(progress){
 
 function handleFileClick(event){
   const heldShift = event.shiftKey
-  meshService.selectMeshId(props.file.uuid, !heldShift)
+  meshService.selectMeshId(props.file._id || props.file.id, !heldShift)
 }
 
 function hideMesh(){
-  props.file.visible = !props.file.visible
+  meshService.toggleVisibility(props.file)
 }
 
 async function destroyMesh(){

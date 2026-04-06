@@ -12,6 +12,8 @@ const { mesh } = defineProps({
   mesh: PartMesh
 })
 
+const selectedMesh = computed(()=> AppState.selectedMeshIds.includes(mesh._id))
+
 const localRotation = shallowRef(new Euler())
 const localPosition = shallowRef(new Vector3())
 const localScale = shallowRef(new Vector3(1, 1, 1))
@@ -56,7 +58,7 @@ const selectedMeshIds = computed(() => AppState.selectedMeshIds)
 <template>
   <TresGroup :rotation="localRotation" :position="localPosition" :scale="localScale">
     <primitive :object="markRaw(mesh)">
-      <TresMeshGreyRainboxMaterial v-if="selectedMeshIds.includes(mesh.uuid)"/>
+      <TresMeshGreyRainboxMaterial v-if="selectedMeshIds.includes(mesh._id)"/>
       <TresMeshBasicMaterial v-else-if="mesh.silhouette" color="black" :transparent="true" :opacity=".2"/>
       <TresMeshPurpleRainboxMaterial v-else />
     </primitive>

@@ -48,7 +48,7 @@ async function snap360AllParts(){
     mesh.visible = true
     await camera.snap360(mesh, 3)
   }
-  meshService.showAllMeshes()
+  meshService.reshowHiddenMeshes()
 }
 
 

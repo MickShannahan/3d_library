@@ -62,8 +62,10 @@ function dropped(event){
 
 <template>
 <div>
-  <i draggable="true" @dragstart.prevent="handleDragStart" @drag.prevent  class="drag-handle mdi mdi-unfold-more-vertical"></i>
-  <span v-if="isDragging" :style="`--mx: ${mousePosition.x}px; --my: ${mousePosition.y}px;`" class="value-popup">
+  <slot draggable="true" @dragstart.prevent="handleDragStart" @drag.prevent>
+    <i class="drag-handle mdi mdi-unfold-more-vertical"></i>
+  </slot>
+    <span v-if="isDragging" :style="`--mx: ${mousePosition.x}px; --my: ${mousePosition.y}px;`" class="value-popup">
     <span v-if="modelValue == min"><i class="mdi mdi-arrow-collapse-left text-secondary"></i></span>
     {{ modelValue }}
     <span>{{ label }}</span>

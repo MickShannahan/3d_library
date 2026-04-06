@@ -105,7 +105,7 @@ async function snap360(focusModel: Model | PartMesh, shots: number = 8, hideOthe
    showAxes.value = true
   showGrid.value = true
   lerpCamera.value = true
-  if(hideOtherParts) meshService.showAllMeshes()
+  if(hideOtherParts) meshService.reshowHiddenMeshes()
 }
 
 defineExpose({
