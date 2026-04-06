@@ -67,7 +67,7 @@ function clearJobs(){
           <div class="progress-bar" :style="{ width: job.progress + '%' }" />
         </div>
 
-        <div v-if="job.subJobs?.length" >
+        <div v-if="job.subJobs?.length && job.status != 'error'" >
           <div :id="`subjobs-${idx}`" class="collapse show">
             <div v-for="sub in job.subJobs" :key="sub.name">
               <div class="d-flex align-items-center gap-2">

@@ -56,14 +56,16 @@ button {
 .glass-popup::after {
   content: attr(data-tooltip);
   position: absolute;
-  top: calc(-100% - 1em);
+  bottom: 100%;
   left: 50%;
   transform: scale(0) translate(-50%, -50%);
   transform-origin: center;
   pointer-events: none;
-  line-break: loose;
+  white-space: nowrap;
+  color: var(--bs-secondary);
+  font-style: normal;
+  font-family: monospace;
   min-width: 6ch;
-  max-width: 12ch;
   padding: .25em .5em;
   border-radius: 12px;
   background-color: rgba(var(--bs-dark-rgb), .4);
@@ -76,5 +78,43 @@ button {
 
 .glass-popup:hover::after {
   transform: scale(1) translate(-50%, -50%);
-  transition: all .1s .4s ease;
+  transition: all .1s .35s ease;
+}
+
+// Normal map aesthetic classes
+.bg-normal-grad {
+  background: $normal-grad;
+}
+
+.text-normal-grad {
+  background: $normal-grad;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-normal-grad {
+  background: $normal-grad;
+  background-size: 160% 160%;
+  border: 0;
+  background-position: left;
+  color: $normal-shadow;
+  font-weight: 600;
+  --bs-border-color: rgba($normal-z, .4);
+  transition: background-position .3s ease, box-shadow .3s ease;
+
+  &:hover {
+    background-position: right;
+    color: var(--bs-light);
+  }
+}
+
+.form-range::-webkit-slider-thumb {
+  background-color: var(--bs-normal);
+  border-color: var(--bs-normal);
+}
+
+.form-check-input:checked {
+  background-color: var(--bs-normal);
+  border-color: var(--bs-normal);
 }

@@ -11,8 +11,9 @@ export class MeshesController extends BaseController {
   async uploadMeshes(req, res, next) {
     try {
       const urls = await uploadService.uploadFiles(req.files.meshes, {
-        folder: req.query.folder
-      })
+        folder: req.query.folder,
+        client: '3dmodels'
+      },)
       res.send(urls)
     } catch (error) {
       next(error)

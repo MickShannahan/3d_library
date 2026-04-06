@@ -14,7 +14,8 @@ export class ImagesController extends BaseController {
     try {
       const urls = await uploadService.uploadFiles(req.files.images, {
         processor: (file) => sharpService.processImageToWebP(file),
-        folder: req.query.folder
+        folder: req.query.folder,
+        client: 'images'
       })
       res.send(urls)
     } catch (error) {
@@ -28,7 +29,10 @@ export class ImagesController extends BaseController {
       const url = await uploadService.uploadFileSequence(
         req.files.images,
         (images) => sharpService.processImageSequenceToGif(images, imageName),
-        { folder: req.query.folder }
+        {
+          folder: req.query.folder,
+          client: 'images'
+        }
       )
       res.send({ url })
     } catch (error) {

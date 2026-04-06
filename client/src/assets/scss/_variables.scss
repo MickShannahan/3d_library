@@ -26,4 +26,18 @@ $theme-colors: (
   // Custom colors
   "codeworks": #141d2b,
   "vue": #42b883,
+  // Normal map colors
+  "normal": #8080ff,
+  "normal-x": #ff8080,
+  "normal-y": #80ff9a,
+  "normal-z": #80d4ff,
+  "normal-shadow": #3d2d6e,
 );
+
+// Normal map vars for use in gradients and custom classes
+$normal-base: #8080ff;
+$normal-x: #ff8080;
+$normal-y: #80ff9a;
+$normal-z: #80d4ff;
+$normal-shadow: #3d2d6e;
+$normal-grad: linear-gradient(135deg, $normal-x 0%, $normal-base 40%, $normal-z 70%, $normal-y 100%);

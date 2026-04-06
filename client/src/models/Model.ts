@@ -7,6 +7,7 @@ import { AppState } from "@/AppState"
 import { PartGroup } from "./PartGroup"
 import { MeshImage } from "./MeshImage"
 import { generateId } from "@/utils/GenerateId"
+import { Author } from "./Author"
 
 interface ModelOptions {
   _id?: string
@@ -17,6 +18,11 @@ interface ModelOptions {
   startingScale?: number
   coverImage?: string
   turnAroundImage?: string
+  author?: Author | null
+  tags?: string[]
+  price?: number
+  adjustedScale?: number
+  size?: number
 }
 
 export class Model extends Group {
@@ -30,6 +36,11 @@ export class Model extends Group {
   coverImage: string
   turnAroundImage: string
   partGroups: PartGroup[]
+  author: Author | null
+  tags: string[]
+  price: number
+  adjustedScale: number
+  size: number
 
   constructor(options: ModelOptions = {}) {
     super()
@@ -44,6 +55,11 @@ export class Model extends Group {
     this.coverImage = options.coverImage ?? ''
     this.turnAroundImage = options.turnAroundImage ?? ''
     this.partGroups = []
+    this.author = options.author ?? null
+    this.tags = options.tags ?? []
+    this.price = options.price ?? 0
+    this.adjustedScale = options.adjustedScale ?? 1
+    this.size = options.size ?? 0
     this.meshes.forEach(m => this.add(m))
     this.initialize()
   }
@@ -78,7 +94,12 @@ export class Model extends Group {
       partGroups: this.partGroups,
       images: this.images,
       coverImage: this.coverImage,
-      turnAroundImage: this.turnAroundImage
+      turnAroundImage: this.turnAroundImage,
+      author: this.author?._id ?? null,
+      tags: this.tags,
+      price: this.price,
+      adjustedScale: this.adjustedScale,
+      size: this.size
     }
   }
 

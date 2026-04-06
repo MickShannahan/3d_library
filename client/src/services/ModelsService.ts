@@ -12,6 +12,8 @@ class ModelsService {
 
   async createModel(model: Model) {
 
+
+    jobsService.clearJobQueue()
     jobsService
       .addJobToQueue('Capturing 360 turnaround', async () => {
         await cameraState.cameraRef.snap360(model, 32)
@@ -26,7 +28,7 @@ class ModelsService {
         const gifSubJob = job.createSubJob('Turnaround GIF')
 
         coverSubJob.status = 'active'
-        const [cover] = await imageUploadService.uploadImages([model.images[0]], (p) => { coverSubJob.progress = p }, { folder: model.name })
+        const [cover] = await imageUploadService.uploadImages([model.images[0]], (p) => { coverSubJob.progress = p }, { folder: model.folderRef })
         coverSubJob.status = 'complete'
         model.coverImage = cover
 

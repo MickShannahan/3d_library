@@ -14,16 +14,16 @@ class UploadService {
    * @param {File|File[]} files - Single or multiple files to upload
    * @param {Object} options - Configuration options
    * @param {Function} options.processor - Optional function to process each file before upload
-   * @param {string} options.folder - Folder path in Azure
-   * @param {string} options.containerName - Azure container name (default: '3dmodels')
-   * @param {boolean} options.returnArray - Whether to return as array or single URL (default: true)
+   * @param {string?} options.folder - Folder path in Azure
+   * @param {string?} options.client - Azure client name (default: '3dmodels')
+   * @param {boolean?} options.returnArray - Whether to return as array or single URL (default: true)
    * @returns {Promise<string|string[]>} Uploaded URL(s)
    */
   async uploadFiles(files, options = {}) {
     const {
       processor = null,
       folder = '',
-      containerName = '3dmodels',
+      client = '3dmodels',
       returnArray = true
     } = options
 
@@ -39,7 +39,7 @@ class UploadService {
     }
 
     // Upload all files
-    const urls = await azureService.uploadBulkFiles(filesToUpload, folder, containerName)
+    const urls = await azureService.uploadBulkFiles(filesToUpload, folder, client)
 
     // Return single URL or array based on preference
     return returnArray ? urls : urls[0]
@@ -52,13 +52,13 @@ class UploadService {
    * @param {Function} sequenceProcessor - Function that takes array of files and returns single processed file
    * @param {Object} options - Configuration options
    * @param {string} options.folder - Folder path in Azure
-   * @param {string} options.containerName - Azure container name (default: '3dmodels')
+   * @param {string} options.client - Azure container name (default: '3dmodels')
    * @returns {Promise<string>} Uploaded URL
    */
   async uploadFileSequence(files, sequenceProcessor, options = {}) {
     const {
       folder = '',
-      containerName = '3dmodels'
+      client = '3dmodels'
     } = options
 
     // Normalize to array
@@ -68,7 +68,7 @@ class UploadService {
     const processedFile = await sequenceProcessor(fileArray)
 
     // Upload the single processed file
-    const url = await azureService.uploadFile(processedFile, folder, containerName)
+    const url = await azureService.uploadFile(processedFile, folder, client)
 
     return url
   }

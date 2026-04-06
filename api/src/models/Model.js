@@ -27,5 +27,8 @@ export const ModelSchema = new Schema({
   turnAroundImage: { type: String },
   images: [{ type: String }],
   author: { type: Schema.ObjectId, ref: 'Author', required: false },
-  tags: [{ type: String, maxlength: 25, lowercase: true }]
+  tags: [{ type: String, maxlength: 25, lowercase: true }],
+  price: { type: Number, default: 0, min: 0 },
+  adjustedScale: { type: Number, default: 1, min: 0 },
+  size: { type: Number, default: 0, min: 0 }
 }, { timestamps: true, toJSON: { virtuals: true } })

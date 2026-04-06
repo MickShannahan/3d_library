@@ -57,14 +57,14 @@ async function snap360AllParts(){
 
 <template>
 <section class="d-flex gap-1">
-  <button @click="pointTowardModel"><i class="mdi mdi-image-filter-center-focus"></i></button>
-  <button @click="resetCamera"><i class="mdi mdi-camera-control"></i></button>
-  <button @click="faceCameraToAxis([0,0,15])"><i class="bi bi-front text-red"></i>x</button>
-  <button @click="faceCameraToAxis([15,0,0])"><i class="mdi bi-front text-green"></i>y</button>
-  <button @click="faceCameraToAxis([0,15,0])"><i class="mdi bi-front text-cyan"></i>z</button>
-  <span class="spacer"></span>
+  <button @click="pointTowardModel" v-tooltip="'Point Camera to Model'"><i class="mdi mdi-image-filter-center-focus"></i></button>
+  <button @click="resetCamera" v-tooltip="'Point Camera to World Origin'"><i class="mdi mdi-camera-control"></i></button>
+  <button @click="faceCameraToAxis([0,0,15])" v-tooltip="'Face X Axis'"><i class="bi bi-front text-red" ></i>x</button>
+  <button @click="faceCameraToAxis([15,0,0])" v-tooltip="'Face Y Axis'"><i class="mdi bi-front text-green" ></i>y</button>
+  <button @click="faceCameraToAxis([0,15,0])" v-tooltip="'Face Z Axis'"><i class="mdi bi-front text-cyan" ></i>z</button>
+  <!-- <span class="spacer"></span>
   <button @click="snap360Shots"><i class="mdi mdi-rotate-3d"></i></button>
-  <button @click="snap360AllParts"><i class="mdi mdi-rotate-360"></i> <i class="bi bi-boxes"></i></button>
+  <button @click="snap360AllParts"><i class="mdi mdi-rotate-360"></i> <i class="bi bi-boxes"></i></button> -->
 </section>
 </template>
 

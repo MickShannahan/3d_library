@@ -1,7 +1,10 @@
 import { BlobServiceClient } from "@azure/storage-blob"
 
 
-const azureClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION)
+const clients = {
+  '3dmodels': BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION),
+  images: BlobServiceClient.fromConnectionString(process.env.AZURE_IMAGE_CONNECTION)
+}
 
 const config = {
   blobHTTPHeaders: {
@@ -11,10 +14,10 @@ const config = {
 
 class AzureService {
 
-  async uploadFile(file, folder = '', containerName = '3dmodels') {
+  async uploadFile(file, folder = '', client = 'images') {
     const blobName = `${folder ? folder + '/' : ''}${file.name}${file.extension ? file.extension : ''}`
-    console.log('upload', blobName, folder, containerName, file)
-    const container = azureClient.getContainerClient(containerName)
+    console.log('upload', blobName, folder, client, file)
+    const container = clients[client].getContainerClient(client)
     const blockBlob = container.getBlockBlobClient(blobName)
     const blobOptions = {
       blobHTTPHeaders: {
@@ -27,10 +30,10 @@ class AzureService {
     return blockBlob.url
   }
 
-  async uploadBulkFiles(files, folder = '', containerName = '3dmodels') {
+  async uploadBulkFiles(files, folder = '', client = 'images') {
     const urls = []
     for (const file of files) {
-      const url = await this.uploadFile(file, folder, containerName)
+      const url = await this.uploadFile(file, folder, client)
       urls.push(url)
     }
     return urls

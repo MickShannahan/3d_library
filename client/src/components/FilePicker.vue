@@ -55,8 +55,8 @@ function clickInput(){
     </div>
   </button>
 
-  <button v-else class="btn btn-primary" @click="clickInput">
-    <i class="bi bi-file-plus"></i>
+  <button v-else class="btn btn-primary" @click="clickInput" v-tooltip="'Open File Picker'">
+    <i class="bi bi-file-earmark-plus"></i>
   </button>
 
   <Teleport to="body">
