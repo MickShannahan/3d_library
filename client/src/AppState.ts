@@ -16,7 +16,9 @@ interface AppState {
   jobs: Job[]
   models: Model[]
   activeModel: Model
-  authors: Author[]
+  activeAuthor: Author | null
+  authors: Author[],
+  tags: string[]
 }
 
 export const AppState = reactive<AppState>({
@@ -28,7 +30,9 @@ export const AppState = reactive<AppState>({
   draggingFromPartGroup: null,
   models: [],
   activeModel: null,
+  activeAuthor: null,
   jobs: [],
+  tags: ['nintendo', 'monster', 'capcom', 'warhammer 40k', 'warhammer AoS'],
   authors: [
     new Author({
       name: 'Matmire Makes',

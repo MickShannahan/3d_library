@@ -17,7 +17,20 @@ const router = createRouter({
     {
       path: '/browse',
       name: 'browse',
-      component: () => import('../views/BrowseView.vue')
+      component: () => import('../views/BrowseView.vue'),
+      redirect: { name: 'browse-models' },
+      children: [
+        {
+          path: 'models',
+          name: 'browse-models',
+          component: () => import('../views/BrowseModelsView.vue')
+        },
+        {
+          path: 'authors',
+          name: 'browse-authors',
+          component: () => import('../views/BrowseAuthorsView.vue')
+        }
+      ]
     },
     {
       path: '/orders',

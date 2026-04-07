@@ -20,6 +20,7 @@ interface ModelOptions {
   coverImage?: string
   turnAroundImage?: string
   author?: Author | null
+  partGroups?: PartGroup[]
   tags?: string[]
   price?: number
   adjustedScale?: number
@@ -58,7 +59,7 @@ export class Model extends Group {
     this.images = []
     this.coverImage = options.coverImage ?? ''
     this.turnAroundImage = options.turnAroundImage ?? ''
-    this.partGroups = []
+    this.partGroups = options.partGroups ?? []
     this.author = options.author ?? null
     this.tags = options.tags ?? []
     this.price = options.price ?? 0

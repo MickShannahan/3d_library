@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
-const {id} = defineProps({
-  id: String
+const { id, size } = defineProps({
+  id: String,
+  size: { type: String, default: '' }
 })
 
 </script>
@@ -10,7 +11,7 @@ const {id} = defineProps({
 <template>
 <Teleport to="body">
   <div class="modal fade" :id>
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog" :class="size ? `modal-${size}` : 'modal-lg'">
       <div class="modal-content">
         <div class="modal-body">
           <slot></slot>

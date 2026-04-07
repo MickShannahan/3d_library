@@ -1,11 +1,16 @@
 import { generateId } from "@/utils/GenerateId"
 
+export interface AuthorLink {
+  name: string
+  icon: string
+  url: string
+}
 
 export class Author {
   _id: string
   name: string
-  image: URL
-  socials: []
+  image: string
+  socials: AuthorLink[]
 
   constructor(data) {
     this._id = data.id ?? data._id ?? generateId()
