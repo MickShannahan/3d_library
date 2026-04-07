@@ -39,6 +39,20 @@ class AzureService {
     return urls
   }
 
+  async deleteFile(url = '') {
+    const { hostname, pathname } = new URL(url)
+    const [, containerName, ...blobParts] = pathname.split('/')
+    const blobName = blobParts.join('/')
+    const client = Object.values(clients).find(c => c.url.includes(hostname))
+    if (!client) throw new Error(`No Azure client found for host: ${hostname}`)
+    const container = client.getContainerClient(containerName)
+    await container.deleteBlob(blobName)
+  }
+
+  async deleteBulkFiles(urls = []) {
+    await Promise.all(urls.map(url => this.deleteFile(url)))
+  }
+
 }
 
 export const azureService = new AzureService()

@@ -18,7 +18,7 @@ class SharpService {
 
   async processImageSequenceToGif(images, imageName = 'sequence') {
     const gif = await sharp(images.map(image => image.data), { join: { animated: true } })
-      .gif({ delay: 100, loop: 0, colors: 48, dither: 1 })
+      .gif({ delay: 104, loop: 0, colors: 44, dither: 1 })
       .toBuffer()
 
     return {

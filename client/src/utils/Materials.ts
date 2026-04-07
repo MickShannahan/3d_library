@@ -20,6 +20,7 @@ import diamondPath from '@/assets/matcaps/diamond_mat.png'
 import metalPath from '@/assets/matcaps/brushed_metal_mat.png'
 import bubblePath from '@/assets/matcaps/bubble_mat.png'
 import innerPurpleGlowPath from '@/assets/matcaps/purple_inner_glow.png'
+import fleshPath from '@/assets/matcaps/flesh_mat.jpg'
 import { extend } from '@tresjs/core'
 
 const loader = new THREE.TextureLoader()
@@ -54,6 +55,7 @@ export const MeshDiamondMaterial = createMatcapMaterial(diamondPath)
 export const MeshBrushedMetalMaterial = createMatcapMaterial(metalPath)
 export const MeshBubbleMaterial = createMatcapMaterial(bubblePath)
 export const MeshPurpleInnerGlowMaterial = createMatcapMaterial(innerPurpleGlowPath)
+export const MeshFleshMaterial = createMatcapMaterial(fleshPath)
 
 // Standard materials — react to scene lights
 function createStandardMaterial(options: THREE.MeshStandardMaterialParameters) {
@@ -86,5 +88,6 @@ extend({
   MeshDiamondMaterial,
   MeshBrushedMetalMaterial,
   MeshBubbleMaterial,
-  MeshPurpleInnerGlowMaterial
+  MeshPurpleInnerGlowMaterial,
+  MeshFleshMaterial,
 })

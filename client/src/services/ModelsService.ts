@@ -6,6 +6,7 @@ import { cameraState } from "@/utils/CameraState"
 import { imageUploadService } from "./ImageUploadService"
 import { jobsService } from "./JobService"
 import { AppState } from "@/AppState"
+import { PartMesh } from "@/models/PartMesh"
 
 const exporter = new STLExporter()
 
@@ -29,7 +30,7 @@ class ModelsService {
     jobsService.clearJobQueue()
     jobsService
       .addJobToQueue('Capturing 360 turnaround', async () => {
-        await cameraState.cameraRef.snap360(model, 32)
+        await cameraState.cameraRef.snap360(model, 44)
       }, { indeterminate: true })
 
       .addJobToQueue(`Capturing ${model.meshes.length} part images`, async () => {
@@ -81,15 +82,17 @@ class ModelsService {
       .addJobToQueue('Uploading Meshes', async (onProgress, job) => {
         const meshCount = model.meshes.length
         let done = 0
-        await Promise.all(model.meshes.map(async (mesh) => {
+        await Promise.all(model.meshes.map(async (mesh: PartMesh) => {
           const subJob = job.createSubJob(mesh.name)
           subJob.status = 'active'
           const form = new FormData()
           form.append('meshes', new Blob([exporter.parse(mesh, { binary: true })]), mesh.name)
-          await api.post('upload/meshes', form, {
+
+          const res = await api.post('upload/meshes', form, {
             params: { folder: model.folderRef },
             onUploadProgress: e => { subJob.progress = (e.loaded / e.total) * 95 }
           })
+          mesh.src = res.data[0]
           subJob.progress = 100
           subJob.status = 'complete'
           onProgress((++done / meshCount) * 100)

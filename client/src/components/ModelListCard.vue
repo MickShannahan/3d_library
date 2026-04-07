@@ -29,9 +29,8 @@ function setActive(){
 
 
 .model-card{
-  border: 1px solid transparent;
-  background: linear-gradient(0deg, var(--bs-dark), var(--bs-dark)) padding-box,
-    linear-gradient(-115deg, var(--bs-normal-x) 0%, var(--bs-normal) 40%, var(--bs-normal-z) 70%, var(--bs-normal-y) 100%) border-box;
+  border: 1px solid rgba(var(--bs-black-rgb), .1);
+  background: rgba(var(--bs-black-rgb), .2);
 
     &:hover{
       filter: brightness(1.1);

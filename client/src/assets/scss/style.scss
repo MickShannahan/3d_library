@@ -16,7 +16,6 @@ main {
 button {
   background-color: unset;
   border: unset;
-  border-radius: 16px;
 
   &:hover {
     background-color: rgba(var(--bs-primary-rgb), .2);

@@ -55,15 +55,15 @@ async function deleteModel(){
             <img :src="model.author.image" :alt="`profile image of ${model.author.name}`">
             <span>{{ model.author.name }}</span>
           </div>
-          <img :src="model.turnAroundImage" class="img-fluid border rounded-4" :alt="`Preview of ${model.name}`">
+          <img :src="model.turnAroundImage" class="img-fluid border p-0 rounded-4" :alt="`Preview of ${model.name}`">
         </section>
 
         <div class="row">
           <div class="fw-bold mt-3 mb-2 p-0">Meshes</div>
           <section class="part-grid g-1">
             <div v-for="mesh in model._meshData" class="part-image-wrapper">
-              <img :src="mesh.images[0]?.data" class="part-image border rounded-3" :alt="`image of part ${mesh.name}`">
-              <div class="hover-preview gap-2">
+              <img :src="mesh.images[0]?.data" class="part-image border rounded-4" :alt="`image of part ${mesh.name}`">
+              <div class="hover-preview gap-1">
                 <img v-for="img in mesh.images" :src="img.data" class="preview-image border border-primary rounded-5 shadow">
               </div>
               <span class="mesh-name">{{ mesh.name }}</span>
@@ -73,7 +73,7 @@ async function deleteModel(){
     </div>
     </section>
 
-    <section class="danger-zone rounded-4 p-3 mt-5">
+    <section class="danger-zone rounded-4 p-2 mt-5">
       <div class="text-center">Danger Zone</div>
       <div class="text-end">
         <button @click="deleteModel" class="text-secondary btn selectable-danger">Delete Model <i class="mdi mdi-delete-forever"></i></button>
@@ -101,7 +101,7 @@ async function deleteModel(){
     width: 100%;
     font-size: .8em;
     font-family: monospace;
-    padding: .25em;
+    padding: .25em .5em;
     color: rgba(var(--bs-light-rgb),.5);
     overflow: hidden;
   }

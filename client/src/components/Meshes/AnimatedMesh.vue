@@ -60,7 +60,7 @@ const selectedMeshIds = computed(() => AppState.selectedMeshIds)
     <primitive :object="markRaw(mesh)">
       <TresMeshGreyRainboxMaterial v-if="selectedMeshIds.includes(mesh._id)"/>
       <TresMeshBasicMaterial v-else-if="mesh.silhouette" color="black" :transparent="true" :opacity=".2"/>
-      <TresMeshPurpleRainboxMaterial v-else />
+      <TresMeshFleshMaterial v-else />
     </primitive>
   </TresGroup>
 </template>
