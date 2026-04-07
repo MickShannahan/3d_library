@@ -20,6 +20,7 @@ import StatsWindow from './StatsWindow.vue'
 import SceneClickHandler from './SceneClickHandler.vue'
 import JobsPane from './JobsPane.vue'
 import { delay } from '@/utils/Delay';
+import { cameraState } from '@/utils/CameraState';
 
 const camera = useTemplateRef('camera')
 
@@ -54,7 +55,7 @@ extend({MeshGreyRainboxMaterial})
 
   <JobsPane/>
 
-  <TresCanvas clear-color="#16161d" :fps-limit="60">
+  <TresCanvas :clear-color="cameraState.clearColor" :fps-limit="60">
     <ThreeDCamera  ref="camera"/>
     <AnimatedGroup v-for="meshGroup in meshGroups" :meshGroup/>
     <StatsWindow/>

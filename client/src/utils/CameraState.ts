@@ -10,5 +10,6 @@ interface CameraRef {
 
 export const cameraState = reactive({
   isPanning: false,
-  cameraRef: null as CameraRef | null
+  cameraRef: null as CameraRef | null,
+  clearColor: '#16161d'
 })

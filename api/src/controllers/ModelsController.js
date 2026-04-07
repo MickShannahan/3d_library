@@ -9,6 +9,7 @@ export class ModelsController extends BaseController {
     this.router
       .get('', this.getModels)
       .post('', this.createModel)
+      .delete('/:modelId', this.deleteModel)
   }
 
   async createModel(req, res, next) {
@@ -26,6 +27,16 @@ export class ModelsController extends BaseController {
       const query = req.query ?? {}
       const models = await modelsService.findModels(query)
       res.send(models)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async deleteModel(req, res, next) {
+    try {
+      const modelId = req.params.modelId
+      const deleteMessage = await modelsService.deleteModel(modelId)
+      res.send({ message: deleteMessage })
     } catch (error) {
       next(error)
     }

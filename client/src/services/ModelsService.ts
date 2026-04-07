@@ -107,6 +107,11 @@ class ModelsService {
     await jobsService.runQueue()
   }
 
+  async deleteModel(modelId) {
+    const res = await api.delete(`api/models/${modelId}`)
+    AppState.models = AppState.models.filter(m => m._id != modelId)
+  }
+
 }
 
 export const modelsService = new ModelsService()

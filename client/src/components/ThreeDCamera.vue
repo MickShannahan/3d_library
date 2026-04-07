@@ -56,6 +56,8 @@ function positionCamera(position: THREE.Vector3 | number[]) {
 }
 
 async function snap360(focusModel: Model | PartMesh, shots: number = 8, hideOtherParts = false){
+  const currentClear = cameraState.clearColor
+  cameraState.clearColor = 'black'
   meshService.clearSelectedMeshIds()
   showAxes.value = false
   showGrid.value = false
@@ -105,6 +107,7 @@ async function snap360(focusModel: Model | PartMesh, shots: number = 8, hideOthe
    showAxes.value = true
   showGrid.value = true
   lerpCamera.value = true
+  cameraState.clearColor = currentClear
   if(hideOtherParts) meshService.reshowHiddenMeshes()
 }
 
