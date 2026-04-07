@@ -39,6 +39,27 @@ class AzureService {
     return urls
   }
 
+  fireAndForgetUpload(file, folder = '', clientName = 'images', onProgress = null) {
+    const blobName = `${folder ? folder + '/' : ''}${file.name}${file.extension ? file.extension : ''}`
+    const container = clients[clientName].getContainerClient(clientName)
+    const blockBlob = container.getBlockBlobClient(blobName)
+    const BLOCK_SIZE = 4 * 1024 * 1024
+    const uploadOptions = {
+      blobHTTPHeaders: {
+        ...config.blobHTTPHeaders,
+        blobContentType: file.mimetype
+      },
+      blockSize: BLOCK_SIZE,
+      // Must be 0 to force block staging — default is 256MB which means
+      // any file under 256MB is sent as a single PUT with one progress event at completion
+      maxSingleShotSize: 0,
+      concurrency: 2,
+      onProgress: onProgress ? ev => onProgress(ev.loadedBytes, file.size) : undefined
+    }
+    const uploadPromise = blockBlob.uploadData(file.data, uploadOptions)
+    return { url: blockBlob.url, uploadPromise }
+  }
+
   async deleteFile(url = '') {
     const { hostname, pathname } = new URL(url)
     const [, containerName, ...blobParts] = pathname.split('/')

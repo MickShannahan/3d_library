@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { Author } from '@/models/Author';
 import { AppState } from '@/AppState';
+import { computed } from 'vue';
 
 const props = defineProps({
   author: { type: Author }
 })
+
+const authorModels = computed(()=> AppState.models.filter(m => m.author?._id ==  props.author._id))
 
 function clearActive() {
   AppState.activeAuthor = null
@@ -24,6 +27,12 @@ function clearActive() {
     <div class="d-flex align-items-center gap-3 mb-3">
       <img :src="author.image" class="author-avatar rounded-3 border" :alt="`profile image of ${author.name}`">
       <div class="fs-2 fw-bold">{{ author.name }}</div>
+    </div>
+  </section>
+
+  <section>
+    <div v-for="model in authorModels">
+      {{ model.name }}
     </div>
   </section>
 </div>

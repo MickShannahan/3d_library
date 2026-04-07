@@ -13,6 +13,7 @@ interface PartMeshOptions {
   resize?: number
   material?: THREE.Material
   src?: string
+  bytes?: number
 }
 
 export class PartMesh extends THREE.Mesh {
@@ -23,17 +24,19 @@ export class PartMesh extends THREE.Mesh {
   images: MeshImage[]
   silhouette: boolean
   src: string
+  bytes: number
   targetRotation = new THREE.Euler()
   targetPosition = new THREE.Vector3()
   targetScale = new THREE.Vector3(1, 1, 1)
 
   constructor(options: PartMeshOptions = {}) {
     super()
-    const { objectName, resize, material, src, _id } = options
+    const { objectName, resize, material, src, _id, bytes } = options
     this._id = _id ?? generateId()
     this.progress = 0
     this.name = objectName ?? src
     this.src = src
+    this.bytes = bytes ?? 0
     this.material = material ?? new THREE.MeshNormalMaterial()
     this.defaultMaterial = this.material
     this.images = []
@@ -46,6 +49,7 @@ export class PartMesh extends THREE.Mesh {
         this.src,
         (bufferGeo) => {
           this.geometry = bufferGeo
+          this.bytes = bufferGeo.attributes.position?.array.byteLength ?? 0
           if (resize) {
             this.geometry.computeBoundingBox()
             const currentSize = this.geometry.boundingBox.max.y - this.geometry.boundingBox.min.y
@@ -72,7 +76,8 @@ export class PartMesh extends THREE.Mesh {
       _id: this._id,
       name: this.name,
       images: this.images,
-      src: this.src
+      src: this.src,
+      bytes: this.bytes
     }
   }
 }

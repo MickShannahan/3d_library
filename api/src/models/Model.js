@@ -10,6 +10,7 @@ const MeshImageSchema = new Schema({
 const PartMeshSchema = new Schema({
   name: { type: String, required: true, minlength: 3, maxlength: 50 },
   src: { type: String, required: true },
+  bytes: { type: Number, default: 0, min: 0 },
   images: [{ type: MeshImageSchema }]
 })
 
@@ -30,5 +31,6 @@ export const ModelSchema = new Schema({
   tags: [{ type: String, maxlength: 25, lowercase: true }],
   price: { type: Number, default: 0, min: 0 },
   adjustedScale: { type: Number, default: 1, min: 0 },
-  size: { type: Number, default: 0, min: 0 }
+  size: { type: Number, default: 0, min: 0 },
+  bytes: { type: Number, default: 0, min: 0 }
 }, { timestamps: true, toJSON: { virtuals: true } })

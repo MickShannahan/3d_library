@@ -45,6 +45,10 @@ export class Model extends Group {
   adjustedScale: number
   size: number
 
+  get bytes(): number {
+    return this.meshes.reduce((sum, m) => sum + (m.bytes ?? 0), 0)
+  }
+
   constructor(options: ModelOptions = {}) {
     super()
     this._id = options._id ?? generateId()

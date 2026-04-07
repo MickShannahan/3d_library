@@ -2,11 +2,13 @@ import { logger } from "@/utils/Logger"
 import { api } from "./AxiosService"
 import { Model } from "@/models/Model"
 import { STLExporter } from "three/examples/jsm/Addons.js"
+import { Mesh } from "three"
 import { cameraState } from "@/utils/CameraState"
 import { imageUploadService } from "./ImageUploadService"
 import { jobsService } from "./JobService"
 import { AppState } from "@/AppState"
 import { PartMesh } from "@/models/PartMesh"
+import { socketService } from "./SocketService"
 
 const exporter = new STLExporter()
 
@@ -86,13 +88,24 @@ class ModelsService {
           const subJob = job.createSubJob(mesh.name)
           subJob.status = 'active'
           const form = new FormData()
-          form.append('meshes', new Blob([exporter.parse(mesh, { binary: true })]), mesh.name)
+          const exportMesh = new Mesh(mesh.geometry) // new mesh so world transforms don't apply
+          exportMesh.updateMatrixWorld(true)
+          form.append('meshes', new Blob([exporter.parse(exportMesh, { binary: true })]), mesh.name)
 
+          // Set up socket
+          const { ready, complete: azureComplete } = socketService.waitForUploadComplete(mesh._id, (loadedBytes, totalBytes) => {
+            subJob.progress = 50 + (loadedBytes / totalBytes) * 50
+          })
+          await ready
+
+          // Send Mesh
           const res = await api.post('upload/meshes', form, {
-            params: { folder: model.folderRef },
-            onUploadProgress: e => { subJob.progress = (e.loaded / e.total) * 95 }
+            params: { folder: model.folderRef, roomId: mesh._id },
+            onUploadProgress: e => { subJob.progress = (e.loaded / e.total) * 50 }
           })
           mesh.src = res.data[0]
+
+          await azureComplete
           subJob.progress = 100
           subJob.status = 'complete'
           onProgress((++done / meshCount) * 100)

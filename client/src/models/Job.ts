@@ -6,6 +6,8 @@ export interface SubJob {
   name: string
   progress: number
   status: JobStatus
+  startTime: Date | null
+  endTime: Date | null
 }
 
 interface JobOptions {
@@ -17,7 +19,9 @@ interface JobOptions {
 export class Job {
   label: string
   description: string
-  status: JobStatus
+  private _status: JobStatus
+  startTime: Date | null
+  endTime: Date | null
   progress: number
   indeterminate: boolean
   error: string | null
@@ -26,7 +30,9 @@ export class Job {
 
   constructor(options: JobOptions) {
     this.label = options.label
-    this.status = 'pending'
+    this._status = 'pending'
+    this.startTime = null
+    this.endTime = null
     this.description = ''
     this.progress = 0
     this.indeterminate = options.indeterminate ?? true
@@ -35,8 +41,18 @@ export class Job {
     this._run = options.run
   }
 
+  get status(): JobStatus {
+    return this._status
+  }
+
+  set status(value: JobStatus) {
+    this._status = value
+    if (value === 'active') this.startTime = new Date()
+    else if (value === 'complete' || value === 'error') this.endTime = new Date()
+  }
+
   createSubJob(name: string): SubJob {
-    const subJob = reactive({ name, progress: 0, status: 'pending' as JobStatus })
+    const subJob = reactive<SubJob>({ name, progress: 0, status: 'pending', startTime: null, endTime: null })
     this.subJobs.push(subJob)
     return this.subJobs[this.subJobs.length - 1]
   }

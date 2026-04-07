@@ -23,8 +23,8 @@ function setActive(){
   <div class="px-1 d-flex  flex-column justify-content-between">
     <div>
       <h3 class="fs-6">{{ model.name }}</h3>
-      <img src="https://images2.myminifactory.com/insecure/rt:fill-down/w:400/h:400/el:1/plain/https://dl4.myminifactory.com/public-assets/profile-images/e9b100b47258334e198851a0042738d5e25a5580.png" class="rounded-3" height="24" width="24" alt="">
-      <small class="ms-1">Twin Goddess Minis</small>
+      <img v-if="model.author" :src="model.author.image" class="bg-dark object-fit-cover rounded-3" height="24" width="24" alt="">
+      <small class="ms-1">{{ model.author?.name }}</small>
     </div>
     <small class="text-secondary text-end">last ordered: Aug 13</small>
   </div>

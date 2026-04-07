@@ -1,4 +1,5 @@
 import { azureService } from './AzureService.js'
+import { socketProvider } from '../SocketProvider.js'
 
 class UploadService {
 
@@ -43,6 +44,61 @@ class UploadService {
 
     // Return single URL or array based on preference
     return returnArray ? urls : urls[0]
+  }
+
+  /**
+   * Fire-and-forget upload: responds immediately with URLs, emits socket progress as Azure uploads complete
+   * @param {File|File[]} files
+   * @param {Object} options
+   * @param {Function} options.processor - Optional processor (e.g. sharp)
+   * @param {string} options.folder
+   * @param {string} options.client
+   * @param {string} options.roomId - Socket room to emit progress to
+   * @returns {Promise<string[]>} URLs — available before Azure upload completes
+   */
+  async uploadFilesAsync(files, options = {}) {
+    const {
+      processor = null,
+      folder = '',
+      client = 'images',
+      roomId = null
+    } = options
+
+    let fileArray = this.ensureArray(files)
+    if (processor) {
+      fileArray = await Promise.all(fileArray.map(file => processor(file)))
+    }
+
+    const results = fileArray.map((file, i) => {
+      const onProgress = roomId
+        ? (loadedBytes, totalBytes) => {
+          socketProvider.messageRoom(roomId, 'UPLOAD_PROGRESS', { roomId, fileIndex: i, loadedBytes, totalBytes })
+        }
+        : null
+      return azureService.fireAndForgetUpload(file, folder, client, onProgress)
+    })
+    const urls = results.map(r => r.url)
+
+    if (roomId) {
+      const total = results.length
+      let done = 0
+      const trackUploads = async () => {
+        try {
+          await Promise.all(results.map(async ({ uploadPromise }) => {
+            await uploadPromise
+            done++
+            if (done === total) {
+              socketProvider.messageRoom(roomId, 'UPLOAD_COMPLETE', { roomId, urls })
+            }
+          }))
+        } catch (err) {
+          socketProvider.messageRoom(roomId, 'UPLOAD_ERROR', { roomId, message: err.message })
+        }
+      }
+      trackUploads()
+    }
+
+    return urls
   }
 
   /**

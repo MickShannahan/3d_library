@@ -10,10 +10,11 @@ export class MeshesController extends BaseController {
 
   async uploadMeshes(req, res, next) {
     try {
-      const urls = await uploadService.uploadFiles(req.files.meshes, {
+      const urls = await uploadService.uploadFilesAsync(req.files.meshes, {
         folder: req.query.folder,
-        client: '3dmodels'
-      },)
+        client: '3dmodels',
+        roomId: req.query.roomId
+      })
       res.send(urls)
     } catch (error) {
       next(error)
