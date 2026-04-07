@@ -22,6 +22,10 @@ button {
   }
 }
 
+.no-underline {
+  text-decoration: none !important;
+}
+
 #pop-toast-container {
   display: flex;
   flex-direction: column;

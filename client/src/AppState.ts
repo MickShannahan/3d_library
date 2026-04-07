@@ -13,7 +13,9 @@ interface AppState {
   scaleModelsBy: 0,
   draggingMesh: PartMesh
   draggingFromPartGroup: PartGroup | null
-  jobs: Job[],
+  jobs: Job[]
+  models: Model[]
+  activeModel: Model
   authors: Author[]
 }
 
@@ -24,6 +26,8 @@ export const AppState = reactive<AppState>({
   scaleModelsBy: 0,
   draggingMesh: null,
   draggingFromPartGroup: null,
+  models: [],
+  activeModel: null,
   jobs: [],
   authors: [
     new Author({

@@ -13,7 +13,9 @@ class MeshService {
     if (newMeshGroups instanceof Model) {
       AppState.meshGroups = [...AppState.meshGroups, newMeshGroups]
     } else {
-      AppState.meshGroups = [...AppState.meshGroups, new Model({ meshes: newMeshGroups })]
+      const model = new Model({ meshes: newMeshGroups })
+      model.load()
+      AppState.meshGroups = [...AppState.meshGroups, model]
     }
   }
 

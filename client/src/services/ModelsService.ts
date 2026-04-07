@@ -5,13 +5,26 @@ import { STLExporter } from "three/examples/jsm/Addons.js"
 import { cameraState } from "@/utils/CameraState"
 import { imageUploadService } from "./ImageUploadService"
 import { jobsService } from "./JobService"
+import { AppState } from "@/AppState"
 
 const exporter = new STLExporter()
 
 class ModelsService {
 
-  async createModel(model: Model) {
 
+  async getModels() {
+    const res = await api.get('api/models')
+    const models = res.data.map(d => new Model(d))
+    logger.log('models', models)
+    AppState.models = models
+  }
+
+  setActiveModel(model) {
+    AppState.activeModel = model
+  }
+
+
+  async createModel(model: Model) {
 
     jobsService.clearJobQueue()
     jobsService

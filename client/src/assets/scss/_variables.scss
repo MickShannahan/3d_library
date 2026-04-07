@@ -1,19 +1,19 @@
 $body-bg: #fff;
-$body-bg-dark: #1b1f22;
+$body-bg-dark: #16161d;
 $theme-colors: (
-  "primary": #0e6efd,
+  "primary": #4545ff,
   "secondary": #aeb2b6,
-  "success": #198754,
+  "success": rgb(117, 241, 0),
   "info": #0ccaf0,
   "warning": #ffc105,
   "danger": #dc3545,
-  "dark": #212529,
+  "dark": #16161d,
   "light": #f8f9fa,
   "body-bg": #fff,
   // Bootstrap extended colors
   "gray": $gray-500,
   "grey": $gray-500,
-  "blue": $blue,
+  "blue": rgb(17, 81, 255),
   "indigo":$indigo,
   "purple":$purple,
   "pink":$pink,
@@ -23,9 +23,6 @@ $theme-colors: (
   "green":rgb(117, 241, 0),
   "teal": $teal,
   "cyan":rgb(23, 209, 255),
-  // Custom colors
-  "codeworks": #141d2b,
-  "vue": #42b883,
   // Normal map colors
   "normal": #8080ff,
   "normal-x": #ff8080,
@@ -41,3 +38,7 @@ $normal-y: #80ff9a;
 $normal-z: #80d4ff;
 $normal-shadow: #3d2d6e;
 $normal-grad: linear-gradient(135deg, $normal-x 0%, $normal-base 40%, $normal-z 70%, $normal-y 100%);
+
+:root {
+  --normal-grad-bg: $normal-grad
+}

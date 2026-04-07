@@ -12,6 +12,7 @@ import { Author } from "./Author"
 interface ModelOptions {
   _id?: string
   meshes?: PartMesh[]
+  name?: string
   order?: number
   visible?: boolean
   groupRotation?: VectorCoordinates
@@ -28,6 +29,7 @@ interface ModelOptions {
 export class Model extends Group {
   _id: string
   meshes: PartMesh[]
+  private _meshData: any[]
   order?: number
   groupRotation?: VectorCoordinates
   startingScale?: number
@@ -45,7 +47,9 @@ export class Model extends Group {
   constructor(options: ModelOptions = {}) {
     super()
     this._id = options._id ?? generateId()
-    this.meshes = options.meshes
+    this.name = options.name
+    this._meshData = options.meshes ?? []
+    this.meshes = []
     this.order = options.order ?? 0
     this.visible = options.visible ?? true
     this.groupRotation = options.groupRotation ?? new Vector3(0, 0, 0)
@@ -60,8 +64,13 @@ export class Model extends Group {
     this.price = options.price ?? 0
     this.adjustedScale = options.adjustedScale ?? 1
     this.size = options.size ?? 0
+  }
+
+  async load() {
+    if (this.loaded) return
+    this.meshes = this._meshData.map(m => m instanceof PartMesh ? m : new PartMesh(m))
     this.meshes.forEach(m => this.add(m))
-    this.initialize()
+    await this.initialize()
   }
 
   async initialize() {
