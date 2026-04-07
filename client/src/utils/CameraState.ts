@@ -10,6 +10,9 @@ interface CameraRef {
 
 export const cameraState = reactive({
   isPanning: false,
+  showGrid: true,
+  showAxis: true,
   cameraRef: null as CameraRef | null,
-  clearColor: '#16161d'
+  clearColor: '#16161d',
+  selectedMaterial: 'Flesh Rainbow'
 })

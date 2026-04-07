@@ -20,6 +20,7 @@ defineProps({
 .toolbar-wrapper{
   position: absolute;
   z-index: 1;
+  user-select: none;
 }
 
 .top{
@@ -27,6 +28,10 @@ defineProps({
 }
 .left{
   left:0;
+}
+.center{
+  left: 50%;
+  transform: translateX(-50%);
 }
 .bottom{
   bottom:0;

@@ -30,7 +30,7 @@ function handleSelectedFiles(files){
 
 function ungroupedMeshes(group: Model){
   const groupedIds = group.partGroups.flatMap(pg => pg.partIds)
-  return group.meshes.filter(m => !groupedIds.includes(m.uuid))
+  return group.meshes.filter(m => !groupedIds.includes(m._id))
 }
 
 </script>
@@ -44,9 +44,9 @@ function ungroupedMeshes(group: Model){
       <button v-if="fileGroups.length" v-tooltip="'Create model'" class="btn btn-normal-grad" data-bs-toggle="modal" data-bs-target="#create-model"><i class="mdi mdi-creation"></i></button>
     </div>
 
-    <FileListGroup v-for="group in fileGroups" :key="group.uuid"  :group>
+    <FileListGroup v-for="group in fileGroups" :key="group._id"  :group>
 
-      <FileListItem v-for="file in ungroupedMeshes(group)" :file :key="file.uuid"/>
+      <FileListItem v-for="file in ungroupedMeshes(group)" :file :key="`file-item-${file._id}`"/>
 
       <FileListPartGroupItem v-for="partGroup in group.partGroups" :partGroup :key="partGroup.name"/>
 

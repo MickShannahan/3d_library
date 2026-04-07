@@ -5,7 +5,7 @@ import { meshService } from '@/services/MeshService';
 import { logger } from '@/utils/Logger';
 import { Pop } from '@/utils/Pop';
 import { string } from 'three/tsl';
-import { watch, onMounted, ref, computed } from 'vue';
+import { watch, onMounted, ref, computed, getCurrentInstance, shallowRef } from 'vue';
 
 
 const props = defineProps({
@@ -13,14 +13,15 @@ const props = defineProps({
   accent: {type: String, default: 'blue'}
 })
 const emit = defineEmits(['dragstart'])
+const isVisible = shallowRef(true)
 const fileSelected = computed(()=> AppState.selectedMeshIds.includes(props.file._id))
 const progressLoaded = ref(0)
 const accentColor = ref(`rgba(var(--bs-${props.accent}-rgb),.2)`)
 
 onMounted(()=>{
   props.file.addEventListener('progress', handleFileProgress)
+  isVisible.value = props.file.visible
 })
-
 
 function handleFileProgress(progress){
   progressLoaded.value = progress.value
@@ -33,6 +34,7 @@ function handleFileClick(event){
 
 function hideMesh(){
   meshService.toggleVisibility(props.file)
+  isVisible.value = props.file.visible
 }
 
 async function destroyMesh(){
@@ -71,8 +73,8 @@ function handleDragEnd(){
          {{ file.name }}
         </div>
 
-      <div>
-        <button v-if="file.visible" @click.stop="hideMesh"><i class="bi bi-eye"></i></button>
+      <div >
+        <button v-if="isVisible" @click.stop="hideMesh"><i class="bi bi-eye"></i></button>
         <button v-else @click.stop="hideMesh"><i class="bi bi-eye-slash text-secondary"></i></button>
         <button @click.stop="destroyMesh"><i class="bi bi-trash3"></i></button>
       </div>

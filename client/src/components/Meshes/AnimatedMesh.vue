@@ -5,6 +5,8 @@ import { lerp } from '@/utils/3Dtransforms';
 import { useLoop } from '@tresjs/core';
 import { Euler, Vector3 } from 'three';
 import { computed, markRaw, onMounted, shallowRef } from 'vue';
+import { cameraState } from '@/utils/CameraState';
+import { MATERIAL_REGISTRY } from '@/utils/Materials';
 
 const { onRender } = useLoop()
 
@@ -13,6 +15,7 @@ const { mesh } = defineProps({
 })
 
 const selectedMesh = computed(()=> AppState.selectedMeshIds.includes(mesh._id))
+const currentMaterial = computed(() => MATERIAL_REGISTRY[cameraState.selectedMaterial]?.component)
 
 const localRotation = shallowRef(new Euler())
 const localPosition = shallowRef(new Vector3())
@@ -60,7 +63,7 @@ const selectedMeshIds = computed(() => AppState.selectedMeshIds)
     <primitive :object="markRaw(mesh)">
       <TresMeshGreyRainboxMaterial v-if="selectedMeshIds.includes(mesh._id)"/>
       <TresMeshBasicMaterial v-else-if="mesh.silhouette" color="black" :transparent="true" :opacity=".2"/>
-      <TresMeshFleshRainbowMaterial v-else />
+      <component v-else :is="currentMaterial" />
     </primitive>
   </TresGroup>
 </template>

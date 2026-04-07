@@ -51,11 +51,13 @@ class MeshService {
   hideMesh(mesh: PartMesh, onlySilhouette = false) {
     this._recentlyHiddenMeshes.push(mesh)
     onlySilhouette ? mesh.silhouette = true : mesh.visible = false
+    onlySilhouette ? '' : mesh.isVisible = false
   }
 
   showMesh(mesh: PartMesh, onlySilhouette = false) {
     this._recentlyHiddenMeshes = this._recentlyHiddenMeshes.filter(m => m != mesh)
     onlySilhouette ? mesh.silhouette = false : mesh.visible = true
+    onlySilhouette ? '' : mesh.isVisible = true
   }
 
   toggleVisibility(mesh: PartMesh, onlySilhouette = false) {

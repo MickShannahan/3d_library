@@ -9,7 +9,7 @@ import { logger } from '@/utils/Logger';
 
 
 const selectedMeshes = computed(()=>AppState.selectedMeshIds)
-const rotateStep = ref(90)
+const rotateStep = ref(15)
 const positionEditable = ref(new Vector3(0,0,0))
 
 function quickRotate(x,y,z){
@@ -42,7 +42,7 @@ function handleUpdatePosition(x,y,z){
 
 
 <template>
-  <section class="tools glass-pane border rounded rounded-3 p-2" :class="{disabled: selectedMeshes.length == 0}">
+  <section class="tools glass-pane border rounded rounded-3 p-2" >
     <div class="d-flex flex-column gap-2">
       <!-- Rotation -->
       <section>
@@ -74,28 +74,38 @@ function handleUpdatePosition(x,y,z){
       <section>
         <div class="small-input-group rounded-3">
             <label>Position</label>
-            <div class="d-flex flex-column gap-1">
-              <div class="d-flex">
-                <label>x</label>
-                <div class="d-flex justify-content-between">
-                  <InputDraggable direction="horizontal" :min="-100" :max="100" v-model="positionEditable.x" @update:modelValue="(v)=>handleUpdatePosition(v,positionEditable.y,positionEditable.z)" :step="1"/>
-                </div>
-                <label></label>
+            <div class="d-flex flex-column">
+
+              <div class="input-row">
+                <span>x</span>
+                  <InputDraggable :disabled="!selectedMeshes.length" direction="horizontal" :min="-100" :max="100" v-model="positionEditable.x" @update:modelValue="(v)=>handleUpdatePosition(v,positionEditable.y,positionEditable.z)" :step="1">
+                    <span class="d-flex badge border border-normal-x text-normal-x rounded-3" :style="`transform: translateX(clamp(-25%, ${positionEditable.x}%, 25%))`">
+                      <i class="mdi mdi-chevron-left pe-3"></i><i class="mdi mdi-chevron-right"></i>
+                    </span>
+                  </InputDraggable>
+                <button v-tooltip="'Reset'" @click="handleUpdatePosition(0,positionEditable.y,positionEditable.z)"><i class="bi bi-arrow-repeat"></i></button>
               </div>
-              <div class="d-flex">
-                <label>y</label>
-                <div class="d-flex justify-content-between">
-                  <InputDraggable direction="horizontal" :min="-100" :max="100" v-model="positionEditable.y" @update:modelValue="(v)=>handleUpdatePosition(positionEditable.x,v,positionEditable.z)" :step="1"/>
-                </div>
-                <label></label>
+
+              <div class="input-row">
+                <span>y</span>
+                  <InputDraggable :disabled="!selectedMeshes.length" direction="horizontal" :min="-100" :max="100" v-model="positionEditable.y" @update:modelValue="(v)=>handleUpdatePosition(positionEditable.x,v,positionEditable.z)" :step="1">
+                    <span class="d-flex badge border border-normal-y text-normal-y rounded-3" :style="`transform: translateX(clamp(-25%, ${positionEditable.y}%, 25%))`">
+                      <i class="mdi mdi-chevron-left pe-3"></i><i class="mdi mdi-chevron-right"></i>
+                    </span>
+                  </InputDraggable>
+                <button v-tooltip="'Reset'" @click="handleUpdatePosition(positionEditable.x,0,positionEditable.z)"><i class="bi bi-arrow-repeat"></i></button>
               </div>
-              <div class="d-flex">
-                <label>z</label>
-                <div class="d-flex justify-content-between">
-                  <InputDraggable direction="horizontal" :min="-100" :max="100" v-model="positionEditable.z" @update:modelValue="(v)=>handleUpdatePosition(positionEditable.x,positionEditable.y,v)" :step="1"/>
-                </div>
-                <label></label>
+
+              <div class="input-row">
+                <span>z</span>
+                  <InputDraggable :disabled="!selectedMeshes.length" direction="horizontal" :min="-100" :max="100" v-model="positionEditable.z" @update:modelValue="(v)=>handleUpdatePosition(positionEditable.x,positionEditable.y,v)" :step="1">
+                    <span class="d-flex badge border border-normal-z text-normal-z rounded-3" :style="`transform: translateX(clamp(-25%, ${positionEditable.z}%, 25%))`">
+                      <i class="mdi mdi-chevron-left pe-3"></i><i class="mdi mdi-chevron-right"></i>
+                    </span>
+                  </InputDraggable>
+                <button v-tooltip="'Reset'" @click="handleUpdatePosition(positionEditable.x,positionEditable.y,0)"><i class="bi bi-arrow-repeat"></i></button>
               </div>
+
             </div>
         </div>
       </section>
@@ -135,6 +145,12 @@ button {
   &:active {
     transform: scale(0.92);
   }
+}
+
+.input-row{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .small-input-group{

@@ -11,7 +11,6 @@ import { AppState } from '@/AppState';
 import { meshService } from '@/services/MeshService';
 
 import AnimatedGroup from './Meshes/AnimatedGroup.vue';
-import BottomToolBar from './ToolBars/BottomToolBar.vue';
 import CameraControls from './ToolBars/CameraControls.vue';
 import FileListPane from './FileListPane.vue';
 import ToolBar from './ToolBars/ToolBar.vue';
@@ -21,6 +20,7 @@ import SceneClickHandler from './SceneClickHandler.vue'
 import JobsPane from './JobsPane.vue'
 import { delay } from '@/utils/Delay';
 import { cameraState } from '@/utils/CameraState';
+import WorldControls from './WorldControls.vue';
 
 const camera = useTemplateRef('camera')
 
@@ -48,10 +48,16 @@ extend({MeshGreyRainboxMaterial})
       <MeshToolsPane/>
     </ToolBar>
 
-
-  <BottomToolBar>
-    <CameraControls :camera/>
-  </BottomToolBar>
+    <ToolBar :position="['bottom', 'center']">
+      <div class="d-flex gap-1">
+        <div class="glass-pane border rounded-3 p-2">
+          <CameraControls :camera/>
+        </div>
+        <div class="glass-pane border rounded-3 p-2">
+          <WorldControls />
+        </div>
+      </div>
+    </ToolBar>
 
   <JobsPane/>
 

@@ -59,8 +59,8 @@ async function snap360(focusModel: Model | PartMesh, shots: number = 8, hideOthe
   const currentClear = cameraState.clearColor
   cameraState.clearColor = 'black'
   meshService.clearSelectedMeshIds()
-  showAxes.value = false
-  showGrid.value = false
+  cameraState.showAxis = false
+  cameraState.showGrid = false
   lerpCamera.value = false
 
   if(hideOtherParts){
@@ -104,8 +104,8 @@ async function snap360(focusModel: Model | PartMesh, shots: number = 8, hideOthe
   }
   focusModel.images = capturedImages
 
-   showAxes.value = true
-  showGrid.value = true
+  cameraState.showAxis = true
+  cameraState.showGrid = true
   lerpCamera.value = true
   cameraState.clearColor = currentClear
   if(hideOtherParts) meshService.reshowHiddenMeshes()
@@ -146,8 +146,8 @@ extend({OrbitControls})
 
   <TresDirectionalLight :position="[-4, 12, -14]" :intensity="10.5" color="pink" /> -->
 
-  <TresGridHelper v-if="showGrid"/>
-  <TresAxesHelper v-if="showAxes"/>
+  <TresGridHelper v-if="cameraState.showGrid"/>
+  <TresAxesHelper v-if="cameraState.showAxis"/>
 </template>
 
 

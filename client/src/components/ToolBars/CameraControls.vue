@@ -62,9 +62,9 @@ async function snap360AllParts(){
   <button @click="faceCameraToAxis([0,0,15])" v-tooltip="'Face X Axis'"><i class="bi bi-front text-red" ></i>x</button>
   <button @click="faceCameraToAxis([15,0,0])" v-tooltip="'Face Y Axis'"><i class="mdi bi-front text-green" ></i>y</button>
   <button @click="faceCameraToAxis([0,15,0])" v-tooltip="'Face Z Axis'"><i class="mdi bi-front text-cyan" ></i>z</button>
-  <!-- <span class="spacer"></span>
-  <button @click="snap360Shots"><i class="mdi mdi-rotate-3d"></i></button>
-  <button @click="snap360AllParts"><i class="mdi mdi-rotate-360"></i> <i class="bi bi-boxes"></i></button> -->
+  <span class="spacer"></span>
+  <button @click="snap360Shots" v-tooltip="'Test 360 turn around'"><i class="mdi mdi-rotate-3d"></i></button>
+  <button @click="snap360AllParts"><i class="mdi mdi-rotate-360" v-tooltip="'Test Part Capture'"></i> <i class="bi bi-boxes"></i></button>
 </section>
 </template>
 

@@ -14,7 +14,6 @@ import goobertPurplePath from '@/assets/matcaps/goobert_purple_mat.png'
 import normalLighterPath from '@/assets/matcaps/normal_lighter_mat_512.png'
 import normalNegativePath from '@/assets/matcaps/normal_negative_mat_512.png'
 import purplePath from '@/assets/matcaps/purple_mat_512.png'
-import waterPath from '@/assets/matcaps/water_mat.png'
 import lilacPath from '@/assets/matcaps/lilac_mat.png'
 import diamondPath from '@/assets/matcaps/diamond_mat.png'
 import metalPath from '@/assets/matcaps/brushed_metal_mat.png'
@@ -22,6 +21,16 @@ import bubblePath from '@/assets/matcaps/bubble_mat.png'
 import innerPurpleGlowPath from '@/assets/matcaps/purple_inner_glow.png'
 import fleshPath from '@/assets/matcaps/flesh_mat.jpg'
 import fleshRainbowPath from '@/assets/matcaps/flesh_rainbow_mat.png'
+import clayMatPath from '@/assets/matcaps/clay_mat.png'
+import hardGoldPath from '@/assets/matcaps/hard_gold_mat.png'
+import lightGreyPath from '@/assets/matcaps/light_grey_mat.png'
+import maroonClayPath from '@/assets/matcaps/maroon_clay_mat.jpg'
+import peachClayPath from '@/assets/matcaps/peach_clay_mat.png'
+import redClayPath from '@/assets/matcaps/red_clay_mat.png'
+import softGoldPath from '@/assets/matcaps/soft_gold_mat.png'
+import softGreyPath from '@/assets/matcaps/soft_grey_mat.png'
+import toonCreamPath from '@/assets/matcaps/toon_cream_mat.png'
+import toonPurplePath from '@/assets/matcaps/toon_purple_mat.png'
 import { extend } from '@tresjs/core'
 
 const loader = new THREE.TextureLoader()
@@ -50,7 +59,6 @@ export const MeshGoobertPurpleMaterial = createMatcapMaterial(goobertPurplePath)
 export const MeshNormalLighterMaterial = createMatcapMaterial(normalLighterPath)
 export const MeshNormalNegativeMaterial = createMatcapMaterial(normalNegativePath)
 export const MeshPurpleMaterial = createMatcapMaterial(purplePath)
-export const MeshWaterMaterial = createMatcapMaterial(waterPath)
 export const MeshLilacMaterial = createMatcapMaterial(lilacPath)
 export const MeshDiamondMaterial = createMatcapMaterial(diamondPath)
 export const MeshBrushedMetalMaterial = createMatcapMaterial(metalPath)
@@ -58,6 +66,16 @@ export const MeshBubbleMaterial = createMatcapMaterial(bubblePath)
 export const MeshPurpleInnerGlowMaterial = createMatcapMaterial(innerPurpleGlowPath)
 export const MeshFleshMaterial = createMatcapMaterial(fleshPath)
 export const MeshFleshRainbowMaterial = createMatcapMaterial(fleshRainbowPath)
+export const MeshClayMaterial = createMatcapMaterial(clayMatPath)
+export const MeshHardGoldMaterial = createMatcapMaterial(hardGoldPath)
+export const MeshLightGreyMaterial = createMatcapMaterial(lightGreyPath)
+export const MeshMaroonClayMaterial = createMatcapMaterial(maroonClayPath)
+export const MeshPeachClayMaterial = createMatcapMaterial(peachClayPath)
+export const MeshRedClayMaterial = createMatcapMaterial(redClayPath)
+export const MeshSoftGoldMaterial = createMatcapMaterial(softGoldPath)
+export const MeshSoftGreyMaterial = createMatcapMaterial(softGreyPath)
+export const MeshToonCreamMaterial = createMatcapMaterial(toonCreamPath)
+export const MeshToonPurpleMaterial = createMatcapMaterial(toonPurplePath)
 
 // Standard materials — react to scene lights
 function createStandardMaterial(options: THREE.MeshStandardMaterialParameters) {
@@ -83,8 +101,9 @@ extend({
   MeshDarkPurpleMaterial,
   MeshGoobertMaterial,
   MeshGoobertPurpleMaterial,
+  MeshNormalLighterMaterial,
+  MeshNormalNegativeMaterial,
   MeshPurpleMaterial,
-  MeshWaterMaterial,
   MeshPlasticMaterial,
   MeshLilacMaterial,
   MeshDiamondMaterial,
@@ -93,4 +112,52 @@ extend({
   MeshPurpleInnerGlowMaterial,
   MeshFleshMaterial,
   MeshFleshRainbowMaterial,
+  MeshClayMaterial,
+  MeshHardGoldMaterial,
+  MeshLightGreyMaterial,
+  MeshMaroonClayMaterial,
+  MeshPeachClayMaterial,
+  MeshRedClayMaterial,
+  MeshSoftGoldMaterial,
+  MeshSoftGreyMaterial,
+  MeshToonCreamMaterial,
+  MeshToonPurpleMaterial,
+  MeshSteelMaterial,
+  MeshSelectedMaterial,
 })
+
+
+export const MATERIAL_REGISTRY = {
+  'Iridescent': { component: 'TresMeshIridescentMaterial', preview: iridescentMatPath },
+  'Normal Highlight': { component: 'TresMeshNormalHighlightMaterial', preview: normalHighlightPath },
+  'Grey Rainbow': { component: 'TresMeshGreyRainboxMaterial', preview: greyRainbowPath },
+  'Purple Rainbow': { component: 'TresMeshPurpleRainboxMaterial', preview: purpleRainbowPath },
+  'Blue Glow': { component: 'TresMeshBlueGlowMaterial', preview: blueGlowPath },
+  'Custom 4': { component: 'TresMeshCustom4Material', preview: custom4Path },
+  'Dark Grey': { component: 'TresMeshDarkGreyMaterial', preview: darkGreyPath },
+  'Dark Purple': { component: 'TresMeshDarkPurpleMaterial', preview: darkPurplePath },
+  'Goobert': { component: 'TresMeshGoobertMaterial', preview: goobertPath },
+  'Goobert Purple': { component: 'TresMeshGoobertPurpleMaterial', preview: goobertPurplePath },
+  'Normal Lighter': { component: 'TresMeshNormalLighterMaterial', preview: normalLighterPath },
+  'Normal Negative': { component: 'TresMeshNormalNegativeMaterial', preview: normalNegativePath },
+  'Purple': { component: 'TresMeshPurpleMaterial', preview: purplePath },
+  'Lilac': { component: 'TresMeshLilacMaterial', preview: lilacPath },
+  'Diamond': { component: 'TresMeshDiamondMaterial', preview: diamondPath },
+  'Brushed Metal': { component: 'TresMeshBrushedMetalMaterial', preview: metalPath },
+  'Bubble': { component: 'TresMeshBubbleMaterial', preview: bubblePath },
+  'Purple Inner Glow': { component: 'TresMeshPurpleInnerGlowMaterial', preview: innerPurpleGlowPath },
+  'Flesh': { component: 'TresMeshFleshMaterial', preview: fleshPath },
+  'Flesh Rainbow': { component: 'TresMeshFleshRainbowMaterial', preview: fleshRainbowPath },
+  'Steel': { component: 'TresMeshSteelMaterial', preview: purpleRainbowPath },
+  'Plastic': { component: 'TresMeshPlasticMaterial', preview: blueGlowPath },
+  'Clay': { component: 'TresMeshClayMaterial', preview: clayMatPath },
+  'Hard Gold': { component: 'TresMeshHardGoldMaterial', preview: hardGoldPath },
+  'Light Grey': { component: 'TresMeshLightGreyMaterial', preview: lightGreyPath },
+  'Maroon Clay': { component: 'TresMeshMaroonClayMaterial', preview: maroonClayPath },
+  'Peach Clay': { component: 'TresMeshPeachClayMaterial', preview: peachClayPath },
+  'Red Clay': { component: 'TresMeshRedClayMaterial', preview: redClayPath },
+  'Soft Gold': { component: 'TresMeshSoftGoldMaterial', preview: softGoldPath },
+  'Soft Grey': { component: 'TresMeshSoftGreyMaterial', preview: softGreyPath },
+  'Toon Cream': { component: 'TresMeshToonCreamMaterial', preview: toonCreamPath },
+  'Toon Purple': { component: 'TresMeshToonPurpleMaterial', preview: toonPurplePath },
+}

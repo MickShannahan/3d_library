@@ -10,7 +10,8 @@ const props = defineProps({
   max: Number,
   min: Number,
   step: {type: Number, default: 1},
-  pixels: {type: Number, default: 6}
+  pixels: {type: Number, default: 6},
+  disabled: {type: Boolean, default: false}
 })
 const emit = defineEmits(['update:modelValue', 'input'])
 
@@ -61,10 +62,12 @@ function dropped(event){
 
 
 <template>
-<div>
-  <slot draggable="true" @dragstart.prevent="handleDragStart" @drag.prevent>
-    <i class="drag-handle mdi mdi-unfold-more-vertical"></i>
-  </slot>
+<div :class="{disabled}">
+  <span draggable="true" @dragstart.prevent="handleDragStart" @drag.prevent class="drag-handle">
+    <slot >
+      <i class=" mdi mdi-unfold-more-vertical"></i>
+    </slot>
+  </span>
     <span v-if="isDragging" :style="`--mx: ${mousePosition.x}px; --my: ${mousePosition.y}px;`" class="value-popup">
     <span v-if="modelValue == min"><i class="mdi mdi-arrow-collapse-left text-secondary"></i></span>
     {{ modelValue }}
@@ -77,6 +80,11 @@ function dropped(event){
 
 
 <style lang="scss" scoped>
+.disabled{
+  cursor: not-allowed;
+  filter: brightness(.75)
+}
+
 .drag-handle{
   cursor: grab;
 }
@@ -91,5 +99,6 @@ function dropped(event){
   padding: .25em .75em;
   border-radius: 8px;
   transform: translate(-50%, -120%);
+  backdrop-filter: blur(10px) brightness(.8);
 }
 </style>
