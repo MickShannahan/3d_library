@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { AppState } from '@/AppState'
 import { ordersService } from '@/services/OrdersService'
-import { type CustomerContact, type OrderNote } from '@/models/Order'
+import { Order, type CustomerContact, type OrderNote } from '@/models/Order'
 import { Pop } from '@/utils/Pop'
 import { Modal } from 'bootstrap'
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, watch } from 'vue'
+import PartPopUp from './PartPopUp.vue'
+
+const props = defineProps({
+  order: { type: Order, default: null },
+  modalId: { type: String, default: 'create-order' }
+})
+
+const isEditMode = computed(() => !!props.order)
 
 const CONTACT_TYPES = ['phone', 'email', 'discord', 'etsy', 'twitter', 'bluesky'] as const
 const STATUS_OPTIONS = ['pending', 'hold', 'printing', 'shipped', 'completed', 'archived'] as const
@@ -68,7 +76,7 @@ const selectedModel = computed(() =>
 const ungroupedParts = computed(() => {
   if (!selectedModel.value) return []
   const groupedIds = new Set(selectedModel.value.partGroups.flatMap(g => g.partIds))
-  return selectedModel.value.meshes.filter(m => !groupedIds.has(m._id))
+  return selectedModel.value.meshData.filter(m => !groupedIds.has(m._id))
 })
 
 const sizeDisplay = computed({
@@ -82,7 +90,7 @@ const sizeDisplay = computed({
 })
 
 function getMeshById(id: string) {
-  return selectedModel.value?.meshes.find(m => m._id === id || m.uuid === id)
+  return selectedModel.value?.meshData.find(m => m._id === id || m.uuid === id)
 }
 
 function addContact() {
@@ -97,7 +105,7 @@ function initializeParts(model: typeof AppState.models[number]) {
   checkedParts.value.clear()
   const groupedIds = new Set(model.partGroups.flatMap(g => g.partIds))
   // All ungrouped parts start selected
-  model.meshes.forEach(m => {
+  model.meshData.forEach(m => {
     if (!groupedIds.has(m._id)) checkedParts.value.add(m._id)
   })
   // In each group, only the defaultPartId starts selected
@@ -147,19 +155,24 @@ function closeDropdown(id: string) {
 }
 
 async function submitForm() {
-  if (!formData.customerName) {
+  if (!formData.customerName.trim()) {
     Pop.error('Please enter a customer name')
     return
   }
   loading.value = true
   try {
-    formData.notes = noteBody.value.trim() ? [{ body: noteBody.value.trim() }] : []
-    await ordersService.createOrder(formData)
-    Pop.toast(`Order for ${formData.customerName} created!`)
-    Modal.getOrCreateInstance('#create-order')?.hide()
-    resetForm()
+    if (isEditMode.value) {
+      await ordersService.updateOrder(props.order._id, formData)
+      Pop.toast(`Order #${props.order.orderNumber} updated!`)
+    } else {
+      formData.notes = noteBody.value.trim() ? [{ body: noteBody.value.trim() }] : []
+      await ordersService.createOrder(formData)
+      Pop.toast(`Order for ${formData.customerName} created!`)
+      resetForm()
+    }
+    Modal.getOrCreateInstance(`#${props.modalId}`)?.hide()
   } catch (error) {
-    Pop.error(error, 'Could not create order')
+    Pop.error(error, isEditMode.value ? 'Could not update order' : 'Could not create order')
   }
   loading.value = false
 }
@@ -182,6 +195,25 @@ function resetForm() {
   noteBody.value = ''
   modelSearch.value = ''
 }
+
+watch(() => props.order, (newOrder) => {
+  if (!newOrder) return
+  formData.customerName     = newOrder.customerName
+  formData.customerPrice    = newOrder.customerPrice
+  formData.customerPaid     = newOrder.customerPaid
+  formData.status           = newOrder.status
+  formData.price            = newOrder.price
+  formData.paid             = newOrder.paid
+  formData.modelScale       = newOrder.modelScale
+  formData.modelSize        = newOrder.modelSize
+  formData.customerAddress  = newOrder.customerAddress
+  formData.customerContacts = newOrder.customerContacts.map(c => ({ ...c }))
+  formData.modelId          = newOrder.modelId
+  formData.partIds          = [...newOrder.partIds]
+  formData.notes            = newOrder.notes.map(n => ({ ...n }))
+  modelSearch.value         = newOrder.model?.name ?? ''
+  checkedParts.value        = new Set(newOrder.partIds)
+}, { immediate: true })
 </script>
 
 <template>
@@ -191,7 +223,10 @@ function resetForm() {
     <!-- Header -->
     <div class="row mb-3 align-items-center">
       <div class="col">
-        <h5 class="mb-0"><i class="mdi mdi-package-variant-plus me-2"></i>Create New Order</h5>
+        <h5 class="mb-0">
+        <i class="mdi me-2" :class="isEditMode ? 'mdi-pencil' : 'mdi-package-variant-plus'"></i>
+        {{ isEditMode ? `Edit Order #${order?.orderNumber}` : 'Create New Order' }}
+      </h5>
       </div>
       <div class="col-auto">
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -207,12 +242,12 @@ function resetForm() {
         <!-- Name + Address -->
         <div class="row g-3">
           <div class="col-12">
-            <label class="form-label">Customer Name <span class="text-danger">*</span></label>
+            <label class="form-label"><i class="mdi mdi-card-account-details"></i> Customer Name <span class="text-danger">*</span></label>
             <input v-model="formData.customerName" type="text" class="form-control"
               placeholder="Enter customer name" required />
           </div>
           <div class="col-12">
-            <label class="form-label">Shipping Address</label>
+            <label class="form-label"> <i class="mdi mdi-map-marker"></i> Shipping Address</label>
             <textarea v-model="formData.customerAddress" class="form-control" rows="3"
               placeholder="Street, City, State, Zip"></textarea>
           </div>
@@ -221,7 +256,7 @@ function resetForm() {
         <!-- Contacts -->
         <div>
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <label class="form-label mb-0">Contacts</label>
+            <label class="form-label mb-0"><i class="mdi mdi-comment-account"></i> Contacts</label>
             <button type="button" class="btn btn-sm btn-outline-light" @click="addContact">
               <i class="mdi mdi-plus"></i> Add
             </button>
@@ -232,10 +267,11 @@ function resetForm() {
             <div class="col-auto">
               <div class="dropdown">
                 <button type="button"
-                  class="btn btn-outline-secondary contact-type-btn"
+                  class="btn border"
                   :class="{ show: openDropdowns.has(`contact-${index}`) }"
                   @click="toggleDropdown(`contact-${index}`)">
                   <i class="mdi" :class="CONTACT_ICONS[contact.type]"></i>
+                  <i class="mdi mdi-chevron-down"></i>
                 </button>
                 <ul class="dropdown-menu" :class="{ show: openDropdowns.has(`contact-${index}`) }">
                   <li v-for="type in CONTACT_TYPES" :key="type">
@@ -274,7 +310,7 @@ function resetForm() {
 
         <!-- Model Search -->
         <div>
-          <label class="form-label">Select Model</label>
+          <label class="form-label"><i class="bi bi-boxes"></i> Select Model</label>
           <div class="model-search-wrap">
             <div class="input-group">
               <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
@@ -300,7 +336,7 @@ function resetForm() {
                 <div v-else class="model-thumb bg-secondary rounded"></div>
                 <div class="d-flex flex-column">
                   <span class="fw-semibold">{{ model.name }}</span>
-                  <small class="text-muted">{{ model.author?.name }}</small>
+                  <small class="text-muted"><img :src="model.author?.image" height="16" width="16" class="rounded-2"> {{ model.author?.name }}</small>
                 </div>
               </li>
             </ul>
@@ -344,9 +380,9 @@ function resetForm() {
             <!-- Ungrouped Parts (all start selected) -->
             <div v-if="ungroupedParts.length" class="part-group mb-2">
               <div class="part-group-header d-flex align-items-center gap-2 px-2 py-1 mb-1 rounded">
-                <i class="mdi mdi-cube-outline text-secondary"></i>
+                <i class="mdi mdi-cube-outline text-normal-z"></i>
                 <span class="fw-semibold small text-uppercase">Parts</span>
-                <span class="badge bg-secondary ms-auto">{{ ungroupedParts.filter(p => checkedParts.has(p._id)).length }}/{{ ungroupedParts.length }}</span>
+                <span class="badge bg-normal ms-auto">{{ ungroupedParts.filter(p => checkedParts.has(p._id)).length }}/{{ ungroupedParts.length }}</span>
               </div>
               <div class="part-chip-grid">
                 <div v-for="part in ungroupedParts" :key="part._id"
@@ -360,12 +396,13 @@ function resetForm() {
                     @change="togglePartCheck(part._id)"
                     @click.stop
                   />
-                  <img
-                    v-if="part.images?.[0]?.data"
+                  <PartPopUp :mesh="part" v-if="part.images?.[0]?.data">
+                    <img
                     :src="part.images[0].data"
                     class="part-chip-img rounded"
                     alt="part"
-                  />
+                    />
+                  </PartPopUp>
                   <div v-else class="part-chip-img rounded bg-secondary"></div>
                   <span class="part-chip-name">{{ part.name }}</span>
                 </div>
@@ -377,7 +414,6 @@ function resetForm() {
               <div class="part-group-header d-flex align-items-center gap-2 px-2 py-1 mb-1 rounded">
                 <i class="mdi mdi-layers-outline text-primary"></i>
                 <span class="fw-semibold small text-uppercase">{{ group.name }}</span>
-                <span class="badge bg-primary-subtle text-primary ms-auto">choose one</span>
               </div>
               <div class="part-chip-grid">
                 <div v-for="partId in group.partIds" :key="partId"
@@ -391,12 +427,13 @@ function resetForm() {
                     @change="togglePartCheck(partId)"
                     @click.stop
                   />
-                  <img
-                    v-if="getMeshById(partId)?.images?.[0]?.data"
+                  <PartPopUp v-if="getMeshById(partId)?.images?.[0]?.data" :mesh="getMeshById(partId)">
+                    <img
                     :src="getMeshById(partId).images[0].data"
                     class="part-chip-img rounded"
                     alt="part"
-                  />
+                    />
+                  </PartPopUp>
                   <div v-else class="part-chip-img rounded bg-secondary"></div>
                   <span class="part-chip-name">{{ getMeshById(partId)?.name ?? partId }}</span>
                   <span v-if="group.defaultPartId === partId" class="part-chip-badge">★</span>
@@ -426,11 +463,11 @@ function resetForm() {
         <label class="form-label d-flex align-items-center justify-content-between">
           Size
           <div class="btn-group btn-group-sm ms-2" role="group">
-            <button type="button" class="btn btn-sm"
-              :class="sizeUnit === 'mm' ? 'btn-primary' : 'btn-outline-secondary'"
+            <button type="button" class="btn btn-outline btn-sm"
+              :class="sizeUnit === 'mm' ? 'btn-primary' : 'btn-secondary'"
               @click="sizeUnit = 'mm'">mm</button>
-            <button type="button" class="btn btn-sm"
-              :class="sizeUnit === 'in' ? 'btn-primary' : 'btn-outline-secondary'"
+            <button type="button" class="btn btn-outline btn-sm"
+              :class="sizeUnit === 'in' ? 'btn-primary' : 'btn-secondary'"
               @click="sizeUnit = 'in'">in</button>
           </div>
         </label>
@@ -457,7 +494,7 @@ function resetForm() {
         <label class="form-label">Status</label>
         <div class="dropdown w-100">
           <button type="button"
-            class="btn btn-outline-light w-100 text-start d-flex align-items-center gap-2"
+            class="btn border w-100 text-start d-flex align-items-center gap-2"
             :class="{ show: openDropdowns.has('status') }"
             @click="toggleDropdown('status')">
             <i class="mdi" :class="STATUS_ICONS[formData.status]"></i>
@@ -479,7 +516,7 @@ function resetForm() {
     </div>
 
     <!-- Footer: Payment toggles + Actions -->
-    <div class="d-flex align-items-center gap-4">
+    <div class="d-flex align-items-center gap-4 mt-4">
       <div class="form-check form-switch">
         <input id="customerPaid" v-model="formData.customerPaid" type="checkbox" class="form-check-input" role="switch" />
         <label for="customerPaid" class="form-check-label">Customer Paid</label>
@@ -489,11 +526,15 @@ function resetForm() {
         <label for="paid" class="form-check-label">Paid Out</label>
       </div>
       <div class="ms-auto d-flex gap-2">
-        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn text-secondary me-4" data-bs-dismiss="modal">Cancel</button>
         <button type="submit" class="btn btn-normal-grad px-4" :disabled="loading">
-          <span v-if="!loading">Create Order <i class="mdi mdi-check"></i></span>
+          <span v-if="!loading">
+            {{ isEditMode ? 'Save Changes' : 'Create Order' }}
+            <i class="mdi" :class="isEditMode ? 'mdi-content-save' : 'mdi-check'"></i>
+          </span>
           <span v-else>
-            <span class="spinner-border spinner-border-sm me-2" role="status"></span>Creating...
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ isEditMode ? 'Saving...' : 'Creating...' }}
           </span>
         </button>
       </div>
@@ -503,6 +544,18 @@ function resetForm() {
 </template>
 
 <style lang="scss" scoped>
+.dropdown-menu.show,
+.model-dropdown{
+  margin: 0;
+  padding: 0.25rem 0;
+  background: rgba(var(--bs-dark-rgb), .5);
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.375rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+
 // ── Model search ─────────────────────────────────────────
 .model-search-wrap {
   position: relative;
@@ -515,12 +568,6 @@ function resetForm() {
   max-height: 260px;
   overflow-y: auto;
   list-style: none;
-  margin: 0;
-  padding: 0.25rem 0;
-  background: #1e1e2e;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0.375rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 .model-option {
@@ -532,7 +579,7 @@ function resetForm() {
   transition: background 0.15s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(var(--bs-primary-rgb), .2);
   }
 }
 
@@ -545,8 +592,7 @@ function resetForm() {
 
 // ── Model preview card ────────────────────────────────────
 .model-preview {
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--bs-black-rgb), .25);
 }
 
 .img-wrapper {
@@ -576,16 +622,13 @@ function resetForm() {
 
 // ── Parts selector ────────────────────────────────────────
 .parts-scroll {
-  max-height: 380px;
-  overflow-y: auto;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.375rem;
+  border-radius: 1em;
   padding: 0.5rem;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(var(--bs-black-rgb), .25);
 }
 
 .part-group-header {
-  background: rgba(255, 255, 255, 0.05);
+  // background: rgba(255, 255, 255, 0.05);
   letter-spacing: 0.04em;
 }
 
@@ -603,19 +646,23 @@ function resetForm() {
   gap: 0.35rem;
   padding: 0.2rem 0.4rem 0.2rem 0.3rem;
   border-radius: 0.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+  background: rgba(var(--bs-light-rgb), .1);
   cursor: pointer;
   transition: background 0.12s, border-color 0.12s;
   max-width: 180px;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.09);
+    background: rgba(var(--bs-secondary-rgb), .1);
   }
 
   &--checked {
-    background: rgba(13, 110, 253, 0.15);
-    border-color: rgba(13, 110, 253, 0.4);
+    background: rgba(var(--bs-primary-rgb), .15);
+    border-color: rgba(var(--bs-primary-rgb), .5);
+  }
+
+  input{
+    margin: 0;
   }
 }
 
@@ -637,20 +684,10 @@ function resetForm() {
 
 .part-chip-badge {
   font-size: 0.6rem;
-  color: rgba(13, 110, 253, 0.9);
+  color: var(--bs-info);
   flex-shrink: 0;
 }
 
-// ── Contact type button ───────────────────────────────────
-.contact-type-btn {
-  width: 40px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  font-size: 1.1rem;
-}
 
 // ── Notes ─────────────────────────────────────────────────
 .note-chip {

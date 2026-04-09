@@ -25,13 +25,23 @@ class OrdersService {
     const order = new Order(res.data)
     const idx = AppState.orders.findIndex(o => o._id === orderId)
     if (idx !== -1) AppState.orders[idx] = order
+    if (AppState.activeOrder?._id === orderId) AppState.activeOrder = order
     return order
+  }
+
+  async syncOrderNumbers(orders) {
+    const stripped = orders.map(o => { return { _id: o.id, orderNumber: o.orderNumber } })
+    const res = await api.put(`api/orders/bulk`, stripped)
   }
 
   async deleteOrder(orderId: string) {
     await api.delete(`api/orders/${orderId}`)
     const idx = AppState.orders.findIndex(o => o._id === orderId)
     if (idx !== -1) AppState.orders.splice(idx, 1)
+  }
+
+  setActiveOrder(order: Order | null) {
+    AppState.activeOrder = order
   }
 }
 

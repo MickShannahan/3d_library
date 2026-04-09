@@ -17,6 +17,7 @@ interface AppState {
   models: Model[]
   activeModel: Model
   activeAuthor: Author | null
+  activeOrder: Order | null
   authors: Author[],
   tags: string[]
   orders: Order[]
@@ -32,6 +33,7 @@ export const AppState = reactive<AppState>({
   models: [],
   activeModel: null,
   activeAuthor: null,
+  activeOrder: null,
   jobs: [],
   tags: ['nintendo', 'monster', 'capcom', 'warhammer 40k', 'warhammer AoS'],
   orders: [],

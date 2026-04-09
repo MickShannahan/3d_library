@@ -100,6 +100,10 @@ export class Model extends Group {
     return this.name + '_' + this._id
   }
 
+  get meshData() {
+    return this._meshData
+  }
+
   toData() {
     return {
       _id: this._id,

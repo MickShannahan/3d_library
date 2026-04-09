@@ -2,12 +2,15 @@ import { NotFound } from "@bcwdev/auth0provider/lib/Errors.js"
 import { dbContext } from "../db/DbContext.js"
 
 class OrdersService {
+
   async createOrder(orderData = {}) {
-    return await dbContext.Orders.create(orderData)
+    const lastOrder = await dbContext.Orders.findOne().sort('-createdAt')
+    const nextOrderNumber = lastOrder ? lastOrder.orderNumber + 1 : 0
+    return await dbContext.Orders.create({ ...orderData, orderNumber: nextOrderNumber })
   }
 
   async findOrders(query = {}) {
-    return await dbContext.Orders.find(query).populate('model')
+    return await dbContext.Orders.find(query).sort('orderNumber').populate('model', 'name coverImage')
   }
 
   async findOrderById(orderId = '') {
@@ -17,9 +20,20 @@ class OrdersService {
   }
 
   async updateOrder(orderId = '', updateData = {}) {
-    const order = await dbContext.Orders.findByIdAndUpdate(orderId, updateData, { new: true }).populate('model')
+    const order = await dbContext.Orders.findByIdAndUpdate(orderId, updateData, { new: true }).populate('model', 'name coverImage')
     if (!order) throw new NotFound(`No Order with id: ${orderId}`)
     return order
+  }
+
+  async updateBulk(orders = []) {
+    const updates = orders.map(order => ({
+      updateOne: {
+        filter: { _id: order._id },
+        update: { $set: order }
+      }
+    }))
+    await dbContext.Orders.bulkWrite(updates)
+    return this.findOrders()
   }
 
   async deleteOrder(orderId = '') {

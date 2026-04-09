@@ -1,5 +1,9 @@
 @import '_main.scss';
 
+body {
+  overflow-x: hidden;
+}
+
 #app {
   display: flex;
   flex-direction: column;
@@ -20,7 +24,7 @@ main {
   font-size: 14px;
 }
 
-.btn,
+.btn:not([class*="btn-"]),
 button {
   background-color: unset;
   border: unset;
@@ -32,6 +36,18 @@ button {
 
 .btn.active {
   background-color: rgba(var(--bs-primary-rgb), .4);
+}
+
+[class*="btn-outline-"] {
+  background-color: rgba(var(--bs-btn-focus-shadow-rgb), .2);
+  color: var(--bs-btn-color);
+  border-color: var(--bs-btn-color)
+}
+
+.btn-outline {
+  background-color: rgba(var(--bs-btn-focus-shadow-rgb), .2);
+  color: var(--bs-btn-bg);
+  border-color: var(--bs-btn-bg);
 }
 
 .no-underline {

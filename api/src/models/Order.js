@@ -29,7 +29,7 @@ export const OrderSchema = new Schema({
 
 OrderSchema.virtual('model', {
   localField: 'modelId',
-  ref: 'Models',
+  ref: 'Model',
   foreignField: '_id',
-  justOne: true
+  justOne: true,
 })

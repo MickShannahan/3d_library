@@ -7,6 +7,7 @@ export class OrdersController extends BaseController {
     this.router
       .get('', this.getOrders)
       .post('', this.createOrder)
+      .put('/bulk', this.updateBulk)
       .put('/:orderId', this.updateOrder)
       .delete('/:orderId', this.deleteOrder)
   }
@@ -35,6 +36,15 @@ export class OrdersController extends BaseController {
       const orderId = req.params.orderId
       const order = await ordersService.updateOrder(orderId, req.body)
       res.send(order)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async updateBulk(req, res, next) {
+    try {
+      const orders = req.body
+      res.send(await ordersService.updateBulk(orders))
     } catch (error) {
       next(error)
     }

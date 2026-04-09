@@ -26,5 +26,6 @@ export class PartGroup {
     return model
   }
 
+  static GROUP_COLORS = ['--bs-normal', '--bs-normal-x', '--bs-normal-shadow', '--bs-indigo', '--bs-blue', '--bs-orange', '--bs-cyan', '--bs-purple']
 
 }
