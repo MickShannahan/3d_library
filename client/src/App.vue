@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import Navbar from './components/Navbar.vue';
+import { onMounted } from 'vue';
+import { authorsService } from './services/AuthorsService';
+import { modelsService } from './services/ModelsService';
+
+onMounted(()=>{
+  authorsService.getAuthors()
+  modelsService.getModels()
+})
+
 </script>
 
 <template>

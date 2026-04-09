@@ -1,10 +1,10 @@
 import { reactive } from "vue";
 import { Model } from "./models/Model";
-import { UUID } from "crypto";
 import { PartMesh } from "./models/PartMesh";
 import { PartGroup } from "./models/PartGroup";
 import { Job } from "./models/Job";
 import { Author } from './models/Author'
+import { Order } from './models/Order'
 
 interface AppState {
   meshGroups: Model[]
@@ -19,6 +19,7 @@ interface AppState {
   activeAuthor: Author | null
   authors: Author[],
   tags: string[]
+  orders: Order[]
 }
 
 export const AppState = reactive<AppState>({
@@ -33,6 +34,7 @@ export const AppState = reactive<AppState>({
   activeAuthor: null,
   jobs: [],
   tags: ['nintendo', 'monster', 'capcom', 'warhammer 40k', 'warhammer AoS'],
+  orders: [],
   authors: [
     new Author({
       name: 'Matmire Makes',

@@ -17,7 +17,7 @@ const collapsed = ref(false)
 const editingName = ref(false)
 
 watch(collapsed, (value)=>{
-  const elm = Collapse.getOrCreateInstance(`#file-list-collapse-${group.uuid}`)
+  const elm = Collapse.getOrCreateInstance(`#file-list-collapse-${group._id}`)
   if(!value) elm.show()
   else elm.hide()
 })
@@ -28,7 +28,7 @@ function rotateGroup(){
 }
 
 function selectGroup(){
-  meshService.selectGroupOfMeshId(group.meshes.map(m => m._id || m.uuid))
+  meshService.selectGroupOfMeshId(group.meshes.map(m => m._id))
 }
 
 function rename(){

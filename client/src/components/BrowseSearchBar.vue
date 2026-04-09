@@ -34,7 +34,7 @@ function selectTag(tag){
   </form>
   <section class="row justify-content-center my-2">
     <div class="col-md-9">
-      <span v-for="tag in tags" role="button" class="btn btn-sm badge bg-normal-shadow me-1 d-inline-block" @click="selectTag(tag[0])" v-tooltip="tag[1]">{{ tag[0] }}</span>
+      <span v-for="tag in tags" role="button" class="btn btn-sm badge  me-1 d-inline-block" @click="selectTag(tag[0])" :style="`background: rgba(var(--bs-normal-rgb), ${tag[1]*.15})`" v-tooltip="tag[1]">{{ tag[0] }}</span>
     </div>
   </section>
   

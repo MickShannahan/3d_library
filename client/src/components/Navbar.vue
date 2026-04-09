@@ -45,6 +45,6 @@
 
 
 .site-logo{
-  height: 60px;
+  height: 50px;
 }
 </style>

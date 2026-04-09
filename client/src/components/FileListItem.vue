@@ -53,7 +53,7 @@ function handleDragEnd(){
   // so remove this mesh from its source group
   if(AppState.draggingFromPartGroup){
     const ids = AppState.draggingFromPartGroup.partIds
-    const idx = ids.indexOf(props.file.uuid)
+    const idx = ids.indexOf(props.file._id)
     if(idx !== -1) ids.splice(idx, 1)
   }
   AppState.draggingMesh = null
