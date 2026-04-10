@@ -4,7 +4,7 @@ import { dbContext } from "../db/DbContext.js"
 class OrdersService {
 
   async createOrder(orderData = {}) {
-    const lastOrder = await dbContext.Orders.findOne().sort('-createdAt')
+    const lastOrder = await dbContext.Orders.findOne().sort('-orderNumber')
     const nextOrderNumber = lastOrder ? lastOrder.orderNumber + 1 : 0
     return await dbContext.Orders.create({ ...orderData, orderNumber: nextOrderNumber })
   }

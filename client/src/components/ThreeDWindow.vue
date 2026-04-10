@@ -25,7 +25,7 @@ import WorldControls from './WorldControls.vue';
 const camera = useTemplateRef('camera')
 
 
-const meshGroups = computed(()=> AppState.meshGroups.filter(mg => AppState.loadedMeshGroups.includes(mg.uuid)))
+const meshGroups = computed(()=> AppState.meshGroups.filter(mg => AppState.loadedMeshGroups.includes(mg._id)))
 
 
 watch(()=> AppState.loadedMeshGroups.length, async (last)=>{

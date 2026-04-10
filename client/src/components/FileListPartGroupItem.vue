@@ -23,7 +23,7 @@ function handlePartDragStart(mesh){
 }
 
 function removePartFromGroup(mesh){
-  const id = mesh.uuid
+  const id = mesh._id
   const idx = props.partGroup.partIds.indexOf(id)
   if(idx !== -1) props.partGroup.partIds.splice(idx, 1)
 }
@@ -35,11 +35,11 @@ function partDropped(){
   // If coming from another part group, remove it from there first
   if(AppState.draggingFromPartGroup && AppState.draggingFromPartGroup !== props.partGroup){
     const srcIds = AppState.draggingFromPartGroup.partIds
-    const idx = srcIds.indexOf(meshDropped.uuid)
+    const idx = srcIds.indexOf(meshDropped._id)
     if(idx !== -1) srcIds.splice(idx, 1)
   }
 
-  const id = meshDropped.uuid
+  const id = meshDropped._id
   if(!props.partGroup.partIds.includes(id)){
     props.partGroup.partIds.push(id)
   }
@@ -58,7 +58,7 @@ function partDropped(){
     {{ partGroup.name }}
   </div>
   <section class="d-flex flex-column gap-1 p-2 pe-0">
-    <div v-for="part in partGroup.parts" :key="part.uuid" class="d-flex align-items-center gap-1">
+    <div v-for="part in partGroup.parts" :key="part._id" class="d-flex align-items-center gap-1">
       <FileListItem 
         @click="selectActivePart(part)" 
         :file="part" 

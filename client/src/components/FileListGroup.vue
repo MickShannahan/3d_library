@@ -71,7 +71,7 @@ async function createModel(){
       </button>
 
     </div>
-    <section :id="`file-list-collapse-${group.uuid}`" class="group-files gap-1 p-2 pe-0 collapse show">
+    <section :id="`file-list-collapse-${group._id}`" class="group-files gap-1 p-2 pe-0 collapse show">
       <slot></slot>
     </section>
   </section>

@@ -63,7 +63,7 @@ export class Model extends Group {
     this.images = []
     this.coverImage = options.coverImage ?? ''
     this.turnAroundImage = options.turnAroundImage ?? ''
-    this.partGroups = options.partGroups ?? []
+    this.partGroups = options.partGroups ? options.partGroups.map(pg => new PartGroup(pg as any, this)) : []
     this.author = options.author ?? null
     this.tags = options.tags ?? []
     this.price = options.price ?? 0
@@ -93,7 +93,7 @@ export class Model extends Group {
     const bottomOffset = -box.min.y
     this.position.set(-center.x, bottomOffset, -center.z)
     logger.log('🗿❇️', this)
-    AppState.loadedMeshGroups.push(this.uuid)
+    AppState.loadedMeshGroups.push(this._id)
   }
 
   get folderRef() {

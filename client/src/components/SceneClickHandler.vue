@@ -32,7 +32,7 @@ function handleClick(event: MouseEvent) {
   intersects.sort((a, b) => a.distance - b.distance)
 
   if (intersects.length > 0) {
-    meshService.selectMeshId(intersects[0].object._id || intersects[0].object.uuid, !event.shiftKey)
+    meshService.selectMeshId(intersects[0].object._id, !event.shiftKey)
   } else {
     meshService.clearSelectedMeshIds()
   }

@@ -90,7 +90,7 @@ const sizeDisplay = computed({
 })
 
 function getMeshById(id: string) {
-  return selectedModel.value?.meshData.find(m => m._id === id || m.uuid === id)
+  return selectedModel.value?.meshData.find(m => m._id === id)
 }
 
 function addContact() {

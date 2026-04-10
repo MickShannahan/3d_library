@@ -6,6 +6,7 @@ import { AppState } from '@/AppState'
 import { PartGroup } from '@/models/PartGroup'
 import { modelsService } from '@/services/ModelsService'
 import { Author } from '@/models/Author'
+import { Model } from '@/models/Model'
 
 const model = computed(() => AppState.meshGroups[0])
 
@@ -53,7 +54,7 @@ const sizeDisplay = computed({
     if (model.value) model.value.size = sizeUnit.value === 'in' ? parseFloat((v * MM_PER_INCH).toFixed(2)) : v
   }
 })
-const dragging = ref<string | null>(null)         // uuid of mesh being dragged
+const dragging = ref<string | null>(null)         // _id of mesh being dragged
 const draggingFrom = ref<PartGroup | null>(null)  // source group, null = ungrouped
 
 const ungroupedMeshes = computed(() => {
@@ -63,12 +64,12 @@ const ungroupedMeshes = computed(() => {
 })
 
 function meshName(id: string) {
-  return model.value?.meshes.find(m => m.uuid === id || m._id === id)?.name ?? id
+  return model.value?.meshes.find(m => m._id === id)?.name ?? id
 }
 
 // --- Drag handlers ---
-function onDragStart(uuid: string, fromGroup: PartGroup | null = null) {
-  dragging.value = uuid
+function onDragStart(id: string, fromGroup: PartGroup | null = null) {
+  dragging.value = id
   draggingFrom.value = fromGroup
 }
 
@@ -104,7 +105,7 @@ function addPartGroup() {
     name: newGroupName.value,
     partIds: [],
     modelId: model.value._id
-  }))
+  }, model.value))
   newGroupName.value = ''
 }
 
@@ -113,17 +114,17 @@ function disbandGroup(group: PartGroup) {
   if (idx !== -1) model.value.partGroups.splice(idx, 1)
 }
 
-function removeFromGroup(group: PartGroup, uuid: string) {
-  const idx = group.partIds.indexOf(uuid)
+function removeFromGroup(group: PartGroup, id: string) {
+  const idx = group.partIds.indexOf(id)
   if (idx !== -1) group.partIds.splice(idx, 1)
-  if (group.defaultPartId === uuid) group.defaultPartId = group.partIds[0] ?? null
+  if (group.defaultPartId === id) group.defaultPartId = group.partIds[0] ?? null
 }
 
-function removeMesh(meshUuid: string) {
-  const idx = model.value.meshes.findIndex(m => m.uuid === meshUuid)
+function removeMesh(meshId: string) {
+  const idx = model.value.meshes.findIndex(m => m._id === meshId)
   if (idx !== -1) model.value.meshes.splice(idx, 1)
   model.value.partGroups.forEach(pg => {
-    const pidx = pg.partIds.indexOf(meshUuid)
+    const pidx = pg.partIds.indexOf(meshId)
     if (pidx !== -1) pg.partIds.splice(pidx, 1)
   })
 }
@@ -132,7 +133,7 @@ async function handleSubmit() {
   model.value.author = selectedAuthor.value
   model.value.tags = tags.value
   closeModal()
-  await modelsService.createModel(model.value)
+  await modelsService.createModel(model.value as Model)
 }
 
 function closeModal(){
@@ -253,13 +254,13 @@ function closeModal(){
             <li v-if="!ungroupedMeshes.length" class="list-group-item text-muted fst-italic px-2 py-1">
               All parts are grouped
             </li>
-            <li v-for="mesh in ungroupedMeshes" :key="mesh.uuid"
+            <li v-for="mesh in ungroupedMeshes" :key="mesh._id"
               class="list-group-item d-flex align-items-center gap-2 px-2 py-1 mesh-row"
               draggable="true"
               @dragstart="onDragStart(mesh._id)">
               <i class="bi bi-grip-vertical text-muted drag-handle"></i>
               <input v-model="mesh.name" type="text" class="form-control form-control-sm" minlength="3" maxlength="50" @click.stop />
-              <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0" @click="removeMesh(mesh.uuid)">
+              <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0" @click="removeMesh(mesh._id)">
                 <i class="bi bi-trash"></i>
               </button>
             </li>

@@ -51,7 +51,7 @@ onRender(({delta})=>{
 
 <template>
       <TresGroup :rotation="localRotation" :scale="localScale" :position="localPosition">
-        <AnimatedMesh v-for="mesh in meshGroup.meshes" :mesh="mesh" :key="mesh.uuid"/>
+        <AnimatedMesh v-for="mesh in meshGroup.meshes" :mesh="mesh" :key="mesh._id"/>
       </TresGroup>
 </template>
 

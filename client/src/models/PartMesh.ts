@@ -10,6 +10,7 @@ const loader = new STLLoader()
 interface PartMeshOptions {
   _id?: string
   objectName?: string
+  name?: string
   resize?: number
   material?: THREE.Material
   src?: string
@@ -31,10 +32,10 @@ export class PartMesh extends THREE.Mesh {
 
   constructor(options: PartMeshOptions = {}) {
     super()
-    const { objectName, resize, material, src, _id, bytes } = options
+    const { objectName, name, resize, material, src, _id, bytes } = options
     this._id = _id ?? generateId()
     this.progress = 0
-    this.name = objectName ?? src
+    this.name = objectName ?? name ?? src
     this.src = src
     this.bytes = bytes ?? 0
     this.material = material ?? new THREE.MeshNormalMaterial()
@@ -69,6 +70,7 @@ export class PartMesh extends THREE.Mesh {
       )
     })
   }
+
 
 
   toData() {

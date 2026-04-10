@@ -101,7 +101,7 @@ function orderDropped(draggedOrder, targetOrderNumber){
 
 
 <template>
-<div class="d-flex flex-grow-1">
+<div class="d-flex flex-grow-1 px-2">
   <div class="flex-grow-1 overflow-auto">
     <!-- filters and tools -->
     <div class="container my-4">
@@ -181,28 +181,6 @@ function orderDropped(draggedOrder, targetOrderNumber){
 
 
 <style lang="scss" scoped>
-.side-window {
-  width: 0;
-  transition: all .2s ease;
-
-  &.open {
-    width: clamp(340px, 28dvw, 720px);
-    border-left: 1px solid var(--bs-primary);
-  }
-}
-
-@media (max-width: 768px){
-  .side-window{
-    left: 100dvw;
-    width: 100dvw;
-    height: calc(100dvh - 67px);
-    position: fixed;
-    &.open{
-    left: 0;
-    width: 100dvw;
-    }
-  }
-}
 
 .drop-zone{
   height: 0px;

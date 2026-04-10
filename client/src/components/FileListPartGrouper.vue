@@ -11,9 +11,9 @@ async function createPartGroup(){
   const activeModel = AppState.meshGroups[0]
   const newPartGroup = new PartGroup({
     name: partName,
-    modelId: activeModel._id || activeModel.uuid || activeModel.id,
+    modelId: activeModel._id || activeModel.id,
     partIds: selectedParts.value
-  })
+  }, activeModel)
   activeModel.partGroups.push(newPartGroup)
 }
 

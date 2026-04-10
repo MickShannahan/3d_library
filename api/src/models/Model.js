@@ -17,7 +17,7 @@ const PartMeshSchema = new Schema({
 const PartGroupSchema = new Schema({
   name: { type: String, required: true, minlength: 3, maxlength: 50 },
   partIds: [{ type: Schema.ObjectId }],
-  defaultPartId: { type: Schema.ObjectId }
+  defaultPartId: { type: Schema.ObjectId },
 })
 
 export const ModelSchema = new Schema({

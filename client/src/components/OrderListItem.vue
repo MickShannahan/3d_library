@@ -50,7 +50,7 @@ const statusIcon = STATUS_ICONS[props.order.status] || 'mdi-help-circle'
       </div>
 
       <!-- CENTER-LEFT: Order Details -->
-      <div class="col-4 col-md-2 order-1">
+      <div class="col-4 col-lg-2 order-1">
         <div class="d-flex flex-column gap-1">
           <div>
             <h6 class="mb-1">{{ order.model?.name ?? 'Unknown Model' }}</h6>
@@ -92,7 +92,7 @@ const statusIcon = STATUS_ICONS[props.order.status] || 'mdi-help-circle'
       </div>
 
       <!-- RIGHT: Status + Actions -->
-      <div class="col ps-4 text-end h-100 d-flex align-self-stretch justify-content-end order-2 order-lg-3">
+      <div class="col ps-4 text-end h-100 d-flex align-self-stretch justify-content-end order-2 ">
         <div class="d-flex flex-column align-items-end gap-2">
           <div class="status-badge" :class="`bg-${order.statusColor} border border-${order.statusColor} text-${order.statusColor}`" style="--bs-bg-opacity: .2">
             <i class="mdi" :class="order.statusIcon"></i>

@@ -3,11 +3,16 @@ import { Model } from '@/models/Model';
 import { modelsService } from '@/services/ModelsService';
 import { computed } from 'vue';
 import { Pop } from '@/utils/Pop';
+import { AppState } from '@/AppState';
+import { meshService } from '@/services/MeshService';
+import { useRouter } from 'vue-router';
 
 
 const props = defineProps({
   model: {type: Model}
 })
+
+const router = useRouter()
 
 function clearActive(){
   modelsService.setActiveModel(null)
@@ -40,6 +45,17 @@ const meshGroupMap = computed(() => {
   return map
 })
 
+async function openModelInViewer(){
+  let currentModel = AppState.models[0]
+  if(currentModel){
+    let deleteIt = await Pop.confirm("There is already a model in the 3D window", "Would you like to delete the model there and load this one?", 'Yes', 'Cancel') 
+    if(deleteIt)
+    meshService.destroyMeshGroup(currentModel._id)
+  }
+  meshService.addMeshGroups(props.model)
+  router.push({name: 'create'})
+}
+
 </script>
 
 
@@ -51,7 +67,7 @@ const meshGroupMap = computed(() => {
         <i class="bi bi-x fs-4"></i>
       </button>
       <div>
-        <button class="btn btn-sm selectable-primary me-1">Open 3D<i class="mdi mdi-open-in-new fs-5"></i></button>
+        <button @click="openModelInViewer" class="btn btn-sm selectable-primary me-1">Open 3D<i class="mdi mdi-open-in-new fs-5"></i></button>
         <button class="btn btn-sm btn-normal-grad">
           Create Order
           <i class="mdi mdi-package-variant-closed-plus fs-5"></i>

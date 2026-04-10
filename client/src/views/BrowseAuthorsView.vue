@@ -55,14 +55,4 @@ onMounted(async () => {
   gap: 1em;
 }
 
-.side-window {
-  width: 0px;
-  overflow-y: auto;
-  transition: all .2s ease;
-
-  &.open {
-    width: 800px;
-    border-left: 1px solid var(--bs-primary);
-  }
-}
 </style>
