@@ -27,6 +27,14 @@ export class PartGroup {
     return this._parentModel
   }
 
-  static GROUP_COLORS = ['--bs-normal', '--bs-normal-x', '--bs-normal-shadow', '--bs-indigo', '--bs-blue', '--bs-orange', '--bs-cyan', '--bs-purple']
+  static GROUP_COLORS = ['pink', 'indigo', 'purple', 'cyan', 'teal', 'normal-y', 'normal-x', 'normal-y', 'normal']
+
+  static color(index) {
+    return this.GROUP_COLORS[index % this.GROUP_COLORS.length]
+  }
+
+  static colorVar(index) {
+    return '--bs-' + this.GROUP_COLORS[index % this.GROUP_COLORS.length]
+  }
 
 }

@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { TresCanvas, extend, useLoop } from '@tresjs/core';
+import { TresCanvas, extend} from '@tresjs/core';
 import ThreeDCamera from './ThreeDCamera.vue';
 import { PartMesh } from '@/models/PartMesh';
-import { computed, ref, shallowRef, useTemplateRef, watch, nextTick } from 'vue';
+import { computed, useTemplateRef, watch } from 'vue';
 import * as THREE from 'three'
 import { logger } from '@/utils/Logger';
-import { MeshGreyRainboxMaterial, MeshNormalHighlightMaterial, MeshPurpleRainboxMaterial } from '@/utils/Materials';
-import { getGroupBox, getMeshesCenter, getModelCenter, rotate } from '@/utils/3Dtransforms';
+import { getMeshesCenter } from '@/utils/3Dtransforms';
 import { AppState } from '@/AppState';
 import { meshService } from '@/services/MeshService';
 
@@ -38,7 +37,6 @@ watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
 })
 
 
-extend({MeshGreyRainboxMaterial})
 </script>
 
 

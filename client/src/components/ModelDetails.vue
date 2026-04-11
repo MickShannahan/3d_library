@@ -6,6 +6,7 @@ import { Pop } from '@/utils/Pop';
 import { AppState } from '@/AppState';
 import { meshService } from '@/services/MeshService';
 import { useRouter } from 'vue-router';
+import { PartGroup } from '@/models/PartGroup';
 
 
 const props = defineProps({
@@ -39,7 +40,7 @@ const meshGroupMap = computed(() => {
   const map: Record<string, { name: string, color: string }> = {}
   props.model.partGroups.forEach((group, gi) => {
     group.partIds.forEach(id => {
-      map[id] = { name: group.name, color: groupColors[gi % groupColors.length] }
+      map[id] = { name: group.name, color: PartGroup.colorVar(gi) }
     })
   })
   return map
@@ -56,6 +57,15 @@ async function openModelInViewer(){
   router.push({name: 'create'})
 }
 
+function createOrder(){
+  router.push({
+    name: 'orders',
+    query: {
+      createOrder: props.model._id
+    }
+  })
+}
+
 </script>
 
 
@@ -68,7 +78,7 @@ async function openModelInViewer(){
       </button>
       <div>
         <button @click="openModelInViewer" class="btn btn-sm selectable-primary me-1">Open 3D<i class="mdi mdi-open-in-new fs-5"></i></button>
-        <button class="btn btn-sm btn-normal-grad">
+        <button @click="createOrder" class="btn btn-sm btn-normal-grad">
           Create Order
           <i class="mdi mdi-package-variant-closed-plus fs-5"></i>
         </button>

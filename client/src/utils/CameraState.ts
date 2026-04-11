@@ -14,5 +14,5 @@ export const cameraState = reactive({
   showAxis: true,
   cameraRef: null as CameraRef | null,
   clearColor: '#16161d',
-  selectedMaterial: 'Flesh Rainbow'
+  selectedMaterial: 'Studio Default'
 })

@@ -10,6 +10,9 @@ import { computed, onMounted, ref, shallowRef } from 'vue';
 import { Modal } from 'bootstrap';
 import { logger } from '@/utils/Logger';
 import { Order, STATUS_COLORS, STATUS_ICONS } from '@/models/Order';
+import { useRoute } from 'vue-router';
+
+const route = useRoute()
 
 const orders = computed(()=> {
   const filtered = AppState.orders.filter(order => {
@@ -40,7 +43,13 @@ async function getOrders(){
   }
 }
 
-onMounted(()=>{getOrders()})
+onMounted(()=>{
+  getOrders()
+  if(route.query.createOrder){
+    logger.log('✨start creating!', route.query.createOrder)
+    openCreateOrderModal()
+  }
+})
 
 function openCreateOrderModal() {
   const modal = Modal.getOrCreateInstance('#create-order')

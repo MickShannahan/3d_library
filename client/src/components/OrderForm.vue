@@ -4,8 +4,20 @@ import { ordersService } from '@/services/OrdersService'
 import { Order, type CustomerContact, type OrderNote } from '@/models/Order'
 import { Pop } from '@/utils/Pop'
 import { Modal } from 'bootstrap'
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, ref, computed, watch, onMounted } from 'vue'
 import PartPopUp from './PartPopUp.vue'
+import { useRoute, useRouter } from 'vue-router'
+import { Model } from '@/models/Model'
+
+const route = useRoute()
+const router = useRouter()
+
+onMounted(()=>{
+  if(route.query.createOrder) {
+    onSelectModel(AppState.models.find(m => m._id == route.query.createOrder) as Model)
+    router.push({query: {}})
+  }
+})
 
 const props = defineProps({
   order: { type: Order, default: null },
@@ -115,7 +127,7 @@ function initializeParts(model: typeof AppState.models[number]) {
   formData.partIds = Array.from(checkedParts.value)
 }
 
-function onSelectModel(model: typeof AppState.models[number]) {
+function onSelectModel(model: Model) {
   formData.modelId = model._id
   modelSearch.value = model.name
   modelSearchOpen.value = false

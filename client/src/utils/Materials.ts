@@ -1,37 +1,62 @@
 import * as THREE from 'three'
 
 // textures
-import iridescentMatPath from '@/assets/matcaps/iridecent_mat_512.png'
-import normalHighlightPath from '@/assets/matcaps/normal_highlight_2_mat_512.png'
-import greyRainbowPath from '@/assets/matcaps/custom_6_mat_512.png'
-import purpleRainbowPath from '@/assets/matcaps/custom_5_mat_512.png'
-import blueGlowPath from '@/assets/matcaps/blue_glow_mat.png'
-import custom4Path from '@/assets/matcaps/custom_4_mat_512.png'
-import darkGreyPath from '@/assets/matcaps/dark_grey_mat.png'
-import darkPurplePath from '@/assets/matcaps/dark_purple_mat.jpg'
-import goobertPath from '@/assets/matcaps/goobert_mat.png'
-import goobertPurplePath from '@/assets/matcaps/goobert_purple_mat.png'
-import normalLighterPath from '@/assets/matcaps/normal_lighter_mat_512.png'
-import normalNegativePath from '@/assets/matcaps/normal_negative_mat_512.png'
-import purplePath from '@/assets/matcaps/purple_mat_512.png'
-import lilacPath from '@/assets/matcaps/lilac_mat.png'
-import diamondPath from '@/assets/matcaps/diamond_mat.png'
-import metalPath from '@/assets/matcaps/brushed_metal_mat.png'
-import bubblePath from '@/assets/matcaps/bubble_mat.png'
-import innerPurpleGlowPath from '@/assets/matcaps/purple_inner_glow.png'
-import fleshPath from '@/assets/matcaps/flesh_mat.jpg'
-import fleshRainbowPath from '@/assets/matcaps/flesh_rainbow_mat.png'
-import clayMatPath from '@/assets/matcaps/clay_mat.png'
-import hardGoldPath from '@/assets/matcaps/hard_gold_mat.png'
-import lightGreyPath from '@/assets/matcaps/light_grey_mat.png'
-import maroonClayPath from '@/assets/matcaps/maroon_clay_mat.jpg'
-import peachClayPath from '@/assets/matcaps/peach_clay_mat.png'
-import redClayPath from '@/assets/matcaps/red_clay_mat.png'
-import softGoldPath from '@/assets/matcaps/soft_gold_mat.png'
-import softGreyPath from '@/assets/matcaps/soft_grey_mat.png'
-import toonCreamPath from '@/assets/matcaps/toon_cream_mat.png'
-import toonPurplePath from '@/assets/matcaps/toon_purple_mat.png'
+import iridescentPath from '@/assets/matcaps/iridecent_mat_512.png'
+import diamondPath from '@/assets/matcaps/diamond.jpeg'
+import normalLightPath from '@/assets/matcaps/normal-light.png'
+import normalBluePath from '@/assets/matcaps/normal-blue.png'
+import mutedMaroonPath from '@/assets/matcaps/muted-maroon.jpg'
+import softFleshPath from '@/assets/matcaps/soft-flesh.jpg'
+import studioDefaultPath from '@/assets/matcaps/studio-default.png'
+import studioBlackPath from '@/assets/matcaps/studio-black.png'
+import studioBluePath from '@/assets/matcaps/studio-blue.png'
+import studioBlushPath from '@/assets/matcaps/studio-blush.png'
+import studioBlushWetPath from '@/assets/matcaps/studio-blush-wet.png'
+import studioBrownClayPath from '@/assets/matcaps/studio-brown-clay.png'
+import studioChromePath from '@/assets/matcaps/studio-chrome.png'
+import studioDaisyPath from '@/assets/matcaps/studio-daisy.png'
+import studioFlatClayPath from '@/assets/matcaps/studio-flat-clay.png'
+import studioFlatGreyPath from '@/assets/matcaps/studio-flat-grey.png'
+import studioFleshPath from '@/assets/matcaps/studio-flesh.png'
+import studioGlassPath from '@/assets/matcaps/studio-glass.png'
+import studioGlassGreenPath from '@/assets/matcaps/studio-glass-green.png'
+import studioGlassRedPath from '@/assets/matcaps/studio-glass-red.png'
+import studioGlassTealPath from '@/assets/matcaps/studio-glass-teal.png'
+import studioGlowPurplePath from '@/assets/matcaps/studio-glow-purple.png'
+import studioGoldPath from '@/assets/matcaps/studio-gold.png'
+import studioIndigoPath from '@/assets/matcaps/studio-indigo.png'
+import studioLilacPath from '@/assets/matcaps/studio-lilac.png'
+import studioMaroonPath from '@/assets/matcaps/studio-maroon.png'
+import studioPeachPath from '@/assets/matcaps/studio-peach.png'
+import studioRedClayPath from '@/assets/matcaps/studio-red-clay.png'
+import studioSelectedPath from '@/assets/matcaps/studio-selected.png'
+import studioSlatePath from '@/assets/matcaps/studio-slate.png'
+import studioToxicPath from '@/assets/matcaps/studio-toxic.png'
+import studioWarmClayPath from '@/assets/matcaps/studio-warm-clay.png'
+import studioWetBigPath from '@/assets/matcaps/studio-wet-big.png'
+import studioWetFleshPath from '@/assets/matcaps/studio-wet-flesh.png'
+import studioWetPalePath from '@/assets/matcaps/studio-wet-pale.png'
+import studioWetTanPath from '@/assets/matcaps/studio-wet-tan.png'
+import studioYellowPath from '@/assets/matcaps/studio-yellow.png'
+import studioBrightFlesh from '@/assets/matcaps/studio-bright-flesh.png'
+import studioSeaGreen from '@/assets/matcaps/studio-sea-green.png'
+import studioBubblegumPath from '@/assets/matcaps/studio-bubblegum.png'
+import studioClayRedPath from '@/assets/matcaps/studio-clay-red.png'
+import studioClayPath from '@/assets/matcaps/studio-clay.png'
+import studioDeepRedPath from '@/assets/matcaps/studio-deep-red.png'
+import studioFlatRedPath from '@/assets/matcaps/studio-flat-red.png'
+import studioFleshPalePath from '@/assets/matcaps/studio-flesh-pale.png'
+import studioFleshSoftPath from '@/assets/matcaps/studio-flesh-soft.png'
+import studioGreenPath from '@/assets/matcaps/studio-green.png'
+import studioGreyPath from '@/assets/matcaps/studio-grey.png'
+import studioHotPinkPath from '@/assets/matcaps/studio-hot-pink.png'
+import studioMatteBlue from '@/assets/matcaps/studio-matte-blue.png'
+import studioMatteGreen from '@/assets/matcaps/studio-matte-green.png'
+import studioTealPath from '@/assets/matcaps/studio-teal.png'
+import studioUnderRedPath from '@/assets/matcaps/studio-under-red.png'
 import { extend } from '@tresjs/core'
+import { preview } from 'vite'
+import { logger } from './Logger'
 
 const loader = new THREE.TextureLoader()
 
@@ -46,118 +71,89 @@ function createMatcapMaterial(textureImportPath: string) {
   }
 }
 
-export const MeshIridescentMaterial = createMatcapMaterial(iridescentMatPath)
-export const MeshNormalHighlightMaterial = createMatcapMaterial(normalHighlightPath)
-export const MeshGreyRainboxMaterial = createMatcapMaterial(greyRainbowPath)
-export const MeshPurpleRainboxMaterial = createMatcapMaterial(purpleRainbowPath)
-export const MeshBlueGlowMaterial = createMatcapMaterial(blueGlowPath)
-export const MeshCustom4Material = createMatcapMaterial(custom4Path)
-export const MeshDarkGreyMaterial = createMatcapMaterial(darkGreyPath)
-export const MeshDarkPurpleMaterial = createMatcapMaterial(darkPurplePath)
-export const MeshGoobertMaterial = createMatcapMaterial(goobertPath)
-export const MeshGoobertPurpleMaterial = createMatcapMaterial(goobertPurplePath)
-export const MeshNormalLighterMaterial = createMatcapMaterial(normalLighterPath)
-export const MeshNormalNegativeMaterial = createMatcapMaterial(normalNegativePath)
-export const MeshPurpleMaterial = createMatcapMaterial(purplePath)
-export const MeshLilacMaterial = createMatcapMaterial(lilacPath)
-export const MeshDiamondMaterial = createMatcapMaterial(diamondPath)
-export const MeshBrushedMetalMaterial = createMatcapMaterial(metalPath)
-export const MeshBubbleMaterial = createMatcapMaterial(bubblePath)
-export const MeshPurpleInnerGlowMaterial = createMatcapMaterial(innerPurpleGlowPath)
-export const MeshFleshMaterial = createMatcapMaterial(fleshPath)
-export const MeshFleshRainbowMaterial = createMatcapMaterial(fleshRainbowPath)
-export const MeshClayMaterial = createMatcapMaterial(clayMatPath)
-export const MeshHardGoldMaterial = createMatcapMaterial(hardGoldPath)
-export const MeshLightGreyMaterial = createMatcapMaterial(lightGreyPath)
-export const MeshMaroonClayMaterial = createMatcapMaterial(maroonClayPath)
-export const MeshPeachClayMaterial = createMatcapMaterial(peachClayPath)
-export const MeshRedClayMaterial = createMatcapMaterial(redClayPath)
-export const MeshSoftGoldMaterial = createMatcapMaterial(softGoldPath)
-export const MeshSoftGreyMaterial = createMatcapMaterial(softGreyPath)
-export const MeshToonCreamMaterial = createMatcapMaterial(toonCreamPath)
-export const MeshToonPurpleMaterial = createMatcapMaterial(toonPurplePath)
+export const MATERIAL_REGISTRY = {
 
-// Standard materials — react to scene lights
-function createStandardMaterial(options: THREE.MeshStandardMaterialParameters) {
-  return class extends THREE.MeshStandardMaterial {
-    constructor() {
-      super(options)
-    }
-  }
 }
 
-export const MeshSteelMaterial = createStandardMaterial({ color: 0xccccdd, roughness: 0.25, metalness: 0.85 })
-export const MeshPlasticMaterial = createStandardMaterial({ color: 0x8888ff, roughness: 0.6, metalness: 0.0 })
-export const MeshSelectedMaterial = createStandardMaterial({ color: 0x44aaff, roughness: 0.4, metalness: 0.3, emissive: 0x112244 })
+const materials = [
+  // Core & Reference
+  { name: 'Studio Default', src: studioDefaultPath },
+  { name: 'Studio Selected', src: studioSelectedPath },
 
-extend({
-  MeshIridescentMaterial,
-  MeshNormalHighlightMaterial,
-  MeshGreyRainboxMaterial,
-  MeshPurpleRainboxMaterial,
-  MeshBlueGlowMaterial,
-  MeshCustom4Material,
-  MeshDarkGreyMaterial,
-  MeshDarkPurpleMaterial,
-  MeshGoobertMaterial,
-  MeshGoobertPurpleMaterial,
-  MeshNormalLighterMaterial,
-  MeshNormalNegativeMaterial,
-  MeshPurpleMaterial,
-  MeshPlasticMaterial,
-  MeshLilacMaterial,
-  MeshDiamondMaterial,
-  MeshBrushedMetalMaterial,
-  MeshBubbleMaterial,
-  MeshPurpleInnerGlowMaterial,
-  MeshFleshMaterial,
-  MeshFleshRainbowMaterial,
-  MeshClayMaterial,
-  MeshHardGoldMaterial,
-  MeshLightGreyMaterial,
-  MeshMaroonClayMaterial,
-  MeshPeachClayMaterial,
-  MeshRedClayMaterial,
-  MeshSoftGoldMaterial,
-  MeshSoftGreyMaterial,
-  MeshToonCreamMaterial,
-  MeshToonPurpleMaterial,
-  MeshSteelMaterial,
-  MeshSelectedMaterial,
+  // Normals
+  { name: 'Normal Light', src: normalLightPath },
+  { name: 'Normal Blue', src: normalBluePath },
+
+  // Flesh & Skin Tones
+  { name: 'Soft Flesh', src: softFleshPath },
+  { name: 'Studio Flesh', src: studioFleshPath },
+  { name: 'Studio Flesh Soft', src: studioFleshSoftPath },
+  { name: 'Studio Flesh Pale', src: studioFleshPalePath },
+  { name: 'Bright Flesh', src: studioBrightFlesh },
+  { name: 'Studio Blush', src: studioBlushPath },
+  { name: 'Studio Blush Wet', src: studioBlushWetPath },
+
+  // Clay Variants
+  { name: 'Studio Clay', src: studioClayPath },
+  { name: 'Studio Flat Clay', src: studioFlatClayPath },
+  { name: 'Studio Red Clay', src: studioRedClayPath },
+  { name: 'Studio Clay Red', src: studioClayRedPath },
+  { name: 'Studio Brown Clay', src: studioBrownClayPath },
+  { name: 'Studio Warm Clay', src: studioWarmClayPath },
+
+  // Flat & Matte
+  { name: 'Studio Flat Grey', src: studioFlatGreyPath },
+  { name: 'Studio Flat Red', src: studioFlatRedPath },
+  { name: 'Studio Matte Blue', src: studioMatteBlue },
+  { name: 'Studio Matte Green', src: studioMatteGreen },
+
+  // Color Palettes
+  { name: 'Studio Black', src: studioBlackPath },
+  { name: 'Studio Blue', src: studioBluePath },
+  { name: 'Studio Green', src: studioGreenPath },
+  { name: 'Studio Grey', src: studioGreyPath },
+  { name: 'Studio Teal', src: studioTealPath },
+  { name: 'Studio Peach', src: studioPeachPath },
+  { name: 'Studio Yellow', src: studioYellowPath },
+  { name: 'Studio Lilac', src: studioLilacPath },
+  { name: 'Studio Indigo', src: studioIndigoPath },
+  { name: 'Studio Maroon', src: studioMaroonPath },
+  { name: 'Muted Maroon', src: mutedMaroonPath },
+  { name: 'Studio Deep Red', src: studioDeepRedPath },
+  { name: 'Studio Under Red', src: studioUnderRedPath },
+  { name: 'Studio Hot Pink', src: studioHotPinkPath },
+  { name: 'Studio Bubblegum', src: studioBubblegumPath },
+  { name: 'Sea Green', src: studioSeaGreen },
+  { name: 'Studio Slate', src: studioSlatePath },
+  { name: 'Studio Daisy', src: studioDaisyPath },
+
+  // Glass
+  { name: 'Studio Glass', src: studioGlassPath },
+  { name: 'Studio Glass Green', src: studioGlassGreenPath },
+  { name: 'Studio Glass Red', src: studioGlassRedPath },
+  { name: 'Studio Glass Teal', src: studioGlassTealPath },
+
+  // Metallic & Reflective
+  { name: 'Studio Chrome', src: studioChromePath },
+  { name: 'Steel', src: studioChromePath },
+  { name: 'Studio Gold', src: studioGoldPath },
+
+  // Special Effects
+  { name: 'Studio Glow Purple', src: studioGlowPurplePath },
+  { name: 'Studio Toxic', src: studioToxicPath },
+
+  // Specialty
+  { name: 'Iridescent', src: iridescentPath },
+  { name: 'Diamond', src: diamondPath },
+]
+
+materials.forEach(material => {
+  let key = 'Mesh' + material.name.replaceAll(' ', '') + 'Material'
+  MATERIAL_REGISTRY[material.name] = {
+    component: key,
+    preview: material.src
+  }
+  extend({ [key]: createMatcapMaterial(material.src) })
 })
 
-
-export const MATERIAL_REGISTRY = {
-  'Iridescent': { component: 'TresMeshIridescentMaterial', preview: iridescentMatPath },
-  'Normal Highlight': { component: 'TresMeshNormalHighlightMaterial', preview: normalHighlightPath },
-  'Grey Rainbow': { component: 'TresMeshGreyRainboxMaterial', preview: greyRainbowPath },
-  'Purple Rainbow': { component: 'TresMeshPurpleRainboxMaterial', preview: purpleRainbowPath },
-  'Blue Glow': { component: 'TresMeshBlueGlowMaterial', preview: blueGlowPath },
-  'Custom 4': { component: 'TresMeshCustom4Material', preview: custom4Path },
-  'Dark Grey': { component: 'TresMeshDarkGreyMaterial', preview: darkGreyPath },
-  'Dark Purple': { component: 'TresMeshDarkPurpleMaterial', preview: darkPurplePath },
-  'Goobert': { component: 'TresMeshGoobertMaterial', preview: goobertPath },
-  'Goobert Purple': { component: 'TresMeshGoobertPurpleMaterial', preview: goobertPurplePath },
-  'Normal Lighter': { component: 'TresMeshNormalLighterMaterial', preview: normalLighterPath },
-  'Normal Negative': { component: 'TresMeshNormalNegativeMaterial', preview: normalNegativePath },
-  'Purple': { component: 'TresMeshPurpleMaterial', preview: purplePath },
-  'Lilac': { component: 'TresMeshLilacMaterial', preview: lilacPath },
-  'Diamond': { component: 'TresMeshDiamondMaterial', preview: diamondPath },
-  'Brushed Metal': { component: 'TresMeshBrushedMetalMaterial', preview: metalPath },
-  'Bubble': { component: 'TresMeshBubbleMaterial', preview: bubblePath },
-  'Purple Inner Glow': { component: 'TresMeshPurpleInnerGlowMaterial', preview: innerPurpleGlowPath },
-  'Flesh': { component: 'TresMeshFleshMaterial', preview: fleshPath },
-  'Flesh Rainbow': { component: 'TresMeshFleshRainbowMaterial', preview: fleshRainbowPath },
-  'Steel': { component: 'TresMeshSteelMaterial', preview: purpleRainbowPath },
-  'Plastic': { component: 'TresMeshPlasticMaterial', preview: blueGlowPath },
-  'Clay': { component: 'TresMeshClayMaterial', preview: clayMatPath },
-  'Hard Gold': { component: 'TresMeshHardGoldMaterial', preview: hardGoldPath },
-  'Light Grey': { component: 'TresMeshLightGreyMaterial', preview: lightGreyPath },
-  'Maroon Clay': { component: 'TresMeshMaroonClayMaterial', preview: maroonClayPath },
-  'Peach Clay': { component: 'TresMeshPeachClayMaterial', preview: peachClayPath },
-  'Red Clay': { component: 'TresMeshRedClayMaterial', preview: redClayPath },
-  'Soft Gold': { component: 'TresMeshSoftGoldMaterial', preview: softGoldPath },
-  'Soft Grey': { component: 'TresMeshSoftGreyMaterial', preview: softGreyPath },
-  'Toon Cream': { component: 'TresMeshToonCreamMaterial', preview: toonCreamPath },
-  'Toon Purple': { component: 'TresMeshToonPurpleMaterial', preview: toonPurplePath },
-}
+logger.log('MATERIALS', MATERIAL_REGISTRY)

@@ -29,6 +29,12 @@ const tagsInput = ref('')
 const tags = computed(() =>
   tagsInput.value.split(',').map(t => t.trim()).filter(t => t.length)
 )
+// ---- 👁️👁️ ----
+watch(model, (m)=>{
+  if(!m) return
+  if(m.author) selectAuthor(m.author)
+  if(m.tags.length) tagsInput.value = m.tags.join(', ')
+}, {immediate: true})
 
 const newGroupName = ref('')
 
@@ -285,16 +291,17 @@ function closeModal(){
             No groups yet — create one and drag parts into it
           </div>
 
-          <div v-for="group in model.partGroups" :key="group.name"
-            class="part-group-zone border-start border-pink ps-2 mb-2"
+          <div v-for="(group, i) in model.partGroups" :key="group.name"
+            class="part-group-zone border-start ps-2 mb-2"
+            :class="`border-${PartGroup.color(i)}`"
             @dragover.prevent
             @drop.prevent="onDropToGroup(group)">
 
             <!-- Group header -->
             <div class="d-flex align-items-center gap-2 py-1">
-              <i class="bi bi-boxes text-pink"></i>
+              <i :class="`bi bi-boxes text-${PartGroup.color(i)}`"></i>
               <input v-model="group.name" type="text" class="form-control form-control-sm" minlength="3" maxlength="50" />
-              <button type="button" class="btn btn-sm btn-outline-warning flex-shrink-0"
+              <button type="button" class="btn btn-sm  flex-shrink-0"
                 @click="disbandGroup(group)" title="Disband group">
                 <i class="bi bi-x-lg"></i>
               </button>
@@ -324,11 +331,6 @@ function closeModal(){
                   @click="removeFromGroup(group, id)" title="Remove from group">
                   <i class="bi bi-x"></i>
                 </button>
-              </div>
-
-              <div class="form-text mt-0" v-if="group.partIds.length > 1">
-                <i class="bi bi-circle-fill text-pink" style="font-size: 0.5rem"></i>
-                = default visible part
               </div>
             </div>
           </div>

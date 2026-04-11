@@ -6,7 +6,8 @@ import { AppState } from '@/AppState';
 import { logger } from '@/utils/Logger';
 
 const props = defineProps({
-  partGroup : PartGroup
+  partGroup : PartGroup,
+  index: {type: Number, default: 0}
 })
 
 const selectedPart = ref(props.partGroup.parts[0])
@@ -52,8 +53,8 @@ function partDropped(){
 
 
 <template>
-<section class="border-start border-pink" @dragover.prevent @drop.prevent="partDropped">
-  <div class="bg-pink ps-2 ">
+<section :class="`border-start border-${PartGroup.color(index)}`" @dragover.prevent @drop.prevent="partDropped">
+  <div :class="`bg-${PartGroup.color(index)} ps-2`">
     <i class="bi bi-boxes"></i>
     {{ partGroup.name }}
   </div>
@@ -62,7 +63,7 @@ function partDropped(){
       <FileListItem 
         @click="selectActivePart(part)" 
         :file="part" 
-        accent="pink"
+        :accent="PartGroup.color(index)"
         @dragstart="handlePartDragStart(part)"
         class="flex-grow-1"
       />

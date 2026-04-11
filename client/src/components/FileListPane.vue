@@ -48,7 +48,7 @@ function ungroupedMeshes(group: Model){
 
       <FileListItem v-for="file in ungroupedMeshes(group)" :file :key="`file-item-${file._id}`"/>
 
-      <FileListPartGroupItem v-for="partGroup in group.partGroups" :partGroup :key="partGroup.name"/>
+      <FileListPartGroupItem v-for="(partGroup, i) in group.partGroups" :partGroup :index="i" :key="partGroup.name"/>
 
     </FileListGroup>
 
