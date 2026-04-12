@@ -59,6 +59,27 @@ class SocketService {
 
     return { ready, complete }
   }
+
+  /**
+   * Joins a download room and listens for DOWNLOAD_PROGRESS events.
+   * Returns a cleanup function that leaves the room and removes listeners.
+   * @param roomId - The ID of the download room
+   * @param onProgress - Optional callback with (done, total) file counts as each file finishes
+   */
+  watchDownloadRoom(roomId: string, onProgress?: (done: number, total: number) => void): () => void {
+    const progressHandler = ({ roomId: id, done, total }: { roomId: string, done: number, total: number }) => {
+      if (id !== roomId) return
+      onProgress?.(done, total)
+    }
+
+    this.socket.on('DOWNLOAD_PROGRESS', progressHandler)
+    this.socket.emit('JOIN_DOWNLOAD_ROOM', roomId)
+
+    return () => {
+      this.socket.off('DOWNLOAD_PROGRESS', progressHandler)
+      this.socket.emit('LEAVE_ROOM', roomId)
+    }
+  }
 }
 
 export const socketService = new SocketService()

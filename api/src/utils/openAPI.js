@@ -49,71 +49,76 @@ function generateSwaggerSpec(controllers) {
   logger.log('Schemas', Object.keys(schemas).length);
 
   for (const controller of controllers) {
-    const basePath = controller.mount;
-    const stack = controller.router.stack;
+    try {
+      const basePath = controller.mount;
+      const stack = controller.router.stack;
 
-    let requiresAuth = false; // 🔥 Track when `.use(Auth0Provider.getAuthorizedUserInfo)` appears
-    let permissions = []; // 🔥 Track applied permissions
+      let requiresAuth = false; // 🔥 Track when `.use(Auth0Provider.getAuthorizedUserInfo)` appears
+      let permissions = []; // 🔥 Track applied permissions
 
-    for (const layer of stack) {
-      if (!layer.route) {
-        // 🔥 If `.use(Auth0Provider.getAuthorizedUserInfo)`, set requiresAuth = true for subsequent routes
-        const middlewareSecurity = extractSecurityFromMiddleware([layer]);
-        if (middlewareSecurity.requiresAuth) {
-          requiresAuth = true; // 🔥 Lock future routes
+      for (const layer of stack) {
+        if (!layer.route) {
+          // 🔥 If `.use(Auth0Provider.getAuthorizedUserInfo)`, set requiresAuth = true for subsequent routes
+          const middlewareSecurity = extractSecurityFromMiddleware([layer]);
+          if (middlewareSecurity.requiresAuth) {
+            requiresAuth = true; // 🔥 Lock future routes
+          }
+          if (middlewareSecurity.permissions.length > 0) {
+            permissions = [...new Set([...permissions, ...middlewareSecurity.permissions])];
+          }
+          continue;
         }
-        if (middlewareSecurity.permissions.length > 0) {
-          permissions = [...new Set([...permissions, ...middlewareSecurity.permissions])];
-        }
-        continue;
-      }
 
-      const routePath = basePath + layer.route.path;
-      const methods = Object.keys(layer.route.methods);
-      const handler = layer.route.stack[layer.route.stack.length - 1].handle;
+        const routePath = basePath + layer.route.path;
+        const methods = Object.keys(layer.route.methods);
+        const handler = layer.route.stack[layer.route.stack.length - 1].handle;
 
-      // 🔥 Extract per-route security
-      const routeSecurity = extractSecurityFromMiddleware(layer.route.stack);
+        // 🔥 Extract per-route security
+        const routeSecurity = extractSecurityFromMiddleware(layer.route.stack);
 
-      // 🔥 Merge per-route security with controller-wide security AFTER `.use()`
-      const finalRequiresAuth = requiresAuth || routeSecurity.requiresAuth;
-      const finalPermissions = [...new Set([...permissions, ...routeSecurity.permissions])];
+        // 🔥 Merge per-route security with controller-wide security AFTER `.use()`
+        const finalRequiresAuth = requiresAuth || routeSecurity.requiresAuth;
+        const finalPermissions = [...new Set([...permissions, ...routeSecurity.permissions])];
 
-      methods.forEach(method => {
-        if (!paths[routePath]) paths[routePath] = {};
+        methods.forEach(method => {
+          if (!paths[routePath]) paths[routePath] = {};
 
-        const statusCodes = extractStatusCodes(handler);
-        const schemaName = Object.keys(schemas).find(s => routePath.includes(s.toLowerCase()));
-        const responseSchemaRef = schemaName ? { "$ref": `#/components/schemas/${schemaName}` } : undefined;
+          const statusCodes = extractStatusCodes(handler);
+          const schemaName = Object.keys(schemas).find(s => routePath.includes(s.toLowerCase()));
+          const responseSchemaRef = schemaName ? { "$ref": `#/components/schemas/${schemaName}` } : undefined;
 
-        const securityDefinition = finalRequiresAuth ? [{ "bearerAuth": [] }] : undefined;
+          const securityDefinition = finalRequiresAuth ? [{ "bearerAuth": [] }] : undefined;
 
-        paths[routePath][method] = {
-          summary: `${handler.name}`,
-          description: `Auto-generated documentation`,
-          security: securityDefinition,
-          "x-permissions": finalPermissions.length > 0 ? finalPermissions : undefined,
-          requestBody: method !== "get" && schemaName
-            ? {
-              required: true,
-              content: {
-                "application/json": {
-                  schema: { "$ref": `#/components/schemas/${schemaName}` }
+          paths[routePath][method] = {
+            summary: `${handler.name}`,
+            description: `Auto-generated documentation`,
+            security: securityDefinition,
+            "x-permissions": finalPermissions.length > 0 ? finalPermissions : undefined,
+            requestBody: method !== "get" && schemaName
+              ? {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: { "$ref": `#/components/schemas/${schemaName}` }
+                  }
                 }
               }
-            }
-            : undefined,
-          responses: Object.fromEntries(statusCodes.map(code => [
-            code,
-            {
-              description: `Response for status ${code}`,
-              content: responseSchemaRef
-                ? { "application/json": { schema: responseSchemaRef } }
-                : undefined
-            }
-          ]))
-        };
-      });
+              : undefined,
+            responses: Object.fromEntries(statusCodes.map(code => [
+              code,
+              {
+                description: `Response for status ${code}`,
+                content: responseSchemaRef
+                  ? { "application/json": { schema: responseSchemaRef } }
+                  : undefined
+              }
+            ]))
+          };
+        });
+      }
+    } catch (error) {
+      console.error('CONTROLLER ERROR:', controller.mount)
+      throw error
     }
   }
 

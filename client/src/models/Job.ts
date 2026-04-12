@@ -13,7 +13,8 @@ export interface SubJob {
 interface JobOptions {
   label: string
   indeterminate?: boolean
-  run: (onProgress: (percent: number) => void, job?: Job) => Promise<void>
+  run: (onProgress: (percent: number) => void, job?: Job) => Promise<void>,
+  description?: string
 }
 
 export class Job {
@@ -33,7 +34,7 @@ export class Job {
     this._status = 'pending'
     this.startTime = null
     this.endTime = null
-    this.description = ''
+    this.description = options.description ?? ''
     this.progress = 0
     this.indeterminate = options.indeterminate ?? true
     this.error = null

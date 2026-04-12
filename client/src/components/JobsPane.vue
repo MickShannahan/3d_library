@@ -4,17 +4,24 @@ import { computed, reactive, watch } from 'vue'
 import {Collapse} from 'bootstrap'
 import { logger } from '@/utils/Logger'
 import { jobsService } from '@/services/JobService'
+import { Job } from '@/models/Job'
+
+
+const props = defineProps({
+  jobs: {type: Array<Job>}
+})
 
 const collapsed = reactive<Record<number, boolean>>({})
-const jobs = computed(()=> AppState.jobs)
+
 const allJobsDone = computed(()=> {
-  return AppState.jobs.every(j => j.status =='complete') &&
-  AppState.jobs.length
+  return props.jobs.every(j => j.status =='complete') &&
+  props.jobs.length
 })
 
 watch(
-  jobs,
+  ()=> props.jobs,
   (jobs) => {
+    logger.log('jobs done', jobs)
     jobs.forEach((job, idx) => {
       if (job.subJobs?.length && job.subJobs.every(s => s.status === 'complete')) {
         toggleCollapsed(idx, true)
@@ -41,9 +48,9 @@ function clearJobs(){
 </script>
 
 <template>
-  <section id="jobs-pane" v-if="AppState.jobs.length">
+  <section id="jobs-pane" v-if="jobs.length">
     <div class="glass-pane border p-3 rounded rounded-3 d-flex flex-column gap-2">
-      <div v-for="(job, idx) in AppState.jobs" :key="job.label" class="d-flex flex-column gap-1">
+      <div v-for="(job, idx) in jobs" :key="job.label" class="d-flex flex-column gap-1">
         <div class="d-flex align-items-center gap-2">
 
           <span class="job-icon">
@@ -64,7 +71,7 @@ function clearJobs(){
         </div>
 
         <div v-if="job.status === 'active' && !job.indeterminate" class="progress" style="height: 4px;">
-          <div class="progress-bar" :style="{ width: job.progress + '%' }" />
+          <div class="progress-bar bg-normal-grad" :style="{ width: job.progress + '%' }" />
         </div>
 
         <div v-if="job.subJobs?.length && job.status != 'error'" >
@@ -96,7 +103,7 @@ function clearJobs(){
 
 <style lang="scss" scoped>
 #jobs-pane {
-  position: absolute;
+  position: fixed;
   bottom: 1rem;
   right: 1rem;
   z-index: 1;

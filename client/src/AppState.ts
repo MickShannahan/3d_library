@@ -14,6 +14,7 @@ interface AppState {
   draggingMesh: PartMesh
   draggingFromPartGroup: PartGroup | null
   jobs: Job[]
+  downloadJobs: Job[]
   models: Model[]
   activeModel: Model
   activeAuthor: Author | null
@@ -21,6 +22,7 @@ interface AppState {
   authors: Author[],
   tags: string[]
   orders: Order[]
+  sasToken: string
 }
 
 export const AppState = reactive<AppState>({
@@ -35,6 +37,7 @@ export const AppState = reactive<AppState>({
   activeAuthor: null,
   activeOrder: null,
   jobs: [],
+  downloadJobs: [],
   tags: ['nintendo', 'monster', 'capcom', 'warhammer 40k', 'warhammer AoS'],
   orders: [],
   authors: [
@@ -54,5 +57,6 @@ export const AppState = reactive<AppState>({
       name: 'Mark Lambert',
       image: 'https://cdn.bsky.app/img/avatar/plain/did:plc:mcpmqreubpvq5ezqwloqonnv/bafkreigdraa472diudda77l5wbftfgff3zr42fhaaozreg7dc2g7puwsom'
     }),
-  ]
+  ],
+  sasToken: ''
 })

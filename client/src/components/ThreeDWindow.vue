@@ -26,6 +26,8 @@ const camera = useTemplateRef('camera')
 
 const meshGroups = computed(()=> AppState.meshGroups.filter(mg => AppState.loadedMeshGroups.includes(mg._id)))
 
+const uploadJobs = computed(()=> AppState.jobs)
+
 
 watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
     const lastLoadedGroup = AppState.meshGroups[last-1]
@@ -57,7 +59,7 @@ watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
       </div>
     </ToolBar>
 
-  <JobsPane/>
+  <JobsPane :jobs="uploadJobs"/>
 
   <TresCanvas :clear-color="cameraState.clearColor" :fps-limit="60">
     <ThreeDCamera  ref="camera"/>

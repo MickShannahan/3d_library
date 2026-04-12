@@ -4,12 +4,19 @@ import { azureService } from "./AzureService.js"
 
 
 class ModelsService {
-  async createModel(modelData = {}) {
+
+  async createOrUpdateModel(modelData = {}) {
     return await dbContext.Models.findOneAndUpdate({ _id: modelData._id }, modelData, { upsert: true, new: true })
   }
 
   async findModels(query = {}) {
     return await dbContext.Models.find(query).populate('author')
+  }
+
+  async findModelById(modelId = '') {
+    const model = await dbContext.Models.findById(modelId).populate('author')
+    if (!model) throw new NotFound(`No model with id: ${modelId}`)
+    return model
   }
 
   async deleteModel(modelId = '') {

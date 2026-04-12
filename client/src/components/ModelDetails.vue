@@ -7,6 +7,7 @@ import { AppState } from '@/AppState';
 import { meshService } from '@/services/MeshService';
 import { useRouter } from 'vue-router';
 import { PartGroup } from '@/models/PartGroup';
+import { logger } from '@/utils/Logger';
 
 
 const props = defineProps({
@@ -34,7 +35,6 @@ async function deleteModel(){
   }
 }
 
-const groupColors = ['--bs-normal','--bs-normal-x','--bs-normal-shadow','--bs-indigo','--bs-blue','--bs-orange','--bs-cyan','--bs-purple',]
 
 const meshGroupMap = computed(() => {
   const map: Record<string, { name: string, color: string }> = {}
@@ -47,12 +47,13 @@ const meshGroupMap = computed(() => {
 })
 
 async function openModelInViewer(){
-  let currentModel = AppState.models[0]
+  let currentModel = AppState.meshGroups[0]
   if(currentModel){
     let deleteIt = await Pop.confirm("There is already a model in the 3D window", "Would you like to delete the model there and load this one?", 'Yes', 'Cancel') 
     if(deleteIt)
     meshService.destroyMeshGroup(currentModel._id)
   }
+  const token = await meshService.getToken()
   meshService.addMeshGroups(props.model)
   router.push({name: 'create'})
 }
@@ -64,6 +65,15 @@ function createOrder(){
       createOrder: props.model._id
     }
   })
+}
+
+async function downloadModel(){
+  try {
+    const meshes = props.model.meshData.map(m => m.src)
+    await meshService.downloadMeshes(meshes, props.model.name)
+  } catch (error) {
+    Pop.error(error)
+  }
 }
 
 </script>
@@ -82,6 +92,7 @@ function createOrder(){
           Create Order
           <i class="mdi mdi-package-variant-closed-plus fs-5"></i>
         </button>
+        <button @click="downloadModel">Download Model</button>
       </div>
     </section>
 

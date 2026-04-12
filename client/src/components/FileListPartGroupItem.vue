@@ -54,7 +54,7 @@ function partDropped(){
 
 <template>
 <section :class="`border-start border-${PartGroup.color(index)}`" @dragover.prevent @drop.prevent="partDropped">
-  <div :class="`bg-${PartGroup.color(index)} ps-2`">
+  <div :class="`bg-${PartGroup.color(index)} ps-2`" style="--bs-bg-opacity: .5;">
     <i class="bi bi-boxes"></i>
     {{ partGroup.name }}
   </div>

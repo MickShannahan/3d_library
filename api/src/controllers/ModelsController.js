@@ -15,7 +15,7 @@ export class ModelsController extends BaseController {
   async createModel(req, res, next) {
     try {
       const body = req.body
-      const model = await modelsService.createModel(body)
+      const model = await modelsService.createOrUpdateModel(body)
       res.send(model)
     } catch (error) {
       next(error)

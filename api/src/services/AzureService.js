@@ -1,6 +1,8 @@
-import { BlobServiceClient } from "@azure/storage-blob"
+import { AccountSASPermissions, BlobServiceClient, BlockBlobClient, ContainerSASPermissions, generateBlobSASQueryParameters, StorageSharedKeyCredential } from "@azure/storage-blob"
+import { socketProvider } from "../SocketProvider.js";
+import AdmZip from "adm-zip"
 
-
+/** @type {{string: BlobServiceClient}} clients */
 const clients = {
   '3dmodels': BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION),
   images: BlobServiceClient.fromConnectionString(process.env.AZURE_IMAGE_CONNECTION)
@@ -74,6 +76,51 @@ class AzureService {
     await Promise.all(urls.map(url => this.deleteFile(url)))
   }
 
+
+  async generateSASToken(clientName = '3dmodels') {
+    /** @type {BlobServiceClient} client */
+    const sasQuery = generateBlobSASQueryParameters({
+      containerName: clientName,
+      expiresOn: new Date(Date.now() + 1000 * 60 * 5),
+      permissions: ContainerSASPermissions.parse("rl")
+    },
+      new StorageSharedKeyCredential('3dlib', process.env.AZURE_STORAGE_KEY)
+    )
+    console.log(sasQuery.toString())
+    return sasQuery.toString()
+  }
+
+  async downloadFilesAsZip(files = [], socketRoomId = '') {
+    const zip = new AdmZip()
+    /** @type {BlobServiceClient} */
+    const serviceClient = clients['3dmodels']
+    const containerClient = serviceClient.getContainerClient('3dmodels')
+    const total = files.length
+    let done = 0
+    for (let file of files) {
+      const blobName = getBlobName(file)
+      console.log('📥', file, blobName)
+      const blob = containerClient.getBlobClient(blobName)
+      const data = await blob.downloadToBuffer()
+      const fileName = file.slice(file.lastIndexOf('/') + 1)
+      zip.addFile(fileName, data)
+      done++
+      if (socketRoomId) socketProvider.messageRoom(socketRoomId, 'DOWNLOAD_PROGRESS', { roomId: socketRoomId, done, total })
+    }
+
+    if (socketRoomId) socketProvider.messageRoom(socketRoomId, 'DOWNLOAD_COMPLETE', { roomId: socketRoomId })
+    return zip.toBuffer()
+  }
+
+
+
+}
+
+
+function getBlobName(blobUrl = '') {
+  const { hostname, pathname } = new URL(blobUrl)
+  const [, containerName, ...blobParts] = pathname.split('/')
+  return blobParts.join('/').replaceAll('%20', ' ')
 }
 
 export const azureService = new AzureService()

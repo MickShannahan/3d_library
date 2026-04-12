@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 import { MeshImage } from './MeshImage'
 import { generateId } from '@/utils/GenerateId'
+import { AppState } from '@/AppState'
 
 
 const loader = new STLLoader()
@@ -24,7 +25,7 @@ export class PartMesh extends THREE.Mesh {
   defaultMaterial: THREE.Material
   images: MeshImage[]
   silhouette: boolean
-  src: string
+  private _src: string
   bytes: number
   targetRotation = new THREE.Euler()
   targetPosition = new THREE.Vector3()
@@ -36,7 +37,7 @@ export class PartMesh extends THREE.Mesh {
     this._id = _id ?? generateId()
     this.progress = 0
     this.name = objectName ?? name ?? src
-    this.src = src
+    this._src = src
     this.bytes = bytes ?? 0
     this.material = material ?? new THREE.MeshNormalMaterial()
     this.defaultMaterial = this.material
@@ -71,6 +72,16 @@ export class PartMesh extends THREE.Mesh {
     })
   }
 
+  get src() {
+    if (window.origin.includes('https://3dlib.blob.core')) {
+      return this._src + '?' + AppState.sasToken
+    }
+    return this._src
+  }
+
+  set src(v) {
+    this._src = v
+  }
 
 
   toData() {
@@ -78,7 +89,7 @@ export class PartMesh extends THREE.Mesh {
       _id: this._id,
       name: this.name,
       images: this.images,
-      src: this.src,
+      src: this._src,
       bytes: this.bytes
     }
   }

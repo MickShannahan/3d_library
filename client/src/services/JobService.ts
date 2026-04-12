@@ -19,6 +19,7 @@ class JobService {
 
   clearJobQueue() {
     AppState.jobs = []
+    AppState.downloadJobs = []
   }
 
   async retryFailedJobs() {
