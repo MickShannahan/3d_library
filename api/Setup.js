@@ -113,6 +113,9 @@ export async function attachHandlers(io, socket, user, profile) {
 
 export function UseStaticPages(router) {
   router.use(ROUTE_PREFIX, express.static(Paths.Public))
+  router.get('*', (req, res) => {
+    res.sendFile(join(Paths.Public, 'index.html'))
+  })
 }
 
 
