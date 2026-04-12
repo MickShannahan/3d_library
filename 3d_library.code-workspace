@@ -10,7 +10,7 @@
     },
     {
       "name": "👩‍🔧deployment",
-      "path": ".github"
+      "path": "./",
     }
   ],
   "settings": {
