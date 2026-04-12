@@ -1,4 +1,4 @@
-import { NotFound } from "@bcwdev/auth0provider/lib/Errors.js"
+import { NotFound } from '../utils/Errors.js'
 import { dbContext } from "../db/DbContext.js"
 
 class AuthorsService {

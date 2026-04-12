@@ -1,4 +1,4 @@
-import { Forbidden, NotFound } from "@bcwdev/auth0provider/lib/Errors.js"
+import { NotFound, Forbidden } from '../utils/Errors.js'
 import { dbContext } from "../db/DbContext.js"
 import { azureService } from "./AzureService.js"
 
