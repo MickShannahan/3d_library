@@ -7,9 +7,7 @@ import { jobsService } from '@/services/JobService'
 import { Job } from '@/models/Job'
 
 
-const props = defineProps({
-  jobs: {type: Array<Job>}
-})
+const props = defineProps<{jobs: Job[]}>()
 
 const collapsed = reactive<Record<number, boolean>>({})
 

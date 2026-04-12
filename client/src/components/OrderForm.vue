@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AppState } from '@/AppState'
 import { ordersService } from '@/services/OrdersService'
-import { Order, type CustomerContact, type OrderNote } from '@/models/Order'
+import { CustomerContact, Order, type OrderNote } from '@/models/Order'
 import { Pop } from '@/utils/Pop'
 import { Modal } from 'bootstrap'
 import { reactive, ref, computed, watch, onMounted } from 'vue'
@@ -106,7 +106,7 @@ function getMeshById(id: string) {
 }
 
 function addContact() {
-  formData.customerContacts.push({ type: 'email', value: '' })
+  formData.customerContacts.push(new CustomerContact({ type: 'email', value: '' }))
 }
 
 function removeContact(index: number) {
@@ -219,7 +219,7 @@ watch(() => props.order, (newOrder) => {
   formData.modelScale       = newOrder.modelScale
   formData.modelSize        = newOrder.modelSize
   formData.customerAddress  = newOrder.customerAddress
-  formData.customerContacts = newOrder.customerContacts.map(c => ({ ...c }))
+  formData.customerContacts = newOrder.customerContacts.map(c => (new CustomerContact({ ...c })))
   formData.modelId          = newOrder.modelId
   formData.partIds          = [...newOrder.partIds]
   formData.notes            = newOrder.notes.map(n => ({ ...n }))
@@ -229,8 +229,7 @@ watch(() => props.order, (newOrder) => {
 </script>
 
 <template>
-  <form class="container-fluid p-3" @submit.prevent="submitForm"
-    @keydown.enter="(e) => { if (!(e.target instanceof HTMLTextAreaElement)) e.preventDefault() }">
+  <form class="container-fluid p-3" @submit.prevent>
 
     <!-- Header -->
     <div class="row mb-3 align-items-center">
@@ -539,7 +538,7 @@ watch(() => props.order, (newOrder) => {
       </div>
       <div class="ms-auto d-flex gap-2">
         <button type="button" class="btn text-secondary me-4" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-normal-grad px-4" :disabled="loading">
+        <button type="submit" class="btn btn-normal-grad px-4" :disabled="loading" @click="submitForm">
           <span v-if="!loading">
             {{ isEditMode ? 'Save Changes' : 'Create Order' }}
             <i class="mdi" :class="isEditMode ? 'mdi-content-save' : 'mdi-check'"></i>

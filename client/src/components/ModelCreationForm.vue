@@ -150,8 +150,7 @@ function closeModal(){
 <template>
   <ModalWrapper id="create-model">
     <form v-if="model" class="container-fluid"
-      @submit.prevent="handleSubmit"
-      @keydown.enter="(e) => { if (!(e.target instanceof HTMLTextAreaElement)) e.preventDefault() }">
+      @submit.prevent>
 
       <!-- Header -->
       <div class="row mb-3 align-items-center">
@@ -343,7 +342,7 @@ function closeModal(){
       <div class="row">
         <div class="col d-flex justify-content-end gap-2">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-normal-grad">
+          <button type="submit" class="btn btn-normal-grad" @click="handleSubmit">
             <i class="bi bi-cloud-upload me-1"></i>Publish
           </button>
         </div>

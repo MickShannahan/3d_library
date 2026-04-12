@@ -19,7 +19,7 @@ const progressLoaded = ref(0)
 const accentColor = ref(`rgba(var(--bs-${props.accent}-rgb),.2)`)
 
 onMounted(()=>{
-  props.file.addEventListener('progress', handleFileProgress)
+  props.file.addEventListener('progress' as any, handleFileProgress)
   isVisible.value = props.file.visible
 })
 
@@ -69,8 +69,8 @@ function handleDragEnd(){
       <div> 
         <i v-if="file.progress == 1" :class="`bi bi-box text-${accent}`"></i>
         <i v-else :class="`mdi mdi-loading mdi-spin text-${accent}`"></i>
-        <img v-if="file.images[0]" :src="file.images[0]" alt="">
-         {{ file.name }}
+        <img v-if="file.images[0]" :src="file.images[0].data" alt="preview of part image">
+          {{ file.name }}
         </div>
 
       <div >

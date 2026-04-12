@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { AppState } from '@/AppState'
 import { meshService } from '@/services/MeshService'
 import { cameraState } from '@/utils/CameraState'
+import { PartMesh } from '@/models/PartMesh'
 
 const { camera, renderer } = useTres()
 
@@ -32,7 +33,8 @@ function handleClick(event: MouseEvent) {
   intersects.sort((a, b) => a.distance - b.distance)
 
   if (intersects.length > 0) {
-    meshService.selectMeshId(intersects[0].object._id, !event.shiftKey)
+    const object = intersects[0].object as PartMesh
+    meshService.selectMeshId(object._id, !event.shiftKey)
   } else {
     meshService.clearSelectedMeshIds()
   }

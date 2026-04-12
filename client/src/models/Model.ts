@@ -30,7 +30,7 @@ interface ModelOptions {
 export class Model extends Group {
   _id: string
   meshes: PartMesh[]
-  private _meshData: any[]
+  _meshData: any[]
   order?: number
   groupRotation?: VectorCoordinates
   startingScale?: number

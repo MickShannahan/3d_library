@@ -1,12 +1,16 @@
 {
   "folders": [
     {
-      "name": "api",
+      "name": "💱api",
       "path": "api"
     },
     {
-      "name": "client",
+      "name": "🌐client",
       "path": "client"
+    },
+    {
+      "name": "👩‍🔧deployment",
+      "path": "./",
     }
   ],
   "settings": {

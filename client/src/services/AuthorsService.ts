@@ -1,5 +1,5 @@
 import { AppState } from "@/AppState"
-import { Author } from "@/models/Author"
+import { Author, AuthorLink } from "@/models/Author"
 import { api } from "./AxiosService"
 
 class AuthorsService {
@@ -8,7 +8,7 @@ class AuthorsService {
     AppState.authors = res.data.map(a => new Author(a))
   }
 
-  async createAuthor(authorData: { name: string, image: string }) {
+  async createAuthor(authorData: { name: string, image: string, socials: AuthorLink[] }) {
     const res = await api.post('api/authors', authorData)
     const author = new Author(res.data)
     AppState.authors.push(author)

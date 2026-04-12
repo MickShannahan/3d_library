@@ -16,6 +16,7 @@ interface PartMeshOptions {
   material?: THREE.Material
   src?: string
   bytes?: number
+  images?: MeshImage[]
 }
 
 export class PartMesh extends THREE.Mesh {
@@ -25,7 +26,7 @@ export class PartMesh extends THREE.Mesh {
   defaultMaterial: THREE.Material
   images: MeshImage[]
   silhouette: boolean
-  private _src: string
+  _src: string
   bytes: number
   targetRotation = new THREE.Euler()
   targetPosition = new THREE.Vector3()
@@ -33,7 +34,7 @@ export class PartMesh extends THREE.Mesh {
 
   constructor(options: PartMeshOptions = {}) {
     super()
-    const { objectName, name, resize, material, src, _id, bytes } = options
+    const { objectName, name, resize, material, src, _id, bytes, images } = options
     this._id = _id ?? generateId()
     this.progress = 0
     this.name = objectName ?? name ?? src
@@ -41,7 +42,7 @@ export class PartMesh extends THREE.Mesh {
     this.bytes = bytes ?? 0
     this.material = material ?? new THREE.MeshNormalMaterial()
     this.defaultMaterial = this.material
-    this.images = []
+    this.images = images ?? [] as MeshImage[]
     this.silhouette = false
 
     this.raycast = () => null
@@ -62,7 +63,7 @@ export class PartMesh extends THREE.Mesh {
         },
         (modelProgress) => {
           this.progress = modelProgress.loaded / modelProgress.total
-          this.dispatchEvent({ type: 'progress', value: this.progress })
+          this.dispatchEvent({ type: 'progress', value: this.progress } as any) // not sure how to extend that
         },
         (err) => {
           logger.error(err)
