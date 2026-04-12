@@ -26,20 +26,20 @@ interface AppState {
 }
 
 export const AppState = reactive<AppState>({
-  meshGroups: [],
+  meshGroups: [] as Model[],
   selectedMeshIds: [],
   loadedMeshGroups: [],
   scaleModelsBy: 0,
   draggingMesh: null,
   draggingFromPartGroup: null,
-  models: [],
+  models: [] as Model[],
   activeModel: null,
   activeAuthor: null,
   activeOrder: null,
-  jobs: [],
-  downloadJobs: [],
+  jobs: [] as Job[],
+  downloadJobs: [] as Job[],
   tags: ['nintendo', 'monster', 'capcom', 'warhammer 40k', 'warhammer AoS'],
-  orders: [],
+  orders: [] as Order[],
   authors: [
     new Author({
       name: 'Matmire Makes',

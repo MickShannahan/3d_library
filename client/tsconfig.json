@@ -1,5 +1,6 @@
 {
   "include": [
+    "./env.d.ts",
     "./src/**/*.vue",
     "./src/**/*.js",
     "./src/**/*.ts",

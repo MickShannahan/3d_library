@@ -20,14 +20,14 @@ interface JobOptions {
 export class Job {
   label: string
   description: string
-  private _status: JobStatus
+  _status: JobStatus
   startTime: Date | null
   endTime: Date | null
   progress: number
   indeterminate: boolean
   error: string | null
   subJobs: SubJob[]
-  private _run: (onProgress: (percent: number) => void, job: typeof this) => Promise<void>
+  _run: (onProgress: (percent: number) => void, job: typeof this) => Promise<void>
 
   constructor(options: JobOptions) {
     this.label = options.label

@@ -63,7 +63,7 @@ export function rotate(degrees: number) {
   return degrees * (Math.PI / 180)
 }
 
-export function rotateVector3(degrees: Vector3 | number[]) {
+export function rotateVector3(degrees: Vector3) {
   return new Vector3(
     (degrees.x || degrees[0]) * (Math.PI / 180),
     (degrees.y || degrees[1]) * (Math.PI / 180),

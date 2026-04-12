@@ -67,7 +67,12 @@ function createMatcapMaterial(textureImportPath: string) {
   }
 }
 
-export const MATERIAL_REGISTRY = {
+export type MaterialAsset = {
+  component: typeof THREE.Material | string
+  preview: string
+}
+
+export const MATERIAL_REGISTRY: Record<string, MaterialAsset> = {
 
 }
 

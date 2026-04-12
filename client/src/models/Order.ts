@@ -38,8 +38,13 @@ export interface OrderNote {
 }
 
 export class CustomerContact {
+
   type: 'phone' | 'email' | 'discord' | 'etsy' | 'twitter' | 'bluesky'
   value: string
+  constructor(data) {
+    this.type = data.type ?? 'email'
+    this.value = data.value ?? ''
+  }
 
   get contactIcon() {
     return CONTACT_ICONS[this.type]

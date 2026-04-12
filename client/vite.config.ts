@@ -19,10 +19,13 @@ export default defineConfig({
     }
   },
   base: '',
+  build: {
+    outDir: '../api/www'
+  },
   server: {
     port: 8080
   },
   optimizeDeps: {
     include: ['three', '@tresjs/core']
-  }
+  },
 })
