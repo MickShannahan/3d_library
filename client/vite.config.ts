@@ -1,18 +1,17 @@
 import { fileURLToPath, URL } from 'node:url'
 import { templateCompilerOptions } from '@tresjs/core'
+import vueDevTools from 'vite-plugin-vue-devtools'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-const isDev = process.env.NODE_ENV !== 'production'
-
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(async () => ({
   plugins: [
     vue({
       ...templateCompilerOptions
     }),
-    ...(isDev ? [(await import('vite-plugin-vue-devtools')).default()] : [])
+    process.env.NODE_ENV == 'dev' ? vueDevTools() : null
   ],
   resolve: {
     alias: {
@@ -28,5 +27,5 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['three', '@tresjs/core']
-  },
-})
+  }
+}))
