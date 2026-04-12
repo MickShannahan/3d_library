@@ -11,6 +11,7 @@ import FileListPartGrouper from './FileListPartGrouper.vue';
 import FileListPartGroupItem from './FileListPartGroupItem.vue';
 import { Model } from '@/models/Model';
 import ModelCreationForm from './ModelCreationForm.vue';
+import { Pop } from '@/utils/Pop';
 
 const fileGroups = computed(()=> AppState.meshGroups)
 
@@ -33,15 +34,33 @@ function ungroupedMeshes(group: Model){
   return group.meshes.filter(m => !groupedIds.includes(m._id))
 }
 
+async function clearWorkSpace(){
+  const confirm = await Pop.confirm("Remove ALL Files from Workspace?")
+  if(!confirm) return
+  for(let group of AppState.meshGroups){
+    meshService.destroyMeshGroup(group._id)
+  }
+}
+
 </script>
 
 
 <template>
   <section id="file-list-pane" class="glass-pane border rounded rounded-3 p-2">
-    <div class="d-flex justify-content-end gap-1">
-      <FilePicker @selectedFiles="handleSelectedFiles" :type="fileGroups.length == 0 ? 'area':'button'"/>
+    <div v-if="fileGroups.length" class="d-flex justify-content-between gap-1">
 
-      <button v-if="fileGroups.length" v-tooltip="'Create model'" class="btn btn-normal-grad" data-bs-toggle="modal" data-bs-target="#create-model"><i class="mdi mdi-creation"></i></button>
+      <button  @click="clearWorkSpace" class="btn " v-tooltip="'Clear 3D Workspace'">
+        <i class="mdi mdi-cancel"></i>
+      </button>
+
+      <div>
+        <FilePicker @selectedFiles="handleSelectedFiles" type="button"/>
+        
+        <button v-tooltip="'Create model'" class="btn btn-normal-grad ms-1" data-bs-toggle="modal" data-bs-target="#create-model"><i class="mdi mdi-creation"></i></button>
+      </div>
+    </div>
+    <div v-else>
+        <FilePicker @selectedFiles="handleSelectedFiles" type="area"/>
     </div>
 
     <FileListGroup v-for="group in fileGroups" :key="group._id"  :group>

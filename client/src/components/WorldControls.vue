@@ -46,7 +46,7 @@ function selectMaterial(materialName: string) {
 
   .mat-grid.show{
     display: grid;
-    grid-template-columns: repeat(4, minmax(30px, 1fr));
+    grid-template-columns: repeat(5, minmax(30px, 1fr));
   }
 
   .mat-preview{

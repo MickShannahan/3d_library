@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, useTemplateRef,watch } from 'vue';
+import { onBeforeUnmount, ref, useTemplateRef,watch } from 'vue';
 import {Modal} from 'bootstrap'
+import { generateId } from '@/utils/GenerateId';
 
 defineProps({
   type: {type: String, default: 'area'}
 })
-
+const pickerId = generateId()
 const emit = defineEmits(['selectedFiles'])
 
 const fileInputElm = useTemplateRef('file-input')
@@ -14,11 +15,13 @@ const pickerFiles = ref([])
 
 watch(pickerFiles, ()=>{
   if(pickerFiles.value.length){
-    Modal.getOrCreateInstance('#file-picker-modal').show()
+    Modal.getOrCreateInstance('#file-picker-modal'+pickerId).show()
   } else {
-    Modal.getOrCreateInstance('#file-picker-modal').hide()
+    Modal.getOrCreateInstance('#file-picker-modal'+pickerId).hide()
   }
 })
+
+onBeforeUnmount(()=> Modal.getOrCreateInstance('#file-picker-modal'+pickerId).dispose())
 
 function onInputChange(event){
   const files = event.target.files
@@ -60,7 +63,7 @@ function clickInput(){
   </button>
 
   <Teleport to="body">
-  <div id="file-picker-modal" class="modal fade">
+  <div :id="'file-picker-modal'+pickerId" class="modal fade">
     <div class="modal-dialog">
       <div class="modal-content">
 

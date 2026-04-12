@@ -84,7 +84,7 @@ function clearJobs(){
                 <small class="text-secondary">{{ sub.name }}</small>
               </div>
               <div v-if="sub.status !== 'complete'" class="progress" style="height: 3px;">
-                <div class="progress-bar" :style="{ width: sub.progress + '%' }" />
+                <div class="progress-bar bg-normal-grad" :style="{ width: sub.progress + '%' }" />
               </div>
             </div>
           </div>
