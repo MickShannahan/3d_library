@@ -18,7 +18,7 @@ export default defineConfig(async () => ({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  base: process.env.NODE_ENV == 'dev' ? '' : 'https://normal-library-2df470da57b4.herokuapp.com/',
+  base: '',
   build: {
     outDir: '../api/www'
   },
