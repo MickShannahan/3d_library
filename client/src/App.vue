@@ -4,10 +4,15 @@ import Navbar from './components/Navbar.vue';
 import { onMounted } from 'vue';
 import { authorsService } from './services/AuthorsService';
 import { modelsService } from './services/ModelsService';
+import downedSlate from '../public/SlateNormal2.gif'
+import { isDev } from './env';
 
 onMounted(()=>{
   authorsService.getAuthors()
   modelsService.getModels()
+  if(isDev){
+    document.querySelector('link[rel="icon"]')?.setAttribute('href', downedSlate )
+  }
 })
 
 </script>

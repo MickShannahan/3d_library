@@ -2,9 +2,12 @@
 import { onBeforeUnmount, ref, useTemplateRef,watch } from 'vue';
 import {Modal} from 'bootstrap'
 import { generateId } from '@/utils/GenerateId';
+import { meshService } from '@/services/MeshService';
+import { logger } from '@/utils/Logger';
 
 defineProps({
-  type: {type: String, default: 'area'}
+  type: {type: String, default: 'area'},
+  class: {type: String}
 })
 const pickerId = generateId()
 const emit = defineEmits(['selectedFiles'])
@@ -30,7 +33,7 @@ function onInputChange(event){
 }
 
 function onSubmit(){
-  emit('selectedFiles',pickerFiles.value)
+  emit('selectedFiles', pickerFiles.value)
   pickerFiles.value = []
   fileInputElm.value.value = ''
 }
@@ -43,20 +46,32 @@ function clickInput(){
   fileInputElm.value.click()
 }
 
+function handleDropEvent(e){
+  logger.log('dropped', e)
+  const files : FileList = e.dataTransfer?.files 
+  if(files){
+    pickerFiles.value = Array(...files)
+  }
+}
+
 
 </script>
 
 
 <template>
 
-  <button v-if="type == 'area'" class="btn add-files-btn" @click="clickInput">
-    <div>
-      Click to Add Files <i class="mdi mdi-plus"></i>
-    </div>
-    <div>
-      <small>or drag files here</small>
-    </div>
-  </button>
+<section v-if="type == 'area'" @drop.prevent="handleDropEvent" @dragover.prevent :class>
+  <slot>
+    <button class="btn add-files-btn" @click="clickInput" >
+      <div>
+        Click to Add Files <i class="mdi mdi-plus"></i>
+      </div>
+      <div>
+        <small>or drag files here</small>
+      </div>
+    </button>
+  </slot>
+</section>
 
   <button v-else class="btn btn-primary" @click="clickInput" v-tooltip="'Open File Picker'">
     <i class="bi bi-file-earmark-plus"></i>
@@ -64,7 +79,7 @@ function clickInput(){
 
   <Teleport to="body">
   <div :id="'file-picker-modal'+pickerId" class="modal fade">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
 
 
@@ -74,16 +89,15 @@ function clickInput(){
             </div>
             <div>
               <span v-if="pickerFiles.length == 0" class="text-secondary">... no files selected</span>
-              <div class="d-flex flex-column" v-else>
-                <div v-for="(f,i) in pickerFiles" class="d-flex align-items-baseline">
+              <div class="d-flex flex-wrap gap-2" v-else>
+                <div v-for="(f,i) in pickerFiles" class="file-badge">
                   <span><i class="bi bi-box text-primary"></i> {{ f.name }}</span>
-                  <span class="dots flex-grow-1"></span>
                   <button @click="removeFileFromList(i)" class="btn"><i class="bi bi-x"></i></button>
                 </div>
               </div>
             </div>
-            <div class="text-end">
-              <button :disabled="!pickerFiles.length" class="btn btn-primary" @click="onSubmit">Submit</button>
+            <div class="text-end mt-2">
+              <button :disabled="!pickerFiles.length" class="btn btn-primary" @click="onSubmit">Add To Scene <i class="mdi mdi-plus"></i></button>
             </div>
           </div>
           
@@ -106,8 +120,11 @@ function clickInput(){
   }
 }
 
-.dots{
-  margin: 5px;
-  border-bottom: 1px dotted var(--bs-secondary);
+.file-badge{
+  display: inline-block;
+  background-color: rgba(var(--bs-black-rgb), .2);
+  border: 1px solid rgba(var(--bs-black-rgb), .4);
+  border-radius: 16px;
+  padding: .2em .2em .2em .6em;
 }
 </style>

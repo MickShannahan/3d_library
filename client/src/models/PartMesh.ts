@@ -74,7 +74,7 @@ export class PartMesh extends THREE.Mesh {
   }
 
   get src() {
-    if (window.origin.includes('https://3dlib.blob.core')) {
+    if (this._src.includes('https://3dlib.blob.core')) {
       return this._src + '?' + AppState.sasToken
     }
     return this._src

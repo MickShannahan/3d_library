@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { isDev } from '@/env';
+
 
 </script>
 
@@ -13,6 +15,7 @@
         <RouterLink :to="{name: 'home'}" class="border-0 d-flex align-items-center no-underline text-light me-5">
           <img class="site-logo" src="/SlateNormal.gif" alt="slate 3d logo">
           <div class="fs-3 fw-bold ms-2 ">Normal Library</div>
+          <!-- <span class="badge bg-warning" v-if="isDev">dev</span> -->
         </RouterLink>
         
         <div>

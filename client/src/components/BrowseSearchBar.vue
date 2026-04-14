@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import { AppState } from '@/AppState';
 import { logger } from '@/utils/Logger';
-import { computed } from 'vue';
+import { sortedArray } from 'three/src/animation/AnimationUtils.js';
+import { computed, reactive } from 'vue';
 
 const model = defineModel<string>({ default: '' })
+const emit = defineEmits(['sorted'])
+
+const sortButtons = reactive({
+  name: true,
+  date: true,
+  popular: true
+})
+
 const tags = computed(()=> {
   let allTags = AppState.models.flatMap(m => m.tags)
   let counts = {}
@@ -17,6 +26,41 @@ const tags = computed(()=> {
 
 function selectTag(tag){
   model.value += tag
+}
+
+function sort(by, value){
+  sortButtons[by] = !sortButtons[by]
+  emit('sorted', by, value)
+}
+
+function tagColor(number){
+const stops = [
+    { threshold: 0, r: 128, g: 128, b: 255 },   // normal-base (blue)
+    { threshold: 25, r: 128, g: 212, b: 255 },  // normal-z (cyan)
+    { threshold: 35, r: 128, g: 255, b: 154 },  // normal-y (green)
+    { threshold: 50, r: 255, g: 128, b: 128 }   // normal-x (red)
+  ]
+
+  let lower = stops[0]
+  let upper = stops[stops.length - 1]
+  
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (number >= stops[i].threshold && number <= stops[i + 1].threshold) {
+      lower = stops[i]
+      upper = stops[i + 1]
+      break
+    }
+  }
+
+  const range = upper.threshold - lower.threshold
+  const position = Math.max(0, Math.min(1, (number - lower.threshold) / range))
+
+  const r = Math.round(lower.r + (upper.r - lower.r) * position)
+  const g = Math.round(lower.g + (upper.g - lower.g) * position)
+  const b = Math.round(lower.b + (upper.b - lower.b) * position)
+
+  const opacity = Math.min(number * 0.15, 1)
+  return `${r}, ${g}, ${b}, ${opacity}`
 }
 
 </script>
@@ -34,7 +78,7 @@ function selectTag(tag){
   </form>
   <section class="row justify-content-center my-2">
     <div class="col-md-9">
-      <span v-for="tag in tags" role="button" class="btn btn-sm badge  me-1 d-inline-block" @click="selectTag(tag[0])" :style="`background: rgba(var(--bs-normal-rgb), ${tag[1]*.15})`" v-tooltip="tag[1]">{{ tag[0] }}</span>
+      <span v-for="tag in tags" role="button" class="btn btn-sm badge  me-1 d-inline-block" @click="selectTag(tag[0])" :style="`background: rgba(${tagColor(tag[1])})`" v-tooltip="tag[1]">{{ tag[0] }}</span>
     </div>
   </section>
   
@@ -51,8 +95,12 @@ function selectTag(tag){
     </section>
 
     <div>
-      <button class="btn"><i class="bi bi-sort-alpha-down"></i> </button>
-      <button class="btn"><i class="bi bi-sort-alpha-up"></i> </button>
+      <button v-if="sortButtons.name" @click="sort('name', 1)" v-tooltip="'sort A-Z'" class="btn"><i class="bi bi-sort-alpha-down"></i> </button>
+      <button v-else @click="sort('name', -1)" v-tooltip="'sort Z-A'" class="btn"><i class="bi bi-sort-alpha-up"></i> </button>
+      <button v-if="sortButtons.date" @click="sort('date', 1)" v-tooltip="'sort Old-New'" class="btn"><i class="mdi mdi-sort-calendar-ascending"></i> </button>
+      <button v-else @click="sort('date', -1)" v-tooltip="'sort New-Old'" class="btn"><i class="mdi mdi-sort-calendar-descending"></i> </button>
+      <button v-if="sortButtons.popular" @click="sort('popular', 1)" v-tooltip="'sort Most-Least Ordered'" class="btn"><i class="bi bi-sort-numeric-down"></i> </button>
+      <button v-else @click="sort('popular', -1)" v-tooltip="'sort Least-Most Ordered'" class="btn"><i class="bi bi-sort-numeric-up"></i> </button>
     </div>
   </section>
 </section>

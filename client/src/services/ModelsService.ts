@@ -91,13 +91,13 @@ class ModelsService {
           const exportMesh = new Mesh(mesh.geometry) // new mesh so world transforms don't apply
           exportMesh.updateMatrixWorld(true)
           form.append('meshes', new Blob([exporter.parse(exportMesh, { binary: true })]), mesh.name)
-
+          logger.log('socket')
           // Set up socket
           const { ready, complete: azureComplete } = socketService.waitForUploadComplete(mesh._id, (loadedBytes, totalBytes) => {
             subJob.progress = 50 + (loadedBytes / totalBytes) * 50
           })
           await ready
-
+          logger.log('post')
           // Send Mesh
           const res = await api.post('upload/meshes', form, {
             params: { folder: model.folderRef, roomId: mesh._id },

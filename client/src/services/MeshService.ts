@@ -13,6 +13,20 @@ class MeshService {
 
   private _recentlyHiddenMeshes: PartMesh[] = []
 
+  addFilesToScene(files: FileList) {
+    logger.log('📂', files)
+    const currentFileGroup = AppState.meshGroups[0]
+    const stlMeshes = [...files].map(f => markRaw(new PartMesh({
+      src: URL.createObjectURL(f),
+      objectName: f.name
+    })))
+    if (currentFileGroup) {
+      currentFileGroup.meshes.push(...stlMeshes)
+    } else {
+      meshService.addMeshGroups(stlMeshes)
+    }
+  }
+
   addMeshGroups(newMeshGroups: Model | PartMesh[]) {
     if (newMeshGroups instanceof Model) {
       AppState.meshGroups = [...AppState.meshGroups, newMeshGroups]

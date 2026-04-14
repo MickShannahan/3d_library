@@ -20,6 +20,8 @@ import JobsPane from './JobsPane.vue'
 import { delay } from '@/utils/Delay';
 import { cameraState } from '@/utils/CameraState';
 import WorldControls from './WorldControls.vue';
+import FilePicker from './FilePicker.vue';
+import WindowToolBar from './WindowToolBar.vue';
 
 const camera = useTemplateRef('camera')
 
@@ -43,30 +45,36 @@ watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
 
 
 <template>
-    <ToolBar :position="['top','left']" class="d-flex flex-column gap-2">
-      <FileListPane/>
-      <MeshToolsPane/>
-    </ToolBar>
+    <WindowToolBar>
+      <template #left>
+          <FileListPane/>
+          <MeshToolsPane/>
+      </template>
 
-    <ToolBar :position="['bottom', 'center']">
-      <div class="d-flex gap-1">
-        <div class="glass-pane border rounded-3 p-2">
-          <CameraControls :camera/>
+      <template #bottom-center>
+        <div class="d-flex gap-1">
+          <div class="glass-pane border rounded-3 p-2">
+            <CameraControls :camera/>
+          </div>
+          <div class="glass-pane border rounded-3 p-2">
+            <WorldControls />
+          </div>
         </div>
-        <div class="glass-pane border rounded-3 p-2">
-          <WorldControls />
-        </div>
-      </div>
-    </ToolBar>
+      </template>
+    </WindowToolBar>
+
+
 
   <JobsPane :jobs="uploadJobs"/>
 
-  <TresCanvas :clear-color="cameraState.clearColor" :fps-limit="60">
-    <ThreeDCamera  ref="camera"/>
-    <AnimatedGroup v-for="meshGroup in meshGroups" :meshGroup/>
-    <StatsWindow/>
-    <SceneClickHandler/>
-  </TresCanvas>
+  <FilePicker type="area" class="flex-grow-1" @selectedFiles="meshService.addFilesToScene">
+    <TresCanvas :clear-color="cameraState.clearColor" :fps-limit="60" >
+      <ThreeDCamera  ref="camera"/>
+      <AnimatedGroup v-for="meshGroup in meshGroups" :meshGroup/>
+      <StatsWindow/>
+      <SceneClickHandler/>
+    </TresCanvas>
+  </FilePicker>
 </template>
 
 

@@ -98,23 +98,33 @@ async function downloadModel(){
 
     <section class="p-2">
       <div class="container-fluid">
-        <section class="row">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="fs-3 fw-bold p-0">{{ model.name }}</div>
-            <div v-if="model.author" class="fs-5 p-0 my-2">
-              <img :src="model.author.image" class="author-img rounded-3 bg-black" :alt="`profile image of ${model.author.name}`">
-              <span class="ms-1">{{ model.author.name }}</span>
+        <section class="row gap-2">
+          <div>
+            <div class="row justify-content-between align-items-center">
+              <div class="fs-3 col-auto fw-bold p-0">{{ model.name }}</div>
+              <div v-if="model.author" class="d-flex col-auto align-items-center fs-5 p-0 my-2">
+                <img :src="model.author.image" class="author-img rounded-3 bg-black" :alt="`profile image of ${model.author.name}`">
+                <span class="ms-1">{{ model.author.name }}</span>
+              </div>
             </div>
           </div>
           <div class="d-flex flex-wrap gap-1 p-0 my-2">
             <span v-for="tag in model.tags" class="bg-normal-shadow badge">{{ tag }}</span>
           </div>
           <img :src="model.turnAroundImage" class="img-fluid border p-0 rounded-4" heigh="512" width="512" :alt="`Preview of ${model.name}`">
-          <div class="p-0 text-secondary my-2">
+          <div class="d-flex flex-wrap gap-3">
+            <div><i class="mdi mdi-ruler-square text-yellow"></i>{{ model.size }}mm ({{model.sizeInch.toFixed(2)}}'')</div>
+            <div><i class="mdi mdi-currency-usd text-green"></i>{{ model.price }}</div>
+          </div>
+          <div class="text-secondary">
+            <div><span>created: </span> {{ model.createdAtFormatted }}</div>
+            <div><span>updated: </span> {{ model.updatedAtFormatted }}</div>
+          </div>
+          <!-- <div class="p-0 text-secondary my-2">
             <span class="me-3"><i class="mdi mdi-currency-usd"></i>{{ model.price }}</span>
             <span class="me-3"><i class="mdi mdi-resize"></i>{{ model.scale }}</span>
             <span class="me-3"><i class="bi bi-person-lines-fill"></i>{{ model.size }}</span>
-          </div>
+          </div> -->
         </section>
 
         <div class="row">

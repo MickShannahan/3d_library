@@ -1,5 +1,6 @@
 type JobStatus = 'pending' | 'active' | 'complete' | 'error'
 
+import { logger } from '@/utils/Logger'
 import { reactive } from 'vue'
 
 export interface SubJob {
@@ -59,6 +60,7 @@ export class Job {
   }
 
   async execute() {
+    logger.log('🐒', this.label)
     this.status = 'active'
     try {
       await this._run((percent) => { this.progress = percent }, this)

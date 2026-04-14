@@ -13,8 +13,11 @@ onMounted(()=>{
 })
 
 const filterBy = reactive({
-  text: ''
+  text: '',
+  sortBy: 'popular',
+  sort: 1
 })
+
 const models = computed(() => AppState.models.filter(model => {
   const input = filterBy.text.trim()
   if (!input) return true
@@ -27,7 +30,13 @@ const models = computed(() => AppState.models.filter(model => {
   } else {
     return input.split(' ').filter(Boolean).every(term => new RegExp(term, 'ig').test(searchable))
   }
-}))
+}).sort((a,b)=> {
+  if(filterBy.sortBy == 'name') return a.name.localeCompare(b.name) * filterBy.sort
+  if(filterBy.sortBy == 'date') return (a.updatedAt.getTime() - b.updatedAt.getTime()) * filterBy.sort
+  if(filterBy.sortBy == 'popular') return (a.orderCount - b.orderCount) * filterBy.sort
+  return 0
+})
+)
 
 
 async function getModels() {
@@ -45,7 +54,7 @@ async function getModels() {
 <div class="d-flex flex-grow-1">
   <div class="container-fluid p-2 p-md-4">
     <BrowseNav/>
-    <BrowseSearchBar v-model="filterBy.text" >
+    <BrowseSearchBar v-model="filterBy.text" @sorted="(by, value)=>{filterBy.sortBy = by; filterBy.sort = value;}">
       <button class="btn">create model<i class="bi bi-plus"></i></button>
     </BrowseSearchBar>
     <section class="cards-grid">

@@ -16,17 +16,7 @@ import { Pop } from '@/utils/Pop';
 const fileGroups = computed(()=> AppState.meshGroups)
 
 function handleSelectedFiles(files){
-  logger.log('📂', files)
-  const currentFileGroup = fileGroups.value[0]
-    const stlMeshes = files.map(f => markRaw(new PartMesh({
-    src: URL.createObjectURL(f),
-    objectName: f.name
-  })))
-  if(currentFileGroup){
-    currentFileGroup.meshes.push(...stlMeshes)
-  } else {
-    meshService.addMeshGroups(stlMeshes)
-  }
+  meshService.addFilesToScene(files)
 }
 
 function ungroupedMeshes(group: Model){

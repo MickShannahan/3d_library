@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import { AppState } from '@/AppState';
 import { Model } from '@/models/Model';
 import { modelsService } from '@/services/ModelsService';
+import { computed } from 'vue';
 
 
 const props = defineProps({
   model: Model
 })
+const isActive = computed(()=> AppState.activeModel?._id == props.model._id)
 
 function setActive(){
   modelsService.setActiveModel(props.model)
@@ -15,7 +18,7 @@ function setActive(){
 
 
 <template>
-<article class="model-card rounded-3 p-2 shadow" role="button" @click="setActive">
+<article class="model-card rounded-3 p-2 shadow" :class="{active: isActive}" role="button" @click="setActive">
   <div class="img-wrapper">
     <img class="img-cover rounded-4" :src="model.coverImage" height="512" width="512" :alt="`preview of ${model.name} model`">
     <img class="img-turnaround rounded-4" :src="model.turnAroundImage" height="512" width="512" :alt="`preview of ${model.name} model`">
@@ -26,7 +29,10 @@ function setActive(){
       <img v-if="model.author" :src="model.author.image" class="bg-dark object-fit-cover rounded-3" height="24" width="24" alt="">
       <small class="ms-1">{{ model.author?.name }}</small>
     </div>
-    <small class="text-secondary text-end">last ordered: Aug 13</small>
+    <div class="text-end text-secondary">
+      <small v-if="model.lastOrdered" >last ordered: {{ model.lastOrdered?.createdAtFormatted }}</small>
+      <small >{{ model.createdAtFormatted }}</small>
+    </div>
   </div>
 </article>
 </template>
@@ -45,6 +51,11 @@ function setActive(){
       filter: brightness(1.2) saturate(1.2);
       transition: all .2s ease;
       border-color: rgba(var(--bs-primary-rgb),.5);
+    }
+
+    &.active{
+      background: rgba(var(--bs-primary-rgb), .2);
+      border: 1px solid rgba(var(--bs-primary-rgb), .5);
     }
 }
 

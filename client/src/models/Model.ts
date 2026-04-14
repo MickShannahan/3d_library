@@ -25,6 +25,9 @@ interface ModelOptions {
   price?: number
   adjustedScale?: number
   size?: number
+  createdAt?: string
+  updatedAt?: string
+  orderCount?: Number
 }
 
 export class Model extends Group {
@@ -44,6 +47,9 @@ export class Model extends Group {
   price: number
   adjustedScale: number
   size: number
+  createdAt: Date
+  updatedAt: Date
+  orderCount: Number
 
   get bytes(): number {
     return this.meshes.reduce((sum, m) => sum + (m.bytes ?? 0), 0)
@@ -69,10 +75,15 @@ export class Model extends Group {
     this.price = options.price ?? 0
     this.adjustedScale = options.adjustedScale ?? 1
     this.size = options.size ?? 0
+
+    this.createdAt = options.createdAt ? new Date(options.createdAt) : new Date()
+    this.updatedAt = options.updatedAt ? new Date(options.updatedAt) : new Date()
+    this.orderCount = options.orderCount ?? 0
   }
 
   async load() {
     if (this.loaded) return
+    logger.log('🔫', this.name, this._meshData)
     this.meshes = this._meshData.map(m => m instanceof PartMesh ? m : new PartMesh(m))
     this.meshes.forEach(m => this.add(m))
     await this.initialize()
@@ -102,6 +113,22 @@ export class Model extends Group {
 
   get meshData() {
     return this._meshData
+  }
+
+  get createdAtFormatted() {
+    return this.createdAt.toLocaleDateString('en-us', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+  get updatedAtFormatted() {
+    return this.updatedAt.toLocaleDateString('en-us', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+
+  get sizeInch() {
+    return this.size / 25.4
+  }
+
+  get lastOrdered() {
+    const order = AppState.orders.find(o => o.modelId == this._id)
+    return order
   }
 
   toData() {
