@@ -71,5 +71,14 @@ async function clearWorkSpace(){
 
 
 <style lang="scss" scoped>
-
+// Shrink-wraps to content height, but caps at the parent's available height
+// and scrolls internally. flex: 0 1 auto = don't grow, do shrink, natural size.
+#file-list-pane {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 </style>

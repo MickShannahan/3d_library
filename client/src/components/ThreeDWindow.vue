@@ -48,13 +48,13 @@ watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
 <template>
     <WindowToolBar>
       <template #left>
-        <div class="d-flex flex-column gap-2">
+        <div class="d-flex flex-column gap-2 left-slot">
           <FileListPane/>
           <MeshToolsPane/>
         </div>
       </template>
 
-      <template #bottom-center>
+      <template #bottom>
         <div class="d-flex gap-1">
           <div class="glass-pane border rounded-3 p-2">
             <CameraControls :camera/>
@@ -83,5 +83,11 @@ watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
 
 
 <style lang="scss" scoped>
-
+// Fills the .left grid cell and propagates the height constraint down to children.
+// FileListPane gets flex: 1 so it grows; MeshToolsPane stays at its natural size.
+.left-slot {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
 </style>

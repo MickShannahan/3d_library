@@ -25,23 +25,14 @@
   </div>
 
 
-  <div class="bottom-left">
-    <slot name="bottom-left">
+  
+
+  <div class="bottom">
+  <slot name="bottom">
 
     </slot>
   </div>
 
-  <div class="bottom-center">
-  <slot name="bottom-center">
-
-    </slot>
-  </div>
-
-  <div class="bottom-right">
-  <slot name="bottom-right">
-
-    </slot>
-  </div>
 
 
 
@@ -83,6 +74,14 @@ div[class*="center"]{
 div.left,
 div.right{
   flex-direction: column;
+  overflow: hidden;
+}
+
+.bottom{
+  grid-column: 1 / span 3;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 }
 
 

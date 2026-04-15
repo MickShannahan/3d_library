@@ -65,13 +65,10 @@ async function createModel(){
           <i class="mdi mdi-format-rotate-90"></i>
         </button>
       </div>
-      <button role="button" @click.stop="collapsed = !collapsed">
-        <i v-if="!collapsed" class="mdi mdi-arrow-collapse-up"></i>
-        <i v-else class="mdi mdi-arrow-expand-down"></i>
-      </button>
+
 
     </div>
-    <section :id="`file-list-collapse-${group._id}`" class="group-files gap-1 p-2 pe-0 collapse show">
+    <section class="group-files gap-1 p-2 pe-0 collapse show">
       <slot></slot>
     </section>
   </section>
@@ -81,6 +78,13 @@ async function createModel(){
 
 
 <style lang="scss" scoped>
+section {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
 .icon-3d{
   height: 25px;
   width: 25px;
@@ -94,6 +98,17 @@ async function createModel(){
   display: flex;
   flex-direction: column;
   border-left: 1px solid var(--bs-primary);
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  &::-webkit-scrollbar{
+    width: 7px;
+    background-color: rgba(var(--bs-black-rgb), .2);
+  }
+  &::-webkit-scrollbar-thumb{
+    background-color: rgba(var(--bs-primary-rgb), .25);
+    border-radius: 5px;
+  }
 }
 
 button{
