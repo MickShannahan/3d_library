@@ -71,7 +71,5 @@ async function clearWorkSpace(){
 
 
 <style lang="scss" scoped>
-#file-list-pane{
-  width: clamp(350px, 6vw, 650px);
-}
+
 </style>

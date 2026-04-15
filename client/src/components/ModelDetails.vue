@@ -82,17 +82,20 @@ async function downloadModel(){
 <template>
 
   <div class="p-2">
-    <section class="d-flex justify-content-between">
+    <section class="d-flex justify-content-between mb-3">
       <button v-tooltip="'Close'" @click="clearActive" >
         <i class="bi bi-x fs-4"></i>
       </button>
-      <div>
-        <button @click="openModelInViewer" class="btn btn-sm selectable-primary me-1">Open 3D<i class="mdi mdi-open-in-new fs-5"></i></button>
-        <button @click="createOrder" class="btn btn-sm btn-normal-grad">
-          Create Order
-          <i class="mdi mdi-package-variant-closed-plus fs-5"></i>
-        </button>
-        <button @click="downloadModel">Download Model</button>
+          <div class="d-flex  align-items-stretch">
+            <button @click="createOrder" class="btn text-start text-nowrap">
+              <i class="mdi mdi-package-variant-closed-plus fs-5 me-2 text-normal-grad"></i>Create Order
+            </button>
+            <button @click="openModelInViewer" class="btn align-items-center text-start me-1" v-tooltip="'Open Model in 3D Scene'">
+              <i class="mdi mdi-open-in-new fs-5 text-normal"></i>
+            </button>
+            <button @click="downloadModel" class="btn text-start align-items-center " v-tooltip="'Download'">
+              <i class="mdi mdi-download fs-5 text-normal-z"></i>
+            </button>
       </div>
     </section>
 

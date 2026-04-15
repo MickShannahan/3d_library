@@ -3,6 +3,7 @@ import { AppState } from '@/AppState';
 import { Model } from '@/models/Model';
 import { modelsService } from '@/services/ModelsService';
 import { computed } from 'vue';
+import LoadingImage from './LoadingImage.vue';
 
 
 const props = defineProps({
@@ -20,7 +21,7 @@ function setActive(){
 <template>
 <article class="model-card rounded-3 p-2 shadow" :class="{active: isActive}" role="button" @click="setActive">
   <div class="img-wrapper">
-    <img class="img-cover rounded-4" :src="model.coverImage" height="512" width="512" :alt="`preview of ${model.name} model`">
+    <LoadingImage :src="model.coverImage" height="512" width="512" class="rounded-4"/>
     <img class="img-turnaround rounded-4" :src="model.turnAroundImage" height="512" width="512" :alt="`preview of ${model.name} model`">
   </div>
   <div class="px-1 d-flex  flex-column justify-content-between">

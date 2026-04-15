@@ -47,8 +47,10 @@ watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
 <template>
     <WindowToolBar>
       <template #left>
+        <div class="d-flex flex-column gap-2">
           <FileListPane/>
           <MeshToolsPane/>
+        </div>
       </template>
 
       <template #bottom-center>
