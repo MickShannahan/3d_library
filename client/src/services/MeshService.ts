@@ -16,10 +16,10 @@ class MeshService {
   addFilesToScene(files: FileList) {
     logger.log('📂', files)
     const currentFileGroup = AppState.meshGroups[0]
-    const stlMeshes = [...files].map(f => markRaw(new PartMesh({
+    const stlMeshes = [...files].map(f => new PartMesh({
       src: URL.createObjectURL(f),
       objectName: f.name
-    })))
+    }))
     if (currentFileGroup) {
       currentFileGroup.meshes.push(...stlMeshes)
     } else {

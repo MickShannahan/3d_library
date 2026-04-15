@@ -16,6 +16,7 @@ import ToolBar from './ToolBars/ToolBar.vue';
 import MeshToolsPane from './ToolBars/MeshToolsPane.vue';
 import StatsWindow from './StatsWindow.vue'
 import SceneClickHandler from './SceneClickHandler.vue'
+import SceneToolHandler from './SceneToolHandler.vue'
 import JobsPane from './JobsPane.vue'
 import { delay } from '@/utils/Delay';
 import { cameraState } from '@/utils/CameraState';
@@ -75,6 +76,7 @@ watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
       <AnimatedGroup v-for="meshGroup in meshGroups" :meshGroup/>
       <StatsWindow/>
       <SceneClickHandler/>
+      <SceneToolHandler/>
     </TresCanvas>
   </FilePicker>
 </template>
