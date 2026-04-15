@@ -43,8 +43,12 @@ class MeshService {
   }
 
   selectMeshId(meshId, clearFirst = true) {
-    if (clearFirst) this.clearSelectedMeshIds()
-    AppState.selectedMeshIds.push(meshId)
+    if (AppState.selectedMeshIds.includes(meshId)) {
+      AppState.selectedMeshIds = AppState.selectedMeshIds.filter(m => m != meshId)
+    } else {
+      if (clearFirst) this.clearSelectedMeshIds()
+      AppState.selectedMeshIds.push(meshId)
+    }
   }
 
   selectGroupOfMeshId(meshIds: string[], clearFirst = true) {

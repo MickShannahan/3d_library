@@ -7,6 +7,7 @@ import { getGroupBox, getMeshesCenter } from '@/utils/3Dtransforms';
 import { logger } from '@/utils/Logger';
 import { markRaw } from 'vue';
 import { meshService } from '@/services/MeshService';
+import { cameraState } from '@/utils/CameraState';
 
 const {camera} = defineProps({
   camera: ThreeDCamera
@@ -56,7 +57,7 @@ async function snap360AllParts(){
 
 
 <template>
-<section class="d-flex gap-1">
+  <section class="d-flex gap-1">
   <button @click="pointTowardModel" v-tooltip="'Point Camera to Model'"><i class="mdi mdi-image-filter-center-focus"></i></button>
   <button @click="resetCamera" v-tooltip="'Point Camera to World Origin'"><i class="mdi mdi-camera-control"></i></button>
   <button @click="faceCameraToAxis([0,0,15])" v-tooltip="'Face X Axis'"><i class="bi bi-front text-red" ></i>x</button>

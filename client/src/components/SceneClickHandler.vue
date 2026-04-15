@@ -13,6 +13,12 @@ const { camera, renderer } = useTres()
 
 const meshRaycast = THREE.Mesh.prototype.raycast
 
+// Track mousedown position to detect panning vs. genuine clicks.
+// If the mouse moves > 5px from mousedown, it's a pan (ignore the click).
+let mouseDownClientX = 0
+let mouseDownClientY = 0
+const PAN_THRESHOLD_PX = 5
+
 
 function getIntersects(x,y){
   const raycaster = new THREE.Raycaster()
@@ -31,8 +37,12 @@ function getIntersects(x,y){
 
 
 function handleClick(event: MouseEvent) {
+  // Reject clicks that were actually pans (mousedown moved > threshold)
+  const dx = event.clientX - mouseDownClientX
+  const dy = event.clientY - mouseDownClientY
+  if (Math.sqrt(dx * dx + dy * dy) > PAN_THRESHOLD_PX) return
+
   if (cameraState.isPanning) return
-  // Let SceneToolHandler own clicks when any tool is active
   if (toolState.mode !== 'none') return
 
   const canvas = renderer.domElement
@@ -47,19 +57,25 @@ function handleClick(event: MouseEvent) {
   meshService.selectMeshId(object._id, !event.shiftKey)
 }
 
-function handleRightClick(){
-  // Let SceneToolHandler own right-clicks when any tool is active (e.g. cancel grab)
-  if (toolState.mode !== 'none') return
-  meshService.clearSelectedMeshIds()
+function handleMouseDown(event: MouseEvent) {
+  mouseDownClientX = event.clientX
+  mouseDownClientY = event.clientY
 }
 
+// function handleRightClick(){
+
+//   if(cameraState.isPanning) return
+//   if (toolState.mode !== 'none') return
+//   meshService.clearSelectedMeshIds()
+// }
+
 onMounted(() => {
+  renderer.domElement.addEventListener('mousedown', handleMouseDown)
   renderer.domElement.addEventListener('click', handleClick)
-  renderer.domElement.addEventListener('contextmenu', handleRightClick)
 })
 onUnmounted(() => {
+  renderer.domElement.removeEventListener('mousedown', handleMouseDown)
   renderer.domElement.removeEventListener('click', handleClick)
-  renderer.domElement.removeEventListener('contextmenu', handleRightClick)
 })
 </script>
 

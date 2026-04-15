@@ -12,6 +12,7 @@ import { Model } from '@/models/Model';
 import { PartMesh } from '@/models/PartMesh';
 import { MeshImage } from '@/models/MeshImage';
 import { meshService } from '@/services/MeshService';
+import { delay } from '@/utils/Delay';
 
 
 const {camera, renderer} = useTres()
@@ -120,11 +121,14 @@ defineExpose({
 onMounted( async ()=>{
   await nextTick()
   const rawControls = toRaw(orbitControls.value)
-  rawControls.addEventListener('start', () => cameraState.isPanning = true)
-  rawControls.addEventListener('end', () => {
-    cameraState.isPanning = false
-    targetPosition.value = camera.value.position.clone()
-    targetLookAt.value = rawControls.target.clone()
+  rawControls.addEventListener('start', async  () => {
+    cameraState.isPanning = true
+  } )
+  rawControls.addEventListener('end',  async () => {
+      cameraState.isPanning = false
+      targetPosition.value = camera.value.position.clone()
+      targetLookAt.value = rawControls.target.clone()
+
   })
   cameraState.cameraRef = { snap360, pointCamera, positionCamera }
 })
