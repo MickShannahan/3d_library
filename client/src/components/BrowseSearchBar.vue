@@ -86,8 +86,10 @@ const stops = [
 
   <section class="d-flex justify-content-between mt-3">
     <div>
-      <button class="btn"><i class="bi bi-grid"></i> </button>
-      <button class="btn"><i class="bi bi-list"></i> </button>
+      <slot name="buttons">
+        <button class="btn"><i class="bi bi-grid"></i> </button>
+        <button class="btn"><i class="bi bi-list"></i> </button>
+      </slot>
     </div>
 
     <section>

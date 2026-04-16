@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { isDev } from '@/env';
+import { useRoute } from 'vue-router';
+const route = useRoute()
 
 
 </script>
@@ -7,7 +9,7 @@ import { isDev } from '@/env';
 
 <template>
   <!-- Desktop Nav -->
-  <nav class="navbar bg-black border-bottom border-primary shadow p-2">
+  <nav class="navbar bg-black border-bottom border-primary shadow p-2" v-if="route.name != 'home'">
     <div class="d-flex">
 
 

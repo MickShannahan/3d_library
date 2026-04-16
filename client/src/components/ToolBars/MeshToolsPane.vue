@@ -52,6 +52,15 @@ function toggleFaceMoveMode() {
   toolState.faceClickCount = 0
 }
 
+const grabToolTip = `
+<div>
+  <div> <kbd>G</kbd> to start grab move </div>
+  <div> <kbd>X/Y/Z</kbd> to lock to axis </div>
+  <div> <kbd>shift</kbd> to slow </div>
+  <div> <kbd>RBM</kbd> to cancel </div>
+</div>
+`
+
 </script>
 
 
@@ -78,7 +87,7 @@ function toggleFaceMoveMode() {
             <!-- Hot-key grab mode hint -->
             <button class="tool-btn flex-grow-1" :disabled="!selectedMeshes.length"
               :class="{ 'tool-btn--active': toolState.mode === 'grab' }"
-              v-tooltip="'Hover canvas and press G to start grab mode. X/Y/Z to lock axis. Shift to slow. RMB to cancel.'"
+              v-tooltip="grabToolTip"
               @click="() => {}">
               <i class="mdi mdi-cursor-move"></i> Grab <kbd>G</kbd>
             </button>

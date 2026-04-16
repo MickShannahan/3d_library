@@ -29,7 +29,7 @@ const loaded = ref(false)
     filter: brightness(0);
   }
   &.loaded img{
-    transition: opacity .2s ease, filter 1.5s ease;
+    transition: opacity .2s ease, filter .5s ease;
     filter: brightness(1);
     opacity: 1;
   }

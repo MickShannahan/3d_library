@@ -18,6 +18,8 @@ const filterBy = reactive({
   sort: 1
 })
 
+const gridStyle = ref('regular')
+
 const models = computed(() => AppState.models.filter(model => {
   const input = filterBy.text.trim()
   if (!input) return true
@@ -55,10 +57,15 @@ async function getModels() {
   <div class="container-fluid p-2 p-md-4">
     <BrowseNav/>
     <BrowseSearchBar v-model="filterBy.text" @sorted="(by, value)=>{filterBy.sortBy = by; filterBy.sort = value;}">
-      <button class="btn">create model<i class="bi bi-plus"></i></button>
+      <template #buttons>
+        <button class="btn" @click="gridStyle = 'regular'"><i class="bi bi-grid-3x3-gap"></i> </button>
+        <button class="btn" @click="gridStyle = 'large'"><i class="bi bi-grid"></i> </button>
+        <button class="btn" @click="gridStyle = 'list'"><i class="bi bi-list"></i> </button>
+      </template>
+      <!-- <button class="btn">create model<i class="bi bi-plus"></i></button> -->
     </BrowseSearchBar>
-    <section class="cards-grid">
-      <ModelListCard v-for="model in models" :model :key="model._id" />
+    <section class="cards-grid" :class="[gridStyle]">
+      <ModelListCard v-for="model in models" :model :key="model._id" :type="gridStyle == 'list' ? 'list' : 'card'" />
     </section>
   </div>
   <div class="side-window shadow text-bg-dark" :class="{ open: AppState.activeModel }">
@@ -74,6 +81,16 @@ async function getModels() {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: 1em;
+}
+
+.cards-grid.large{
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+}
+.cards-grid.list{
+  margin: auto;
+  max-width: calc(120ch + 10dvw);
+  grid-auto-rows: 100px;
+  grid-template-columns: 1fr;
 }
 
 </style>

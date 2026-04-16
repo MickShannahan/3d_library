@@ -6,9 +6,12 @@ import { computed } from 'vue';
 import LoadingImage from './LoadingImage.vue';
 
 
-const props = defineProps({
-  model: Model
-})
+
+
+const props = defineProps<{
+  model: Model,
+  type?: 'card' | 'list'
+}>()
 const isActive = computed(()=> AppState.activeModel?._id == props.model._id)
 
 function setActive(){
@@ -19,7 +22,7 @@ function setActive(){
 
 
 <template>
-<article class="model-card rounded-3 p-2 shadow" :class="{active: isActive}" role="button" @click="setActive">
+<article class="model-card rounded-3 p-2 shadow" :class="{active: isActive, list: type == 'list', card: type == 'card'}" role="button" @click="setActive">
   <div class="img-wrapper">
     <LoadingImage :src="model.coverImage" height="512" width="512" class="rounded-4"/>
     <img class="img-turnaround rounded-4" :src="model.turnAroundImage" height="512" width="512" :alt="`preview of ${model.name} model`">
@@ -43,6 +46,7 @@ function setActive(){
 
 
 .model-card{
+  width: 100%;
   display: grid;
   grid-template-columns: minmax(100px, 4fr) 5fr;
   border: 1px solid rgba(var(--bs-black-rgb), .1);
@@ -58,22 +62,27 @@ function setActive(){
       background: rgba(var(--bs-primary-rgb), .2);
       border: 1px solid rgba(var(--bs-primary-rgb), .5);
     }
+
+    &.list{
+      grid-template-columns: 82px 5fr;
+    }
 }
 
 .img-wrapper{
   position: relative;
+  height: 100%;
 
 
 
   .img-cover{
-      width: 100%;
-      height: auto;
+      height: 100%;
+      width: auto;
     }
 
     .img-turnaround{
       opacity: 0;
-      width: 100%;
-      height: auto;
+      height: 100%;
+      width: auto;
       position: absolute;
       inset: 0;
       transition: opacity .2s ease;

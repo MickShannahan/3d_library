@@ -1,4 +1,5 @@
 @import '_main.scss';
+@import '_fonts.scss';
 
 body {
   overflow-x: hidden;
@@ -117,19 +118,18 @@ a {
 }
 
 
-.glass-popup::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: scale(0) translate(-50%, -50%);
+.glass-popup {
+  position: fixed;
+  opacity: 0;
+  transform: scale(0);
   transform-origin: center;
   pointer-events: none;
-  white-space: nowrap;
+  white-space: strict;
   color: var(--bs-secondary);
   font-style: normal;
-  font-family: monospace;
+  font-family: var(--f-mono);
   min-width: 6ch;
+  max-width: 38ch;
   padding: .25em .5em;
   border-radius: 12px;
   background-color: rgba(var(--bs-dark-rgb), .4);
@@ -138,12 +138,21 @@ a {
   border-left: 1px outset rgba(var(--bs-light-rgb), .2) !important;
   border-right: 1px outset rgba(var(--bs-light-rgb), .2) !important;
   border-bottom: 1px outset rgba(var(--bs-light-rgb), .1) !important;
+  z-index: 999999;
+  transition: all .1s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+
+  &.show {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.glass-popup:hover::after {
-  transform: scale(1) translate(-50%, -50%);
-  transition: all .1s .35s ease;
-}
+
+
+// .glass-popup:hover::after {
+//   transform: scale(1) translate(-50%, -50%);
+//   transition: all .1s .35s ease;
+// }
 
 // Normal map aesthetic classes
 .bg-normal-grad {
