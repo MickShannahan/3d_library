@@ -2,7 +2,7 @@
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js'
 import { extend, useLoop, useTres } from '@tresjs/core';
 import * as THREE from 'three'
-import { onMounted, shallowRef, toRaw, useTemplateRef } from 'vue';
+import { computed, onMounted, shallowRef, toRaw, useTemplateRef, watch } from 'vue';
 import { nextTick } from 'vue';
 import { cameraState } from '@/utils/CameraState';
 import { getMeshesCenter, getModelZoom, lerp, rotate } from '@/utils/3Dtransforms';
@@ -13,17 +13,32 @@ import { PartMesh } from '@/models/PartMesh';
 import { MeshImage } from '@/models/MeshImage';
 import { meshService } from '@/services/MeshService';
 import { delay } from '@/utils/Delay';
+import background from '../assets/img/blurryBgLowSm.gif'
 
 
-const {camera, renderer} = useTres()
+const {camera, renderer, scene} = useTres()
 const orbitControls = useTemplateRef<OrbitControls>('orbit-controls')
 const { onRender } = useLoop()
 
 const showGrid = shallowRef(true)
 const showAxes = shallowRef(true)
+const showBackground = computed(()=> cameraState.showBackground)
 const targetPosition = shallowRef(new THREE.Vector3(10, 10, 10))
 const targetLookAt = shallowRef(new THREE.Vector3(0, 0, 0))
 const lerpCamera = shallowRef(true)
+
+watch(showBackground, (show)=>{
+  if(show){
+    const loader = new THREE.TextureLoader()
+    const texture = loader.load(background)
+    scene.value.background = texture
+    scene.value.backgroundIntensity = .12
+    scene.value.backgroundBlurriness = 1
+  } else {
+    scene.value.backgroundIntensity = 0
+  }
+}, {immediate: true})
+
 
 onRender(({ delta }) => {
   if (!camera.value || !orbitControls.value || cameraState.isPanning || !lerpCamera.value) return

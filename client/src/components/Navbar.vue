@@ -14,11 +14,16 @@ const route = useRoute()
 
 
       <section class="d-flex  align-items-center">
-        <RouterLink :to="{name: 'home'}" class="border-0 d-flex align-items-center no-underline text-light me-5">
-          <img class="site-logo" src="/SlateNormal.gif" alt="slate 3d logo">
-          <div class="fs-3 fw-bold ms-2 ">Normal Library</div>
+        <div class="d-flex align-items-center no-underline text-light me-5">
+          <RouterLink :to="{name: 'home'}" class="border-0 ">
+            <img class="site-logo" src="/NormalLibraryLogo.svg" alt="slate 3d logo">
+          </RouterLink>
+          <!-- <img class="site-logo" src="/SlateNormal.gif" alt="slate 3d logo"> -->
+          <h1 class="m-0">
+            <div class="fs-3 fw-bold ms-2 ">Normal Library</div>
+          </h1>
+        </div>
           <!-- <span class="badge bg-warning" v-if="isDev">dev</span> -->
-        </RouterLink>
         
         <div>
           <div class="d-flex gap-4 mt-2">
@@ -50,6 +55,7 @@ const route = useRoute()
 
 
 .site-logo{
-  height: 50px;
+  height: 40px;
+  padding: 5px;
 }
 </style>

@@ -77,8 +77,8 @@ const stops = [
     </div>
   </form>
   <section class="row justify-content-center my-2">
-    <div class="col-md-9">
-      <span v-for="tag in tags" role="button" class="btn btn-sm badge  me-1 d-inline-block" @click="selectTag(tag[0])" :style="`background: rgba(${tagColor(tag[1])})`" v-tooltip="tag[1]">{{ tag[0] }}</span>
+    <div class="col-md-9 d-flex flex-wrap gap-1">
+      <span v-for="tag in tags" role="button" class="btn btn-sm badge  d-inline-block" @click="selectTag(tag[0])" :style="`background: rgba(${tagColor(tag[1])})`" v-tooltip="tag[1]">{{ tag[0] }}</span>
     </div>
   </section>
   

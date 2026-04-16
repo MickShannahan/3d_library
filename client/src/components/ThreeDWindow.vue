@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { TresCanvas, extend} from '@tresjs/core';
+import { TresCanvas, extend, useTres} from '@tresjs/core';
 import ThreeDCamera from './ThreeDCamera.vue';
 import { PartMesh } from '@/models/PartMesh';
-import { computed, useTemplateRef, watch } from 'vue';
+import { computed, onMounted, useTemplateRef, watch } from 'vue';
 import * as THREE from 'three'
 import { logger } from '@/utils/Logger';
 import { getMeshesCenter } from '@/utils/3Dtransforms';
@@ -26,10 +26,10 @@ import WindowToolBar from './WindowToolBar.vue';
 
 const camera = useTemplateRef('camera')
 
-
 const meshGroups = computed(()=> AppState.meshGroups.filter(mg => AppState.loadedMeshGroups.includes(mg._id)))
 
 const uploadJobs = computed(()=> AppState.jobs)
+
 
 
 watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
@@ -71,7 +71,7 @@ watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
   <JobsPane :jobs="uploadJobs"/>
 
   <FilePicker type="area" class="flex-grow-1" @selectedFiles="meshService.addFilesToScene">
-    <TresCanvas :clear-color="cameraState.clearColor" :fps-limit="60" >
+    <TresCanvas :clear-color="cameraState.clearColor" :fps-limit="60" ref="three-canvas">
       <ThreeDCamera  ref="camera"/>
       <AnimatedGroup v-for="meshGroup in meshGroups" :meshGroup/>
       <StatsWindow/>

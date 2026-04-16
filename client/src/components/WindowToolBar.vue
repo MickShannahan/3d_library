@@ -43,6 +43,7 @@
 <style lang="scss" scoped>
 
 .window-toolbar{
+  user-select: none;
   --sidebar: calc(300px + 4dvw);
   position: absolute;
   flex-grow: 1;
