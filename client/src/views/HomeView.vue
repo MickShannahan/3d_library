@@ -1,9 +1,20 @@
 <script setup lang="ts">
+import gutsBg from '../assets/img/background-guts.webp'
+import makiBg from '../assets/img/background-maki.webp'
+import lokiBg from '../assets/img/background-loki.webp'
+import blazerBg from '../assets/img/background-blazer.webp'
+import { computed } from 'vue'
+
+const backgrounds = [gutsBg,makiBg,lokiBg,blazerBg,]
+const randomBg = computed(()=>{
+let bg = backgrounds[Math.floor(Math.random()* backgrounds.length)]
+return `url(${bg})`
+}) 
 
 </script>
 
 <template>
-  <section class="home-split flex-grow-1 ">
+  <section class="home-split load flex-grow-1 ">
 
     <section class="left">
 
@@ -34,6 +45,13 @@
 </template>
 
 <style lang="scss">
+
+@property --bg-o{
+  syntax: '<number>';
+  initial-value: 1;
+  inherits: false;
+}
+
 .logo{
   min-width: 100px;
   max-width: 200px;
@@ -60,16 +78,27 @@
 }
 
 .home-split{
+  position: relative;
   display: flex;
   justify-content: space-around;
   background-color: black;
   filter: saturate(1.5);
-  background-image: url(../assets/img/background5.webp), linear-gradient(15deg, #16161d, black);
+  background-image: linear-gradient(15deg, rgba(22, 22, 29, var(--bg-o)), rgba(0,0,0,var(--bg-o))), v-bind(randomBg), linear-gradient(15deg, #16161d, black);
+  animation: fade-in 1s .2s ease forwards;
   background-repeat: no-repeat;
   background-size: cover;
   background-position:  center;
   position: relative;
   z-index: 1;
+}
+
+@keyframes fade-in {
+  from{
+    --bg-o: 1;
+  }
+  to{
+    --bg-o: 0;
+  }
 }
 
 @media(max-width: 426px){
