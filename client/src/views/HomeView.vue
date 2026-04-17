@@ -3,20 +3,24 @@ import gutsBg from '../assets/img/background-guts.webp'
 import makiBg from '../assets/img/background-maki.webp'
 import lokiBg from '../assets/img/background-loki.webp'
 import blazerBg from '../assets/img/background-blazer.webp'
-import { computed } from 'vue'
+import plagueKnightBg from '../assets/img/background-plague-knight.webp'
+import plagueSwordBg from '../assets/img/background-plague-sword.webp'
+import { computed, ref } from 'vue'
 
-const backgrounds = [gutsBg,makiBg,lokiBg,blazerBg,]
+const backgrounds = [gutsBg,makiBg,lokiBg,blazerBg,plagueKnightBg,plagueSwordBg]
 const randomBg = computed(()=>{
 let bg = backgrounds[Math.floor(Math.random()* backgrounds.length)]
 return `url(${bg})`
 }) 
+const loadedImage = ref(false)
 
 </script>
 
 <template>
-  <section class="home-split load flex-grow-1 ">
+  <section class="home-split flex-grow-1 " :class="{load: loadedImage}">
+    <img @load="loadedImage = true" height="1" width="1" loading="eager" :src="randomBg.slice(5, randomBg.length-1)" class="position-fixed no-click opacity-0">
 
-    <section class="left">
+    <section class="left d-none d-lg-block">
 
     </section>
 
@@ -82,14 +86,16 @@ return `url(${bg})`
   display: flex;
   justify-content: space-around;
   background-color: black;
-  filter: saturate(1.5);
+  filter: brightness(1.1) saturate(1.5) ;
   background-image: linear-gradient(15deg, rgba(22, 22, 29, var(--bg-o)), rgba(0,0,0,var(--bg-o))), v-bind(randomBg), linear-gradient(15deg, #16161d, black);
-  animation: fade-in 1s .2s ease forwards;
   background-repeat: no-repeat;
   background-size: cover;
   background-position:  center;
   position: relative;
   z-index: 1;
+  &.load{
+  animation: fade-in 1.5s .1s ease forwards;
+  }
 }
 
 @keyframes fade-in {

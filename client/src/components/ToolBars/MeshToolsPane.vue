@@ -61,6 +61,15 @@ const grabToolTip = `
 </div>
 `
 
+const connectFaceToolTip = `
+<div>
+  <div><kbd>F</kbd> To activate <b>Connect Faces</b></div>
+  <div>Select meshes</div>
+  <div><kdb>Click two points, moving the part from the first point to the second</kbd></div>
+  <div><kbd>esc</kbd> to cancel</div>
+</div>
+`
+
 </script>
 
 
@@ -95,7 +104,7 @@ const grabToolTip = `
             <!-- Move-to-face mode toggle -->
             <button class="tool-btn flex-grow-1" :disabled="!selectedMeshes.length"
               :class="{ 'tool-btn--active': toolState.mode === 'move-to-face' }"
-              v-tooltip="'Click source face, then target face to snap selection in place. Press F to activate.'"
+              v-tooltip="connectFaceToolTip"
               @click="toggleFaceMoveMode">
               <i class="mdi mdi-target"></i> Face <kbd>F</kbd>
             </button>
@@ -133,7 +142,7 @@ const grabToolTip = `
       </section>
 
       <!-- Position -->
-      <section>
+      <!-- <section>
         <div class="small-input-group rounded-3">
           <label>Position</label>
           <div class="d-flex flex-column">
@@ -182,7 +191,7 @@ const grabToolTip = `
 
           </div>
         </div>
-      </section>
+      </section> -->
 
     </div>
   </section>
