@@ -18,7 +18,7 @@ const loadedImage = ref(false)
 
 <template>
   <section class="home-split flex-grow-1 " :class="{load: loadedImage}">
-    <img @load="loadedImage = true" height="1" width="1" loading="eager" :src="randomBg.slice(5, randomBg.length-1)" class="position-fixed no-click opacity-0">
+    <img @load="loadedImage = true" height="1" width="1" loading="eager" :src="randomBg.slice(4, randomBg.length-1)" class="position-fixed no-click opacity-0">
 
     <section class="left d-none d-lg-block">
 
