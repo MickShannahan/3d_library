@@ -21,7 +21,9 @@ class MeshService {
       objectName: f.name
     }))
     if (currentFileGroup) {
-      currentFileGroup.meshes.push(...stlMeshes)
+      const rawMeshes = stlMeshes.map(m => markRaw(m))
+      rawMeshes.forEach(m => currentFileGroup.add(m))
+      currentFileGroup.meshes.push(...rawMeshes)
     } else {
       meshService.addMeshGroups(stlMeshes)
     }
