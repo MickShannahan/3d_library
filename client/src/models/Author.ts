@@ -16,7 +16,7 @@ export class Author {
     this._id = data.id ?? data._id ?? generateId()
     this.name = data.name
     this.image = data.image
-    this.socials = data.socials ?? [] as AuthorLink[]
+    this.socials = data.socials ?? data.links ?? [] as AuthorLink[]
   }
 
   get id() {

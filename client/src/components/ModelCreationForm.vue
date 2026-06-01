@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import ModalWrapper from './ModalWrapper.vue'
 import {Modal} from 'bootstrap'
 import { AppState } from '@/AppState'
@@ -8,7 +8,8 @@ import { modelsService } from '@/services/ModelsService'
 import { Author } from '@/models/Author'
 import { Model } from '@/models/Model'
 
-const model = computed(() => AppState.meshGroups[0])
+const editMode = computed(() => !!AppState.editingModel)
+const model = computed(() => AppState.editingModel ?? AppState.meshGroups[0])
 
 const authorSearch = ref('')
 const authorDropdownOpen = ref(false)
@@ -66,11 +67,14 @@ const draggingFrom = ref<PartGroup | null>(null)  // source group, null = ungrou
 const ungroupedMeshes = computed(() => {
   if (!model.value) return []
   const groupedIds = model.value.partGroups.flatMap(pg => pg.partIds)
-  return model.value.meshes.filter(m => !groupedIds.includes(m._id))
+  const allMeshes = model.value.meshes.length ? model.value.meshes : model.value._meshData
+  return allMeshes.filter((m: any) => !groupedIds.includes(m._id))
 })
 
 function meshName(id: string) {
-  return model.value?.meshes.find(m => m._id === id)?.name ?? id
+  return model.value?.meshes.find(m => m._id === id)?.name
+    ?? (model.value?._meshData as any[])?.find(m => m._id === id)?.name
+    ?? id
 }
 
 // --- Drag handlers ---
@@ -139,12 +143,22 @@ async function handleSubmit() {
   model.value.author = selectedAuthor.value
   model.value.tags = tags.value
   closeModal()
-  await modelsService.createModel(model.value as Model)
+  if (editMode.value) {
+    await modelsService.updateModel(model.value as Model)
+  } else {
+    await modelsService.createModel(model.value as Model)
+  }
 }
 
 function closeModal(){
   Modal.getOrCreateInstance('#create-model').hide()
 }
+
+onMounted(() => {
+  document.getElementById('create-model')?.addEventListener('hidden.bs.modal', () => {
+    AppState.editingModel = null
+  })
+})
 </script>
 
 <template>
@@ -155,7 +169,7 @@ function closeModal(){
       <!-- Header -->
       <div class="row mb-3 align-items-center">
         <div class="col">
-          <h5 class="mb-0">Publish Model</h5>
+          <h5 class="mb-0">{{ editMode ? 'Edit Model' : 'Publish Model' }}</h5>
         </div>
         <div class="col-auto">
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -343,7 +357,7 @@ function closeModal(){
         <div class="col d-flex justify-content-end gap-2">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-normal-grad" @click="handleSubmit">
-            <i class="bi bi-cloud-upload me-1"></i>Publish
+            <i :class="editMode ? 'bi bi-floppy me-1' : 'bi bi-cloud-upload me-1'"></i>{{ editMode ? 'Save Changes' : 'Publish' }}
           </button>
         </div>
       </div>

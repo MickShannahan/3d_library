@@ -128,6 +128,14 @@ class ModelsService {
     AppState.models = AppState.models.filter(m => m._id != modelId)
   }
 
+  async updateModel(model: Model) {
+    const res = await api.post('api/models', model.toData())
+    const updated = new Model(res.data)
+    const idx = AppState.models.findIndex(m => m._id === updated._id)
+    if (idx !== -1) AppState.models.splice(idx, 1, updated)
+    if (AppState.activeModel?._id === updated._id) AppState.activeModel = updated
+  }
+
 }
 
 export const modelsService = new ModelsService()

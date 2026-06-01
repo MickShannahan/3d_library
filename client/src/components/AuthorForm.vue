@@ -2,8 +2,9 @@
 import { authorsService } from '@/services/AuthorsService';
 import { Author, type AuthorLink } from '@/models/Author';
 import { Pop } from '@/utils/Pop';
+import { AppState } from '@/AppState';
 import { Modal } from 'bootstrap';
-import { reactive, ref, computed } from 'vue';
+import { reactive, ref, computed, watch, onMounted } from 'vue';
 import { api } from '@/services/AxiosService';
 import AuthorListCard from './AuthorListCard.vue';
 
@@ -32,6 +33,26 @@ const imageFile = ref<File | null>(null)
 const imagePreview = ref('')
 const loading = ref(false)
 const openIconDropdown = ref<number | null>(null)
+
+const editMode = computed(() => !!AppState.editingAuthor)
+
+watch(() => AppState.editingAuthor, (author) => {
+  if (!author) return
+  formData.name = author.name
+  formData.socials = author.socials.map(s => ({ ...s }))
+  imagePreview.value = author.image
+  imageFile.value = null
+})
+
+onMounted(() => {
+  document.getElementById('create-author')?.addEventListener('hidden.bs.modal', () => {
+    AppState.editingAuthor = null
+    formData.name = ''
+    formData.socials = []
+    imageFile.value = null
+    imagePreview.value = ''
+  })
+})
 
 const previewAuthor = computed(() => new Author({
   name: formData.name || 'Author Name',
@@ -64,25 +85,30 @@ function toggleIconDropdown(index: number) {
 }
 
 async function submitForm() {
-  if (!formData.name || !imageFile.value) return
+  if (!formData.name || (!editMode.value && !imageFile.value)) return
 
   loading.value = true
   try {
-    const form = new FormData()
-    form.append('images', imageFile.value, imageFile.value.name)
-    const uploadRes = await api.post('upload/images', form)
-    const imageUrl = uploadRes.data[0]
+    let imageUrl = AppState.editingAuthor?.image ?? ''
 
-    await authorsService.createAuthor({ name: formData.name, image: imageUrl, socials: formData.socials })
+    if (imageFile.value) {
+      const form = new FormData()
+      form.append('images', imageFile.value, imageFile.value.name)
+      const uploadRes = await api.post('upload/images', form)
+      imageUrl = uploadRes.data[0]
+    }
 
-    Pop.toast(`${formData.name} created!`)
+    if (editMode.value) {
+      await authorsService.updateAuthor(AppState.editingAuthor._id, { name: formData.name, image: imageUrl, socials: formData.socials })
+      Pop.toast(`${formData.name} updated!`)
+    } else {
+      await authorsService.createAuthor({ name: formData.name, image: imageUrl, socials: formData.socials })
+      Pop.toast(`${formData.name} created!`)
+    }
+
     Modal.getOrCreateInstance('#create-author').hide()
-    formData.name = ''
-    formData.socials = []
-    imageFile.value = null
-    imagePreview.value = ''
   } catch (error) {
-    Pop.error(error, 'Could not create author')
+    Pop.error(error, editMode.value ? 'Could not update author' : 'Could not create author')
   }
   loading.value = false
 }
@@ -92,7 +118,7 @@ async function submitForm() {
 <template>
 <div class="p-2">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0">Create Author</h5>
+    <h5 class="mb-0">{{ editMode ? 'Edit Author' : 'Create Author' }}</h5>
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
   </div>
 
@@ -106,7 +132,7 @@ async function submitForm() {
 
         <div class="mb-3">
           <label class="form-label">Profile Image</label>
-          <input type="file" class="form-control" accept="image/*" @change="handleImagePicked" required>
+          <input type="file" class="form-control" accept="image/*" @change="handleImagePicked" :required="!editMode">
         </div>
 
         <div class="mb-2">
@@ -145,7 +171,7 @@ async function submitForm() {
           <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-normal-grad" :disabled="loading">
             <span v-if="loading"><i class="mdi mdi-loading mdi-spin"></i> Saving...</span>
-            <span v-else>Create Author <i class="mdi mdi-account-plus"></i></span>
+            <span v-else>{{ editMode ? 'Save Changes' : 'Create Author' }} <i class="mdi" :class="editMode ? 'mdi-content-save' : 'mdi-account-plus'"></i></span>
           </button>
         </div>
       </form>

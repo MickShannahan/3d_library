@@ -7,6 +7,7 @@ export class AuthorsController extends BaseController {
     this.router
       .get('', this.getAuthors)
       .post('', this.createAuthor)
+      .put('/:authorId', this.updateAuthor)
       .delete('/:authorId', this.deleteAuthor)
   }
 
@@ -34,6 +35,16 @@ export class AuthorsController extends BaseController {
       const authorId = req.params.authorId
       const deleteMessage = await authorsService.deleteAuthor(authorId)
       res.send({ message: deleteMessage })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async updateAuthor(req, res, next) {
+    try {
+      const authorId = req.params.authorId
+      const updated = await authorsService.updateAuthor(authorId, req.body)
+      res.send(updated)
     } catch (error) {
       next(error)
     }

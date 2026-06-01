@@ -17,6 +17,8 @@ interface AppState {
   downloadJobs: Job[]
   models: Model[]
   activeModel: Model
+  editingModel: Model | null
+  editingAuthor: Author | null
   activeAuthor: Author | null
   activeOrder: Order | null
   authors: Author[],
@@ -34,6 +36,8 @@ export const AppState = reactive<AppState>({
   draggingFromPartGroup: null,
   models: [] as Model[],
   activeModel: null,
+  editingModel: null,
+  editingAuthor: null,
   activeAuthor: null,
   activeOrder: null,
   jobs: [] as Job[],

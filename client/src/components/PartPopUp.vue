@@ -3,7 +3,8 @@ import { PartMesh } from '@/models/PartMesh';
 
 
 defineProps({
-  mesh: PartMesh
+  mesh: PartMesh,
+  images: Array
 })
 
 </script>
@@ -13,7 +14,7 @@ defineProps({
   <div class="hover-area">
     <slot></slot>
     <div class="hover-preview gap-1">
-      <img v-for="img in mesh.images" :src="img.data" class="preview-image border border-primary rounded-5 shadow">
+      <img v-for="img in mesh?.images ?? images" :src="img?.data ?? img" class="preview-image border border-primary rounded-5 shadow">
     </div>
   </div>
 </template>

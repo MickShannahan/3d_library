@@ -8,6 +8,8 @@ import { meshService } from '@/services/MeshService';
 import { useRouter } from 'vue-router';
 import { PartGroup } from '@/models/PartGroup';
 import { logger } from '@/utils/Logger';
+import { Modal } from 'bootstrap';
+import ModelCreationForm from './ModelCreationForm.vue';
 
 
 const props = defineProps({
@@ -76,6 +78,11 @@ async function downloadModel(){
   }
 }
 
+function editModel() {
+  AppState.editingModel = props.model
+  Modal.getOrCreateInstance('#create-model').show()
+}
+
 </script>
 
 
@@ -92,6 +99,9 @@ async function downloadModel(){
             </button>
             <button @click="openModelInViewer" class="btn align-items-center text-start me-1" v-tooltip="'Open Model in 3D Scene'">
               <i class="mdi mdi-open-in-new fs-5 text-normal"></i>
+            </button>
+            <button @click="editModel" class="btn align-items-center text-start me-1" v-tooltip="'Edit Model'">
+              <i class="mdi mdi-pencil fs-5 text-yellow"></i>
             </button>
             <button @click="downloadModel" class="btn text-start align-items-center " v-tooltip="'Download'">
               <i class="mdi mdi-download fs-5 text-normal-z"></i>
@@ -155,6 +165,8 @@ async function downloadModel(){
       </div>
     </section>
   </div>
+
+  <ModelCreationForm />
 
 </template>
 

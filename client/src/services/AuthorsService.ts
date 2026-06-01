@@ -20,6 +20,15 @@ class AuthorsService {
     const idx = AppState.authors.findIndex(a => a._id === authorId)
     if (idx !== -1) AppState.authors.splice(idx, 1)
   }
+
+  async updateAuthor(authorId: string, authorData: { name: string, image: string, socials: AuthorLink[] }) {
+    const res = await api.put(`api/authors/${authorId}`, authorData)
+    const updated = new Author(res.data)
+    const idx = AppState.authors.findIndex(a => a._id === updated._id)
+    if (idx !== -1) AppState.authors.splice(idx, 1, updated)
+    if (AppState.activeAuthor?._id === updated._id) AppState.activeAuthor = updated
+    return updated
+  }
 }
 
 export const authorsService = new AuthorsService()

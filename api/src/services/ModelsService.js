@@ -6,6 +6,19 @@ import { azureService } from "./AzureService.js"
 class ModelsService {
 
   async createOrUpdateModel(modelData = {}) {
+    const existing = modelData._id ? await dbContext.Models.exists({ _id: modelData._id }) : null
+    if (existing) {
+      const allowed = {
+        name: modelData.name,
+        author: modelData.author ?? null,
+        tags: modelData.tags ?? [],
+        price: modelData.price ?? 0,
+        adjustedScale: modelData.adjustedScale ?? 1,
+        size: modelData.size ?? 0,
+        partGroups: modelData.partGroups ?? [],
+      }
+      return await dbContext.Models.findByIdAndUpdate(modelData._id, allowed, { new: true, runValidators: true }).populate('author')
+    }
     return await dbContext.Models.findOneAndUpdate({ _id: modelData._id }, modelData, { upsert: true, new: true })
   }
 
