@@ -1,7 +1,13 @@
 import { Schema } from "mongoose";
 
+const NoteAttachmentSchema = new Schema({
+  url: { type: String },
+  name: { type: String }
+})
+
 const OrderNoteSchema = new Schema({
-  body: { type: String, minlength: 1, maxlength: 500 }
+  body: { type: String, minlength: 1, maxlength: 500 },
+  attachmentImg: { type: NoteAttachmentSchema }
 }, { timestamps: true })
 
 const ContactSchema = new Schema({

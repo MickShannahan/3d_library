@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { Order, STATUS_COLORS, STATUS_ICONS, } from '@/models/Order'
+import { Order, STATUS_COLORS, STATUS_ICONS, type OrderNote } from '@/models/Order'
 import { ordersService } from '@/services/OrdersService'
 import { Pop } from '@/utils/Pop'
 import { Modal } from 'bootstrap'
@@ -66,15 +66,40 @@ async function togglePaid(field: 'paid' | 'customerPaid') {
 
 
 const newNoteBody = ref('')
+const noteAttachmentFile = ref<File | null>(null)
+const noteAttachmentPreview = ref('')
+const noteFileInput = ref<HTMLInputElement | null>(null)
 
-watch(() => props.order._id, () => { newNoteBody.value = '' })
+watch(() => props.order._id, () => {
+  newNoteBody.value = ''
+  removeNoteAttachment()
+})
+
+function handleNoteAttachment(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  noteAttachmentFile.value = file
+  noteAttachmentPreview.value = URL.createObjectURL(file)
+}
+
+function removeNoteAttachment() {
+  noteAttachmentFile.value = null
+  noteAttachmentPreview.value = ''
+  if (noteFileInput.value) noteFileInput.value.value = ''
+}
 
 async function addNote() {
   if (!newNoteBody.value.trim()) return
   try {
-    const updatedNotes = [...props.order.notes, { body: newNoteBody.value.trim() }]
+    const newNote: OrderNote = { body: newNoteBody.value.trim() }
+    if (noteAttachmentFile.value) {
+      const url = await ordersService.uploadNoteAttachment(props.order._id, noteAttachmentFile.value)
+      newNote.attachmentImg = { url, name: noteAttachmentFile.value.name }
+    }
+    const updatedNotes = [...props.order.notes, newNote]
     await ordersService.updateOrder(props.order._id, { notes: updatedNotes })
     newNoteBody.value = ''
+    removeNoteAttachment()
     Pop.toast('Note Added')
   } catch (error) {
     Pop.error(error, 'Could Not Add Note')
@@ -295,7 +320,12 @@ async function deleteOrder() {
     <div v-if="order.notes.length" class="d-flex flex-column gap-2 mb-3">
       <div v-for="(note, i) in order.notes" :key="i" class="note-card p-2">
         <div class="small mb-1">{{ note.body }}</div>
-        <small class="text-muted">{{ formatDate(note.createdAt) || 'No date' }}</small>
+        <div class="d-flex">
+          <PartPopUp v-if="note.attachmentImg?.url" :images="[note.attachmentImg?.url]">
+            <img  :src="note.attachmentImg.url" class="note-attachment rounded mt-1" :alt="note.attachmentImg.name" />
+          </PartPopUp>
+        </div>
+        <small class="text-muted d-block mt-1">{{ formatDate(note.createdAt) || 'No date' }}</small>
       </div>
     </div>
     <div v-else class="text-muted small mb-3">No notes yet.</div>
@@ -307,13 +337,25 @@ async function deleteOrder() {
         rows="2"
         placeholder="Add a note..."
       ></textarea>
-      <button
-        @click="addNote"
-        :disabled="!newNoteBody.trim()"
-        class="btn btn-sm btn-normal align-self-end"
-      >
-        Add Note <i class="mdi mdi-send ms-1"></i>
-      </button>
+
+      <div v-if="noteAttachmentPreview" class="note-attachment-preview position-relative d-inline-block">
+        <img :src="noteAttachmentPreview" class="note-attachment rounded" alt="attachment preview" />
+        <button type="button" class="btn-close btn-close-white note-attachment-remove" @click="removeNoteAttachment"></button>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center">
+        <label class="btn btn-sm btn-outline-secondary mb-0" v-tooltip="'Attach image'">
+          <i class="mdi mdi-image-plus"></i>
+          <input ref="noteFileInput" type="file" accept="image/*" class="d-none" @change="handleNoteAttachment" />
+        </label>
+        <button
+          @click="addNote"
+          :disabled="!newNoteBody.trim()"
+          class="btn btn-sm btn-normal"
+        >
+          Add Note <i class="mdi mdi-send ms-1"></i>
+        </button>
+      </div>
     </div>
   </section>
 
@@ -410,6 +452,21 @@ async function deleteOrder() {
 .note-card {
   border-left: 2px solid var(--bs-normal-shadow);
   background: rgba(var(--bs-black-rgb), 0.1);
+}
+
+.note-attachment {
+  width: 140px;
+}
+
+.note-attachment-preview {
+  .note-attachment-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: rgba(0,0,0,.6);
+    border-radius: 50%;
+    padding: 4px;
+  }
 }
 
 

@@ -31,8 +31,15 @@ export const CONTACT_ICONS: Record<string, string> = {
 }
 
 
+export interface AttachmentImg {
+  file?: Blob,
+  url?: string,
+  name?: string,
+}
+
 export interface OrderNote {
   body: string
+  attachmentImg?: AttachmentImg
   createdAt?: string
   updatedAt?: string
 }

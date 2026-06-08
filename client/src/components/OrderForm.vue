@@ -8,6 +8,7 @@ import { reactive, ref, computed, watch, onMounted } from 'vue'
 import PartPopUp from './PartPopUp.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Model } from '@/models/Model'
+import { logger } from '@/utils/Logger.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -62,11 +63,12 @@ const formData = reactive({
   customerContacts: [] as CustomerContact[],
   modelId: '',
   partIds: [] as string[],
-  notes: [] as OrderNote[]
+  notes: [] as OrderNote[],
+  attachmentImg: null,
 })
 
 const loading = ref(false)
-const sizeUnit = ref<'mm' | 'in'>('mm')
+const sizeUnit = ref<'mm' | 'in'>('in')
 const noteBody = ref('')
 const checkedParts = ref<Set<string>>(new Set())
 const openDropdowns = ref<Set<string>>(new Set())
@@ -178,6 +180,9 @@ async function submitForm() {
       Pop.toast(`Order #${props.order.orderNumber} updated!`)
     } else {
       formData.notes = noteBody.value.trim() ? [{ body: noteBody.value.trim() }] : []
+      if(formData.attachmentImg) {
+        formData.notes[0].attachmentImg = formData.attachmentImg
+      }
       await ordersService.createOrder(formData)
       Pop.toast(`Order for ${formData.customerName} created!`)
       resetForm()
@@ -187,6 +192,15 @@ async function submitForm() {
     Pop.error(error, isEditMode.value ? 'Could not update order' : 'Could not create order')
   }
   loading.value = false
+}
+
+function addFileAttachment(){
+  const file = event.target.files[0]
+  if(!file) return
+  logger.log(file)
+  const previewURL = URL.createObjectURL(file) 
+  formData.attachmentImg = {name: file.name, url: previewURL, file: file}
+  event.target.value = ''
 }
 
 function resetForm() {
@@ -308,10 +322,15 @@ watch(() => props.order, (newOrder) => {
         </div>
 
         <!-- Note (single, for initial creation) -->
-        <div>
+        <div class="position-relative">
           <label class="form-label">Order Note <span class="text-muted fw-normal small">(optional)</span></label>
-          <textarea v-model="noteBody" class="form-control" rows="3"
+          <textarea v-model="noteBody" class="form-control ps-2 pe-5" rows="3"
             placeholder="Any notes for this order..."></textarea>
+            <input @change="addFileAttachment" type="file" accept="image/*" class="file-attachment">
+            <div v-if="formData.attachmentImg" class="position-relative">
+              <img class="img-fluid rounded" :src="formData.attachmentImg?.url">
+              <span @click="formData.attachmentImg = null" class="btn cancel-btn"><i class="mdi mdi-cancel"></i></span>
+            </div>
         </div>
 
       </div>
@@ -705,6 +724,34 @@ watch(() => props.order, (newOrder) => {
   background: rgba(13, 110, 253, 0.1);
   border: 1px solid rgba(13, 110, 253, 0.25);
   font-size: 0.875rem;
+}
+
+.file-attachment{
+  width: 0; 
+  &::after{
+    cursor: pointer;
+    border-radius: .5rem;
+    padding: .2em .5em;
+    color: rgba(var(--bs-primary-rgb), 1);
+    background-color: var(--bs-tertiary-bg);
+    right: 0rem;
+    top: 2rem;
+    position: absolute;
+    font-family: "Material Design Icons";
+    content: "\F1AC9";
+    border: 1px solid var(--bs-primary);
+    &:hover{
+      filter: brightness(1.2) saturate(1.1);
+    }
+  }
+}
+
+.cancel-btn{
+  position: absolute;
+  right: 0;
+  color: var(--bs-light);
+  background-color: rgba(var(--bs--rgb), .2);
+  text-shadow: 0px 0px 5px var(--bs-dark);
 }
 
 // ── Shared dropdown styling ───────────────────────────────

@@ -1,6 +1,8 @@
 import { AppState } from "@/AppState"
 import { Order } from "@/models/Order"
 import { api } from "./AxiosService"
+import { imageUploadService } from "./ImageUploadService"
+import { logger } from "@/utils/Logger"
 
 class OrdersService {
   async getOrders() {
@@ -13,7 +15,22 @@ class OrdersService {
     return new Order(res.data)
   }
 
+  async uploadNoteAttachment(orderId: string, file: File): Promise<string> {
+    const form = new FormData()
+    form.append('images', file, file.name)
+    const folderPath = `order/${orderId}/attachments`
+    const uploadRes = await api.post(`upload/images?folder=${encodeURIComponent(folderPath)}`, form)
+    return uploadRes.data[0]
+  }
+
   async createOrder(orderData: Partial<Order>) {
+    logger.log(orderData)
+    const notesWithUpload = orderData.notes.filter(n => n.attachmentImg?.url?.includes(window.origin))
+    if (notesWithUpload.length) {
+      for (let note of notesWithUpload) {
+        note.attachmentImg.url = await this.uploadNoteAttachment(orderData._id, note.attachmentImg.file as File)
+      }
+    }
     const res = await api.post('api/orders', orderData)
     const order = new Order(res.data)
     AppState.orders.push(order)

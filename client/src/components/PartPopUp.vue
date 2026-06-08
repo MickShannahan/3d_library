@@ -32,8 +32,8 @@ defineProps({
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  right: 100%;
-  bottom: 100%;
+  bottom: 50%;
+  right: 50%;
   display: flex;
   transform-origin: bottom right;
   z-index: 1;
@@ -43,6 +43,10 @@ defineProps({
   opacity: 1;
   transform: scale(.65);
   transition: all .1s .2s ease;
+}
+
+.preview-image{
+  max-width: min(100dvw, 1200px);
 }
 
 .preview-image:last-child{
