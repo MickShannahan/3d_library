@@ -5,7 +5,7 @@ import { Pop } from '@/utils/Pop'
 import { Modal } from 'bootstrap'
 import { computed, ref, watch } from 'vue'
 import PartPopUp from './PartPopUp.vue'
-import { PartGroup } from '@/models/PartGroup'
+import OrderModelBreakdown from './OrderModelBreakdown.vue'
 
 const props = defineProps({
   order: { type: Order }
@@ -21,31 +21,6 @@ const CONTACT_ICONS: Record<string, string> = {
   bluesky: 'mdi-butterfly-outline',
 }
 
-
-
-const ungroupedOrderedMeshes = computed(() => {
-  const model = props.order.model
-  if (!model) return []
-  const groupedIds = new Set(model.partGroups.flatMap(g => g.partIds))
-  const partIdSet = new Set(props.order.partIds)
-  return model.meshData.filter((m: any) => !groupedIds.has(m._id) && partIdSet.has(m._id))
-})
-
-const orderedGroups = computed(() => {
-  const model = props.order.model
-  if (!model) return []
-  const partIdSet = new Set(props.order.partIds)
-  return model.partGroups
-    .map((group, gi) => ({
-      group,
-      color: PartGroup.GROUP_COLORS[gi % PartGroup.GROUP_COLORS.length],
-      meshes: group.partIds
-        .filter(id => partIdSet.has(id))
-        .map(id => model.meshData.find((m: any) => m._id === id))
-        .filter(Boolean)
-    }))
-    .filter(g => g.meshes.length > 0)
-})
 
 
 async function updateStatus(newStatus: string) {
@@ -159,33 +134,69 @@ async function deleteOrder() {
   <!-- Header: image + order number + model/customer -->
   <section class="px-2 pb-2">
     <div class="d-flex gap-3 align-items-start">
-      <img
-        v-if="order.model?.coverImage"
-        :src="order.model.coverImage"
-        class="rounded-3 flex-shrink-0"
-        style="width: 140px; height: 140px; object-fit: cover"
-        :alt="`Cover of ${order.model?.name}`"
-      />
-      <div v-else class="bg-secondary rounded-3 flex-shrink-0" style="width: 140px; height: 120px"></div>
+
+      <!-- Single model: classic layout -->
+      <template v-if="order.modelsData.length <= 1">
+        <img
+          v-if="order.model?.coverImage"
+          :src="order.model.coverImage"
+          class="rounded-3 flex-shrink-0"
+          style="width: 140px; height: 140px; object-fit: cover"
+          :alt="`Cover of ${order.model?.name}`"
+        />
+        <div v-else class="bg-secondary rounded-3 flex-shrink-0" style="width: 140px; height: 120px"></div>
+      </template>
+
+      <!-- Multiple models: stacked image strip -->
+      <template v-else>
+        <div class="multi-model-images flex-shrink-0 d-flex flex-column gap-1" style="width: 140px">
+          <div v-for="(m, i) in order.modelsData.slice(0, 4)" :key="i"
+            class="multi-img-cell rounded-2 position-relative overflow-hidden"
+            :style="{ height: `${Math.floor(140 / Math.min(order.modelsData.length, 4)) - 2}px` }">
+            <img v-if="m?.coverImage" :src="m.coverImage"
+              class="w-100 h-100" style="object-fit: cover; object-position: top;" :alt="m?.name" />
+            <div v-else class="w-100 h-100 bg-secondary"></div>
+            <div v-if="i === 3 && order.modelsData.length > 4"
+              class="position-absolute inset-0 d-flex align-items-center justify-content-center"
+              style="background: rgba(0,0,0,.55); inset:0">
+              <span class="fw-bold text-white">+{{ order.modelsData.length - 3 }}</span>
+            </div>
+          </div>
+        </div>
+      </template>
 
       <div class="flex-grow-1 min-w-0">
         <div class="d-flex align-items-center gap-2 mb-1">
           <div class="order-badge-sm">{{ order.orderNumber }}</div>
-          <h5 class="mb-0 text-truncate">{{ order.model?.name ?? 'Unknown Model' }}</h5>
+          <!-- Single model name -->
+          <h5 v-if="order.modelsData.length <= 1" class="mb-0 text-truncate">
+            {{ order.model?.name ?? 'Unknown Model' }}
+          </h5>
+          <!-- Multiple model names -->
+          <div v-else class="d-flex flex-column min-w-0">
+            <h5 class="mb-0">{{ order.modelsData.length }} Models</h5>
+            <div class="d-flex flex-column gap-0 mt-1">
+              <small v-for="(m, i) in order.modelsData" :key="i" class="text-muted text-truncate">
+                <i class="mdi mdi-cube-outline me-1"></i>{{ m?.name ?? 'Unknown' }}
+                <span class="ms-1 text-teal small">${{ (m as any).orderPrice?.toFixed(2) }}</span>
+                <span v-if="(order.models[i] as any)?.scale" class="ms-2 small">{{ (order.models[i] as any).scale }}%</span>
+                <span v-if="(order.models[i] as any)?.size" class="ms-1 small">{{ (order.models[i] as any).size }}mm</span>
+              </small>
+            </div>
+          </div>
         </div>
         <div class="fs-6 fw-semibold mb-2">{{ order.customerName }}</div>
         <div class="d-flex flex-wrap gap-3 text-muted">
-          <small>Scale: {{ order.modelScale }}%</small>
-          <small v-if="order.modelSize">Size: {{ order.modelSize }}mm</small>
+          <!-- Per-model scale/size shown in model list -->
         </div>
         <div class="d-flex flex-wrap gap-3 mt-1">
           <div v-if="order.customerPrice > 0">
             <small class="text-muted d-block">Customer Price</small>
             <strong class="text-success">${{ order.customerPrice.toFixed(2) }}</strong>
           </div>
-          <div v-if="order.price > 0">
+          <div v-if="order.orderTotal > 0">
             <small class="text-muted d-block">Print Cost</small>
-            <strong>${{ order.price.toFixed(2) }}</strong>
+            <strong class="text-teal">${{ order.orderTotal.toFixed(2) }}</strong>
           </div>
         </div>
       </div>
@@ -232,53 +243,6 @@ async function deleteOrder() {
         <i class="mdi me-1" :class="STATUS_ICONS[status]"></i>
         {{ status.charAt(0).toUpperCase() + status.slice(1) }}
       </button>
-    </div>
-  </section>
-
-  <!-- Parts breakdown (chip-grid style) -->
-  <section v-if="ungroupedOrderedMeshes.length || orderedGroups.length" class="px-2 pb-2 my-2">
-
-    <div class="parts-area">
-
-      <!-- Ungrouped parts -->
-      <div v-if="ungroupedOrderedMeshes.length" class="mb-2">
-        <div class="part-group-header d-flex align-items-center gap-2 px-2 py-1 mb-1 rounded">
-          <i class="mdi mdi-cube-outline text-muted"></i>
-          <span class="fw-semibold small text-uppercase">Parts</span>
-          <span class="badge bg-primary px-3 ms-auto">{{ ungroupedOrderedMeshes.length }}</span>
-        </div>
-        <div class="part-chip-grid">
-          <div v-for="mesh in ungroupedOrderedMeshes" :key="mesh._id" class="part-chip part-chip--included">
-            <PartPopUp v-if="mesh.images?.[0]?.data" :mesh>
-              <img :src="mesh.images[0].data" class="part-chip-img rounded" :alt="mesh.name" />
-            </PartPopUp>
-            <div v-else class="part-chip-img rounded bg-secondary"></div>
-            <span class="part-chip-name">{{ mesh.name }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Part groups -->
-      <div v-for="{ group, color, meshes } in orderedGroups" :key="group.name" class="mb-2">
-        <div class="part-group-header d-flex align-items-center gap-2 px-2 py-1 mb-1 rounded">
-          <i class="mdi mdi-layers-outline" :style="`color: var(${color})`"></i>
-          <span class="fw-semibold small text-uppercase">{{ group.name }}</span>
-          <span
-            class="badge px-3 ms-auto"
-            :style="`background: var(${color})`"
-          >{{ meshes.length }}</span>
-        </div>
-        <div class="part-chip-grid">
-          <div v-for="mesh in meshes" :key="mesh._id" class="part-chip part-chip--included">
-            <PartPopUp v-if="mesh.images?.[0]?.data" :mesh>
-              <img :src="mesh.images[0].data" class="part-chip-img rounded" :alt="mesh.name" />
-            </PartPopUp>
-            <div v-else class="part-chip-img rounded bg-secondary"></div>
-            <span class="part-chip-name">{{ mesh.name }}</span>
-          </div>
-        </div>
-      </div>
-
     </div>
   </section>
 
@@ -361,6 +325,16 @@ async function deleteOrder() {
 
   <!-- Danger zone (pushed to bottom) -->
   <section class="my-4"></section>
+
+  <!-- Models breakdown -->
+  <section class="px-2 pb-2">
+    <hr class="mt-0 mb-2">
+    <div class="fw-semibold mb-2">
+      <i class="mdi mdi-cube-outline me-1 text-muted"></i>Models in Order
+    </div>
+    <OrderModelBreakdown :order="order" />
+  </section>
+
   <section class="danger-zone rounded-4 p-2 mt-auto mx-2 mb-3">
     <div class="text-center small">Danger Zone</div>
     <div class="text-end">
@@ -397,6 +371,13 @@ async function deleteOrder() {
   background: rgba(var(--bs-black-rgb), .2);
   border-radius: 0.75rem;
   padding: 0.5rem;
+}
+
+.part-model-header {
+  border-bottom: 1px solid rgba(var(--bs-light-rgb), .1);
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.25rem;
+  letter-spacing: 0.03em;
 }
 
 .part-group-header {

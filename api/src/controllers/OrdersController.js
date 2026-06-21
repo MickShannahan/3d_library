@@ -24,7 +24,11 @@ export class OrdersController extends BaseController {
 
   async createOrder(req, res, next) {
     try {
-      const order = await ordersService.createOrder(req.body)
+      const body = req.body
+      if (!Array.isArray(body.models) || body.models.length === 0) {
+        return res.status(400).send({ message: 'An order must include at least one model.' })
+      }
+      const order = await ordersService.createOrder(body)
       res.send(order)
     } catch (error) {
       next(error)

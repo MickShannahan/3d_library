@@ -16,6 +16,12 @@ class ModelsService {
         adjustedScale: modelData.adjustedScale ?? 1,
         size: modelData.size ?? 0,
         partGroups: modelData.partGroups ?? [],
+        meshes: modelData.meshes ?? [],
+        coverImage: modelData.coverImage ?? '',
+        turnAroundImage: modelData.turnAroundImage ?? '',
+        images: modelData.images ?? [],
+        notes: modelData.notes ?? '',
+        renderedPreviews: modelData.renderedPreviews ?? [],
       }
       return await dbContext.Models.findByIdAndUpdate(modelData._id, allowed, { new: true, runValidators: true }).populate('author')
     }

@@ -58,6 +58,19 @@ export class CustomerContact {
   }
 }
 
+/** Represents one row in the ModelOrder junction collection (populated from the API) */
+export interface ModelOrderEntry {
+  _id: string
+  orderId: string
+  /** Populated model data or just an id string when unpopulated */
+  modelId: Model | string
+  price: number
+  scale: number
+  size?: number
+  partIds: string[]
+  position: number
+}
+
 export class Order {
   _id: string
   orderNumber: number
@@ -72,9 +85,9 @@ export class Order {
   customerAddress: string
   customerPaid: boolean
   customerPrice: number
-  modelId: string
+  /** Junction entries from the ModelOrder collection, sorted by position */
+  models: ModelOrderEntry[]
   partIds: string[]
-  modelData: any
   createdAt: Date
   updatedAt: Date
 
@@ -92,19 +105,31 @@ export class Order {
     this.customerAddress = data.customerAddress ?? ''
     this.customerPaid = data.customerPaid ?? false
     this.customerPrice = data.customerPrice ?? 0
-    this.modelId = data.modelId ?? ''
+    this.models = data.models ?? []
     this.partIds = data.partIds ?? []
-    this.modelData = data.model
     this.createdAt = new Date(data.createdAt)
     this.updatedAt = new Date(data.updatedAt)
   }
 
-  get model() {
-    if (this.modelData instanceof Model) {
-      return this.modelData
-    }
-    this.modelData = AppState.models.find(m => m._id == this.modelId)
-    return this.modelData
+  /** Returns the full Model objects from AppState, merged with the price from the junction entry */
+  get modelsData(): (Model & { orderPrice: number })[] {
+    return this.models.map(entry => {
+      const populated = entry.modelId as Model
+      const model = (populated?._id)
+        ? populated
+        : AppState.models.find(m => m._id === (entry.modelId as string))
+      return model ? Object.assign(Object.create(Object.getPrototypeOf(model)), model, { orderPrice: entry.price }) : null
+    }).filter(Boolean)
+  }
+
+  /** Convenience: first model (for single-model contexts) */
+  get model(): Model | undefined {
+    return this.modelsData[0]
+  }
+
+  /** Sum of all per-model prices in this order */
+  get orderTotal(): number {
+    return this.models.reduce((sum, entry) => sum + (entry.price ?? 0), 0)
   }
 
   get statusColor() {

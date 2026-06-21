@@ -15,17 +15,21 @@ class MeshService {
 
   addFilesToScene(files: FileList) {
     logger.log('📂', files)
+    const SUPPORTED = ['.stl', '.obj', '.fbx']
     const currentFileGroup = AppState.meshGroups[0]
-    const stlMeshes = [...files].map(f => new PartMesh({
-      src: URL.createObjectURL(f),
-      objectName: f.name
-    }))
+    const meshes = [...files]
+      .filter(f => SUPPORTED.some(ext => f.name.toLowerCase().endsWith(ext)))
+      .map(f => new PartMesh({
+        src: URL.createObjectURL(f),
+        objectName: f.name,
+        file: f
+      }))
     if (currentFileGroup) {
-      const rawMeshes = stlMeshes.map(m => markRaw(m))
+      const rawMeshes = meshes.map(m => markRaw(m))
       rawMeshes.forEach(m => currentFileGroup.add(m))
       currentFileGroup.meshes.push(...rawMeshes)
     } else {
-      meshService.addMeshGroups(stlMeshes)
+      meshService.addMeshGroups(meshes)
     }
   }
 

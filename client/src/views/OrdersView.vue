@@ -17,7 +17,7 @@ const route = useRoute()
 const orders = computed(()=> {
   const filtered = AppState.orders.filter(order => {
     // Text search filter
-    const searchable = [order.customerName, order.status, order.model?.name, order.model?.tags.join(''), order.model?.size, order.model?.author?.name].join(', ')
+    const searchable = [order.customerName, order.status, order.model?.name, order.model?.tags?.join(''), order.model?.size, order.model?.author?.name].join(', ')
     const filterRx = new RegExp(filterText.value, 'ig')
     const passesText = filterRx.test(searchable)
     

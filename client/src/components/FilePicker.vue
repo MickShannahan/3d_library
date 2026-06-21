@@ -85,7 +85,7 @@ function handleDropEvent(e){
 
           <div class="modal-body">
             <div class="mb-2">
-              <input ref="file-input" @change="onInputChange" class="form-control" type="file" accept="stl" multiple placeholder="add more files">
+              <input ref="file-input" @change="onInputChange" class="form-control" type="file" accept=".stl,.obj,.fbx" multiple placeholder="add more files">
             </div>
             <div>
               <span v-if="pickerFiles.length == 0" class="text-secondary">... no files selected</span>

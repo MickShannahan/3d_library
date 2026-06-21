@@ -8,6 +8,7 @@ import { PartGroup } from "./PartGroup"
 import { MeshImage } from "./MeshImage"
 import { generateId } from "@/utils/GenerateId"
 import { Author } from "./Author"
+import { RenderedPreview } from "./RenderedPreview"
 
 interface ModelOptions {
   _id?: string
@@ -28,6 +29,8 @@ interface ModelOptions {
   createdAt?: string
   updatedAt?: string
   orderCount?: Number
+  notes?: string
+  renderedPreviews?: any[]
 }
 
 export class Model extends Group {
@@ -50,6 +53,8 @@ export class Model extends Group {
   createdAt: Date
   updatedAt: Date
   orderCount: Number
+  notes: string
+  renderedPreviews: RenderedPreview[]
 
   get bytes(): number {
     return this.meshes.reduce((sum, m) => sum + (m.bytes ?? 0), 0)
@@ -79,6 +84,8 @@ export class Model extends Group {
     this.createdAt = options.createdAt ? new Date(options.createdAt) : new Date()
     this.updatedAt = options.updatedAt ? new Date(options.updatedAt) : new Date()
     this.orderCount = options.orderCount ?? 0
+    this.notes = options.notes ?? ''
+    this.renderedPreviews = options.renderedPreviews ? options.renderedPreviews.map(p => new RenderedPreview(p)) : []
   }
 
   async load() {
@@ -135,7 +142,9 @@ export class Model extends Group {
     return {
       _id: this._id,
       name: this.name,
-      meshes: this.meshes.map(m => m.toData()),
+      // If the model was never load()ed in the 3D viewer, this.meshes is empty.
+      // Fall back to the raw server data so we never wipe existing mesh records.
+      meshes: this.meshes.length ? this.meshes.map(m => m.toData()) : this._meshData,
       partGroups: this.partGroups,
       images: this.images,
       coverImage: this.coverImage,
@@ -144,7 +153,9 @@ export class Model extends Group {
       tags: this.tags,
       price: this.price,
       adjustedScale: this.adjustedScale,
-      size: this.size
+      size: this.size,
+      notes: this.notes,
+      renderedPreviews: this.renderedPreviews.map(p => ({ url: p.url, title: p.title }))
     }
   }
 

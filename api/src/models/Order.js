@@ -20,7 +20,7 @@ export const OrderSchema = new Schema({
   notes: [OrderNoteSchema],
   price: { type: Number, min: 0 },
   status: { type: String, enum: ['pending', 'hold', 'printing', 'shipped', 'completed', 'archived'] },
-  paid: { type: Boolean, defualt: false },
+  paid: { type: Boolean, default: false },
   modelScale: { type: Number, min: 0, default: 100 },
   modelSize: { type: Number, min: 1 },
   customerName: { type: String },
@@ -29,13 +29,12 @@ export const OrderSchema = new Schema({
   customerPaid: { type: Boolean, default: false },
   customerPrice: { type: Number, min: 0 },
 
-  modelId: { type: Schema.ObjectId },
   partIds: [{ type: Schema.ObjectId }],
 }, { timestamps: true, toJSON: { virtuals: true } })
 
-OrderSchema.virtual('model', {
-  localField: 'modelId',
-  ref: 'Model',
-  foreignField: '_id',
-  justOne: true,
+OrderSchema.virtual('models', {
+  ref: 'ModelOrder',
+  localField: '_id',
+  foreignField: 'orderId',
+  options: { sort: { position: 1 } }
 })

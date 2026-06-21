@@ -1,6 +1,57 @@
 import { azureService } from './AzureService.js'
 import { socketProvider } from '../SocketProvider.js'
 
+/**
+ * Single-worker queue for Azure uploads.
+ * All incoming upload requests are enqueued here and processed one at a time,
+ * preventing the Heroku dyno from being overwhelmed by concurrent Azure transfers.
+ */
+class AzureUploadQueue {
+  constructor() {
+    this._queue = []
+    this._processing = false
+  }
+
+  enqueue(job) {
+    this._queue.push(job)
+    console.log(`[UploadQueue] Enqueued: ${job.file.name} (room: ${job.roomId ?? 'none'}) | Queue depth: ${this._queue.length}`)
+    this._tick()
+  }
+
+  _tick() {
+    if (this._processing || this._queue.length === 0) return
+    this._processNext()
+  }
+
+  async _processNext() {
+    this._processing = true
+    const job = this._queue.shift()
+    console.log(`[UploadQueue] Processing: ${job.file.name} | Remaining: ${this._queue.length}`)
+    try {
+      const onProgress = job.roomId
+        ? (loadedBytes, totalBytes) => {
+          socketProvider.messageRoom(job.roomId, 'UPLOAD_PROGRESS', { roomId: job.roomId, fileIndex: 0, loadedBytes, totalBytes })
+        }
+        : null
+      const { uploadPromise } = azureService.fireAndForgetUpload(job.file, job.folder, job.client, onProgress)
+      await uploadPromise
+      console.log(`[UploadQueue] Complete: ${job.file.name}`)
+      if (job.roomId) {
+        socketProvider.messageRoom(job.roomId, 'UPLOAD_COMPLETE', { roomId: job.roomId, urls: [job.url] })
+      }
+    } catch (err) {
+      console.error(`[UploadQueue] Failed: ${job.file.name}`, err)
+      if (job.roomId) {
+        socketProvider.messageRoom(job.roomId, 'UPLOAD_ERROR', { roomId: job.roomId, message: err.message })
+      }
+    }
+    this._processing = false
+    this._tick()
+  }
+}
+
+const azureUploadQueue = new AzureUploadQueue()
+
 class UploadService {
 
   /**
@@ -69,34 +120,13 @@ class UploadService {
       fileArray = await Promise.all(fileArray.map(file => processor(file)))
     }
 
-    const results = fileArray.map((file, i) => {
-      const onProgress = roomId
-        ? (loadedBytes, totalBytes) => {
-          socketProvider.messageRoom(roomId, 'UPLOAD_PROGRESS', { roomId, fileIndex: i, loadedBytes, totalBytes })
-        }
-        : null
-      return azureService.fireAndForgetUpload(file, folder, client, onProgress)
-    })
-    const urls = results.map(r => r.url)
+    // Compute all URLs upfront — deterministic from filenames, no upload started yet
+    const urls = fileArray.map(file => azureService.getBlobUrl(file, folder, client))
 
-    if (roomId) {
-      const total = results.length
-      let done = 0
-      const trackUploads = async () => {
-        try {
-          await Promise.all(results.map(async ({ uploadPromise }) => {
-            await uploadPromise
-            done++
-            if (done === total) {
-              socketProvider.messageRoom(roomId, 'UPLOAD_COMPLETE', { roomId, urls })
-            }
-          }))
-        } catch (err) {
-          socketProvider.messageRoom(roomId, 'UPLOAD_ERROR', { roomId, message: err.message })
-        }
-      }
-      trackUploads()
-    }
+    // Add each file to the shared queue — the single worker drains them one at a time
+    fileArray.forEach((file, i) => {
+      azureUploadQueue.enqueue({ file, folder, client, roomId, url: urls[i] })
+    })
 
     return urls
   }

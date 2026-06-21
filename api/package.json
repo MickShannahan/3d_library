@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file=.env --watch ./src/main.js",
-    "swagger": "npx swagger-ui-watcher swagger.json"
+    "swagger": "npx swagger-ui-watcher swagger.json",
+    "migrate": "node --env-file=.env ./scripts/migrate-to-many-to-many.js"
   },
   "author": "Codeworks",
   "license": "ISC",

@@ -14,7 +14,6 @@ const exporter = new STLExporter()
 
 class ModelsService {
 
-
   async getModels() {
     const res = await api.get('api/models')
     const models = res.data.map(d => new Model(d))
@@ -26,9 +25,7 @@ class ModelsService {
     AppState.activeModel = model
   }
 
-
-  async createModel(model: Model) {
-
+  private _buildJobQueue(model: Model) {
     jobsService.clearJobQueue()
     jobsService
       .addJobToQueue('Capturing 360 turnaround', async () => {
@@ -58,17 +55,14 @@ class ModelsService {
       })
 
       .addJobToQueue('Uploading Part Images', async (onProgress, job) => {
-        const images = model.meshes.flatMap(m => m.images)
         const subJobs = model.meshes.map(mesh => ({ mesh, subJob: job.createSubJob(mesh.name) }))
-
         let totalDone = 0
         const totalImages = model.meshes.length
 
         await Promise.all(subJobs.map(async ({ mesh, subJob }) => {
           subJob.status = 'active'
-          const meshImages = mesh.images
           const uploaded = await imageUploadService.uploadImages(
-            meshImages,
+            mesh.images,
             (p) => { subJob.progress = p },
             { folder: model.folderRef }
           )
@@ -81,31 +75,55 @@ class ModelsService {
         }))
       })
 
+      .addJobToQueue('Uploading Rendered Previews', async (onProgress, job) => {
+        const newPreviews = model.renderedPreviews.filter(p => !p.url.includes('https://'))
+        if (!newPreviews.length) { onProgress(100); return }
+
+        const form = new FormData()
+        newPreviews.forEach(p => form.append('images', p._file, p._file.name))
+        const res = await api.post('upload/images', form, {
+          params: { folder: model.folderRef },
+          onUploadProgress: e => onProgress((e.loaded / e.total) * 100)
+        })
+        const uploadedUrls: string[] = res.data
+        newPreviews.forEach((p, i) => { p.url = uploadedUrls[i] ?? p.url })
+        onProgress(100)
+      })
+
       .addJobToQueue('Uploading Meshes', async (onProgress, job) => {
-        const meshCount = model.meshes.length
+        // Only upload mesh files that haven't been uploaded to Azure yet
+        const meshesToUpload = model.meshes.filter(m => !m._src.includes('https://'))
+        const meshCount = meshesToUpload.length
+        if (meshCount === 0) { onProgress(100); return }
+
         let done = 0
-        await Promise.all(model.meshes.map(async (mesh: PartMesh) => {
+        await Promise.all(meshesToUpload.map(async (mesh: PartMesh) => {
           const subJob = job.createSubJob(mesh.name)
           subJob.status = 'active'
           const form = new FormData()
-          const exportMesh = new Mesh(mesh.geometry) // new mesh so world transforms don't apply
-          exportMesh.updateMatrixWorld(true)
-          form.append('meshes', new Blob([exporter.parse(exportMesh, { binary: true })]), mesh.name)
-          logger.log('socket')
-          // Set up socket
+
+          if (mesh.fileType !== 'stl' && mesh._file) {
+            // OBJ / FBX: upload the original file as-is
+            form.append('meshes', mesh._file, mesh.name)
+          } else {
+            // STL: export from the Three.js geometry (bakes current scene state)
+            const exportMesh = new Mesh(mesh.geometry)
+            exportMesh.updateMatrixWorld(true)
+            form.append('meshes', new Blob([exporter.parse(exportMesh, { binary: true })]), mesh.name)
+          }
+
+          // Set up socket for Azure upload progress
           const { ready, complete: azureComplete } = socketService.waitForUploadComplete(mesh._id, (loadedBytes, totalBytes) => {
             subJob.progress = 50 + (loadedBytes / totalBytes) * 50
           })
           await ready
-          logger.log('post')
-          // Send Mesh
           const res = await api.post('upload/meshes', form, {
             params: { folder: model.folderRef, roomId: mesh._id },
             onUploadProgress: e => { subJob.progress = (e.loaded / e.total) * 50 }
           })
-          mesh.src = res.data[0]
 
           await azureComplete
+          mesh.src = res.data[0]
           subJob.progress = 100
           subJob.status = 'complete'
           onProgress((++done / meshCount) * 100)
@@ -115,25 +133,30 @@ class ModelsService {
       .addJobToQueue('Saving model', async (onProgress) => {
         const modelData = model.toData()
         logger.log('🗿📦', modelData)
-        await api.post('api/models', modelData, {
+        const res = await api.post('api/models', modelData, {
           onUploadProgress: e => onProgress((e.loaded / e.total) * 100)
         })
+        const saved = new Model(res.data)
+        const idx = AppState.models.findIndex(m => m._id === saved._id)
+        if (idx !== -1) AppState.models.splice(idx, 1, saved)
+        else AppState.models.push(saved)
+        if (AppState.activeModel?._id === saved._id) AppState.activeModel = saved
       })
+  }
 
+  async createModel(model: Model) {
+    this._buildJobQueue(model)
+    await jobsService.runQueue()
+  }
+
+  async updateModel(model: Model) {
+    this._buildJobQueue(model)
     await jobsService.runQueue()
   }
 
   async deleteModel(modelId) {
-    const res = await api.delete(`api/models/${modelId}`)
+    await api.delete(`api/models/${modelId}`)
     AppState.models = AppState.models.filter(m => m._id != modelId)
-  }
-
-  async updateModel(model: Model) {
-    const res = await api.post('api/models', model.toData())
-    const updated = new Model(res.data)
-    const idx = AppState.models.findIndex(m => m._id === updated._id)
-    if (idx !== -1) AppState.models.splice(idx, 1, updated)
-    if (AppState.activeModel?._id === updated._id) AppState.activeModel = updated
   }
 
 }

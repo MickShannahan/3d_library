@@ -41,6 +41,12 @@ class AzureService {
     return urls
   }
 
+  getBlobUrl(file, folder = '', clientName = 'images') {
+    const blobName = `${folder ? folder + '/' : ''}${file.name}${file.extension ? file.extension : ''}`
+    const container = clients[clientName].getContainerClient(clientName)
+    return container.getBlockBlobClient(blobName).url
+  }
+
   fireAndForgetUpload(file, folder = '', clientName = 'images', onProgress = null) {
     const blobName = `${folder ? folder + '/' : ''}${file.name}${file.extension ? file.extension : ''}`
     const container = clients[clientName].getContainerClient(clientName)
@@ -99,7 +105,7 @@ class AzureService {
     let done = 0
     for (let file of files) {
       const blobName = getBlobName(file)
-      console.log('📥', file, blobName)
+      console.log('📥', blobName)
       const blob = containerClient.getBlobClient(blobName)
       const data = await blob.downloadToBuffer()
       const fileName = file.slice(file.lastIndexOf('/') + 1)

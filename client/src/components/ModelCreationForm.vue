@@ -7,6 +7,7 @@ import { PartGroup } from '@/models/PartGroup'
 import { modelsService } from '@/services/ModelsService'
 import { Author } from '@/models/Author'
 import { Model } from '@/models/Model'
+import { RenderedPreview } from '@/models/RenderedPreview'
 
 const editMode = computed(() => !!AppState.editingModel)
 const model = computed(() => AppState.editingModel ?? AppState.meshGroups[0])
@@ -67,14 +68,28 @@ const draggingFrom = ref<PartGroup | null>(null)  // source group, null = ungrou
 const ungroupedMeshes = computed(() => {
   if (!model.value) return []
   const groupedIds = model.value.partGroups.flatMap(pg => pg.partIds)
-  const allMeshes = model.value.meshes.length ? model.value.meshes : model.value._meshData
-  return allMeshes.filter((m: any) => !groupedIds.includes(m._id))
+  // Collect meshes from both the editing model AND all loaded mesh groups
+  // so newly added files are visible even when editingModel !== meshGroups[0]
+  const seen = new Set<string>()
+  const allMeshes: any[] = [
+    ...(model.value.meshes.length ? model.value.meshes : model.value._meshData),
+    ...AppState.meshGroups.flatMap(g => g.meshes)
+  ].filter(m => {
+    if (!m?._id || seen.has(m._id)) return false
+    seen.add(m._id)
+    return true
+  })
+  return allMeshes.filter(m => !groupedIds.includes(m._id))
 })
 
 function meshName(id: string) {
-  return model.value?.meshes.find(m => m._id === id)?.name
-    ?? (model.value?._meshData as any[])?.find(m => m._id === id)?.name
-    ?? id
+  // Search all possible sources so IDs resolve regardless of which model is loaded
+  const allMeshes: any[] = [
+    ...(model.value?.meshes ?? []),
+    ...AppState.meshGroups.flatMap(g => g.meshes),
+    ...(model.value?._meshData ?? []),
+  ]
+  return allMeshes.find(m => m._id === id)?.name ?? id
 }
 
 // --- Drag handlers ---
@@ -152,6 +167,27 @@ async function handleSubmit() {
 
 function closeModal(){
   Modal.getOrCreateInstance('#create-model').hide()
+}
+
+const previewFileInput = ref<HTMLInputElement | null>(null)
+
+function pickRenderedPreviews() {
+  previewFileInput.value?.click()
+}
+
+function onPreviewFilesSelected(event: Event) {
+  const files = (event.target as HTMLInputElement).files
+  if (!files) return
+  for (const file of files) {
+    const preview = new RenderedPreview({ url: URL.createObjectURL(file), title: '' })
+    preview._file = file
+    model.value.renderedPreviews.push(preview)
+  }
+  ;(event.target as HTMLInputElement).value = ''
+}
+
+function removeRenderedPreview(index: number) {
+  model.value.renderedPreviews.splice(index, 1)
 }
 
 onMounted(() => {
@@ -352,6 +388,41 @@ onMounted(() => {
 
       <hr />
 
+      <!-- Notes -->
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <label class="form-label">Notes</label>
+          <textarea v-model="model.notes" class="form-control" rows="3" placeholder="Additional details, printing tips, known issues..."></textarea>
+        </div>
+      </div>
+
+      <!-- Rendered Previews -->
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <label class="form-label mb-0">Rendered Previews</label>
+            <button type="button" class="btn btn-sm btn-outline-primary" @click="pickRenderedPreviews">
+              <i class="bi bi-image me-1"></i>Add Images
+            </button>
+          </div>
+          <input ref="previewFileInput" type="file" accept="image/*" multiple class="d-none" @change="onPreviewFilesSelected" />
+          <div v-if="!model.renderedPreviews.length" class="text-muted fst-italic small">
+            No rendered previews — add external render images here
+          </div>
+          <div class="d-flex flex-wrap gap-2">
+            <div v-for="(preview, i) in model.renderedPreviews" :key="i" class="preview-card">
+              <img :src="preview.url" alt="preview" class="preview-thumb" />
+              <input v-model="preview.title" type="text" class="form-control form-control-sm mt-1" placeholder="Title" />
+              <button type="button" class="btn btn-sm btn-outline-danger w-100 mt-1" @click="removeRenderedPreview(i)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
       <!-- Submit -->
       <div class="row">
         <div class="col d-flex justify-content-end gap-2">
@@ -463,5 +534,18 @@ onMounted(() => {
     &:first-child { transform: none; }
     &:last-child  { transform: translateX(-100%); }
   }
+}
+
+.preview-card {
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.preview-thumb {
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: var(--bs-border-radius);
+  border: 1px solid var(--bs-border-color);
 }
 </style>

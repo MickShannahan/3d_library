@@ -158,6 +158,21 @@ function editModel() {
     </div>
     </section>
 
+    <section v-if="model.notes" class="p-2 mt-3">
+      <div class="fw-bold mb-1">Notes</div>
+      <p class="text-secondary small mb-0" style="white-space: pre-wrap">{{ model.notes }}</p>
+    </section>
+
+    <section v-if="model.renderedPreviews?.length" class="p-2 mt-3">
+      <div class="fw-bold mb-2">Rendered Previews</div>
+      <div class="rendered-preview-grid">
+        <div v-for="preview in model.renderedPreviews" :key="preview.url" class="rendered-preview-item">
+          <img :src="preview.url" :alt="preview.title || 'Rendered preview'" class="rendered-preview-img border rounded-3" />
+          <div v-if="preview.title" class="rendered-preview-title small text-secondary mt-1 text-truncate">{{ preview.title }}</div>
+        </div>
+      </div>
+    </section>
+
     <section class="danger-zone rounded-4 p-2 mt-5">
       <div class="text-center">Danger Zone</div>
       <div class="text-end">
@@ -242,5 +257,21 @@ function editModel() {
 .danger-zone{
   border: 1px solid rgba(var(--bs-danger-rgb), .5);
   color: rgba(var(--bs-danger-rgb), .5);
+}
+
+.rendered-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: .5em;
+}
+
+.rendered-preview-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+
+.rendered-preview-title {
+  text-align: center;
 }
 </style>

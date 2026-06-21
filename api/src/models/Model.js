@@ -1,5 +1,10 @@
 import { Schema } from "mongoose";
 
+const RenderedPreviewSchema = new Schema({
+  url: { type: String, required: true },
+  title: { type: String, default: '' }
+})
+
 const MeshImageSchema = new Schema({
   data: String,
   angle: String,
@@ -32,5 +37,7 @@ export const ModelSchema = new Schema({
   price: { type: Number, default: 0, min: 0 },
   adjustedScale: { type: Number, default: 1, min: 0 },
   size: { type: Number, default: 0, min: 0 },
-  bytes: { type: Number, default: 0, min: 0 }
+  bytes: { type: Number, default: 0, min: 0 },
+  notes: { type: String, default: '' },
+  renderedPreviews: [{ type: RenderedPreviewSchema }]
 }, { timestamps: true, toJSON: { virtuals: true } })
