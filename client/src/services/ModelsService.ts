@@ -92,11 +92,12 @@ class ModelsService {
 
       .addJobToQueue('Uploading Meshes', async (onProgress, job) => {
         // Only upload mesh files that haven't been uploaded to Azure yet
-        const meshesToUpload = model.meshes.filter(m => !m._src.includes('https://'))
+        const meshesToUpload = model.meshes.filter(m => !m._src.includes('https://3dlib.blob.core'))
         const meshCount = meshesToUpload.length
         if (meshCount === 0) { onProgress(100); return }
 
         let done = 0
+        logger.log('📟 setting up uploads', meshesToUpload.length)
         await Promise.all(meshesToUpload.map(async (mesh: PartMesh) => {
           const subJob = job.createSubJob(mesh.name)
           subJob.status = 'active'
