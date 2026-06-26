@@ -13,7 +13,7 @@ import { PartMesh } from '@/models/PartMesh';
 import { MeshImage } from '@/models/MeshImage';
 import { meshService } from '@/services/MeshService';
 import { delay } from '@/utils/Delay';
-import background from '../assets/img/blurryBgLowSm.gif'
+import defaultBackground from '../assets/img/blurryBgLowSm.gif'
 
 
 const {camera, renderer, scene} = useTres()
@@ -30,7 +30,7 @@ const lerpCamera = shallowRef(true)
 watch(showBackground, (show)=>{
   if(show){
     const loader = new THREE.TextureLoader()
-    const texture = loader.load(background)
+    const texture = loader.load(cameraState.background ?? defaultBackground)
     scene.value.background = texture
     scene.value.backgroundIntensity = .12
     scene.value.backgroundBlurriness = 1

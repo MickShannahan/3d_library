@@ -6,6 +6,7 @@ import { Modal } from 'bootstrap'
 import { computed, ref, watch } from 'vue'
 import PartPopUp from './PartPopUp.vue'
 import OrderModelBreakdown from './OrderModelBreakdown.vue'
+import PrintModel from './PrintModel.vue'
 
 const props = defineProps({
   order: { type: Order }
@@ -115,6 +116,24 @@ async function deleteOrder() {
     Pop.error(error, 'Could Not Delete Order')
   }
 }
+
+function printModelOrderParts() {
+  const el = document.querySelector('#print-container') as HTMLElement
+  if (!el) return
+
+  const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+    .map(s => s.outerHTML)
+    .join('\n')
+
+  const printStyles = `<style>
+    @page { size: A4 portrait; margin: 10mm; }
+    .bg-dark { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  </style>`
+
+  const win = window.open('', '_blank')
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">${styles}${printStyles}</head><body>${el.innerHTML}<script>window.onload=()=>window.print()<\/script></body></html>`)
+  win.document.close()
+}
 </script>
 
 
@@ -126,9 +145,14 @@ async function deleteOrder() {
     <button v-tooltip="'Close'" @click="clearActive">
       <i class="bi bi-x fs-4"></i>
     </button>
-    <button class="btn btn-sm btn-normal-grad px-3" @click="openEditModal">
-      Edit <i class="mdi mdi-pencil ms-1"></i>
-    </button>
+    <div>
+      <button class="btn btn-sm btn-normal px-3" @click="openEditModal">
+        Edit <i class="mdi mdi-pencil ms-1"></i>
+      </button>
+      <button class="btn btn-sm btn-normal-y ms-2 px-3" @click="printModelOrderParts">
+        <i class="mdi mdi-file-find" v-tooltip="'Print Order Parts'"></i>
+      </button>
+    </div>
   </section>
 
   <!-- Header: image + order number + model/customer -->
@@ -344,6 +368,17 @@ async function deleteOrder() {
     </div>
   </section>
 
+  <!-- offscreen print content -->
+  <Teleport to="body">
+    <div id="print-container" style="position:fixed;top:0;left:0;width:800px;background:white;color:black;padding:16px;opacity:0;pointer-events:none;z-index:-1;font-size: 10px;">
+      <div id="print-body" style="display:flex;flex-wrap:wrap;gap:8px;">
+        <div v-for="entry in order.models" :key="entry._id" style="width:calc(33% - 6px)">
+          <PrintModel :entry="entry" />
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
 </div>
 </template>
 
@@ -455,4 +490,5 @@ async function deleteOrder() {
   border: 1px solid rgba(var(--bs-danger-rgb), .5);
   color: rgba(var(--bs-danger-rgb), .5);
 }
+
 </style>

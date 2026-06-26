@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import { cameraState } from '@/utils/CameraState';
 import { MATERIAL_REGISTRY } from '@/utils/Materials';
+import defaultBackground from '../assets/img/blurryBgLowSm.gif'
+
 
 
 
 function selectMaterial(materialName: string) {
   if(!Object.keys(MATERIAL_REGISTRY).includes(materialName)) return
   cameraState.selectedMaterial = materialName
+}
+
+function selectWorld(worldScene){
+  cameraState.showBackground = worldScene ? true : false
+  if(worldScene) cameraState.background = worldScene
 }
 
 </script>
@@ -29,6 +36,18 @@ function selectMaterial(materialName: string) {
       >
         <img :src="mat.preview" class="mat-preview" alt="image of matcap preview">
       </button>
+    </div>
+  </div>
+  <div class="dropup dropup-center d-inline-block">
+    <button data-bs-toggle="dropdown">
+      <div>
+        <i v-if="cameraState.showBackground" class="mdi mdi-earth"></i>
+        <i v-else class="mdi mdi-earth-off text-secondary"></i>
+      </div>
+    </button>
+    <div class="dropdown-menu mat-grid glass-pane border p-1 mb-2"> 
+      <button @click="selectWorld(false)"><i class="mdi mdi-cancel"></i></button>
+      <button @click="selectWorld(defaultBackground)"><i class="mdi mdi-earth"></i></button>
     </div>
   </div>
   <button v-if="cameraState.showGrid" @click="cameraState.showGrid = false"><i class="mdi mdi-grid"></i></button>

@@ -25,7 +25,7 @@ const tags = computed(()=> {
 })
 
 function selectTag(tag){
-  model.value += tag
+  model.value = tag
 }
 
 function sort(by, value){

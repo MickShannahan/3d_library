@@ -236,7 +236,7 @@ function resetForm() {
     </div>
 
     <!-- Scrollable screen area -->
-    <div class="screen-body flex-grow-1 overflow-y-auto px-1 pb-2">
+    <div class="screen-body flex-grow-1 px-1 pb-2">
       <Transition name="screen-fade" mode="out-in">
 
         <!-- Step 0: Order Details -->
@@ -277,11 +277,12 @@ function resetForm() {
 <style lang="scss" scoped>
 .order-form-container {
   min-height: 0;
-  max-height: 85dvh;
+  // max-height: 85dvh;
 }
 
 .screen-body {
   min-height: 0;
+  overflow: visible;
 }
 
 // Screen transition

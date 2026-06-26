@@ -70,7 +70,7 @@ function togglePartCheck(partId: string) {
 </script>
 
 <template>
-  <div class="container-fluid px-2 py-1">
+  <div class="model-selection-screen container-fluid px-2 py-1">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h6 class="mb-0 text-muted">
         <i class="mdi mdi-cube-outline me-1"></i>
@@ -248,6 +248,10 @@ function togglePartCheck(partId: string) {
 </template>
 
 <style lang="scss" scoped>
+.model-selection-screen{
+  min-height: 45dvh;
+}
+
 .model-search-wrap { position: relative; }
 
 .model-dropdown {
@@ -329,7 +333,7 @@ function togglePartCheck(partId: string) {
   input { margin: 0; }
 }
 
-.part-chip-img { width: 22px; height: 22px; object-fit: cover; flex-shrink: 0; }
+.part-chip-img { width: 32px; height: 32px; object-fit: cover; flex-shrink: 0; }
 .part-chip-name {
   font-size: 0.72rem; line-height: 1.2; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; max-width: 110px;

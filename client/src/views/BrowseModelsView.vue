@@ -14,8 +14,8 @@ onMounted(()=>{
 
 const filterBy = reactive({
   text: '',
-  sortBy: 'popular',
-  sort: 1
+  sortBy: 'date',
+  sort: -1
 })
 
 const gridStyle = ref('regular')
