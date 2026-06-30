@@ -2,6 +2,12 @@
 import { cameraState } from '@/utils/CameraState';
 import { MATERIAL_REGISTRY } from '@/utils/Materials';
 import defaultBackground from '../assets/img/blurryBgLowSm.gif'
+import darkBackground from '../assets/img/blurryBg2.gif'
+import lightGreenBackground from '../assets/img/blurryBg3.gif'
+import verdantGreenBackground from '../assets/img/blurryBgGreen.gif'
+import cityRedBackground from '../assets/img/blurryBgRed.gif'
+import purpleBackground from '../assets/img/blurryBgPurple.gif'
+import candyBackground from '../assets/img/blurryCandy.gif'
 
 
 
@@ -39,15 +45,21 @@ function selectWorld(worldScene){
     </div>
   </div>
   <div class="dropup dropup-center d-inline-block">
-    <button data-bs-toggle="dropdown">
-      <div>
+    <button data-bs-toggle="dropdown" class="world-icon rounded" :style="`--bg: url(${cameraState.showBackground ? cameraState.background : ''})`">
+      <div >
         <i v-if="cameraState.showBackground" class="mdi mdi-earth"></i>
         <i v-else class="mdi mdi-earth-off text-secondary"></i>
       </div>
     </button>
     <div class="dropdown-menu mat-grid glass-pane border p-1 mb-2"> 
-      <button @click="selectWorld(false)"><i class="mdi mdi-cancel"></i></button>
-      <button @click="selectWorld(defaultBackground)"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(false)" ><i class="mdi mdi-cancel"></i></button>
+      <button @click="selectWorld(defaultBackground)" class="world-icon" :style="`--bg: url(${defaultBackground})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(darkBackground)" class="world-icon" :style="`--bg: url(${darkBackground})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(lightGreenBackground)" class="world-icon" :style="`--bg: url(${lightGreenBackground})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(verdantGreenBackground)" class="world-icon" :style="`--bg: url(${verdantGreenBackground})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(cityRedBackground)" class="world-icon" :style="`--bg: url(${cityRedBackground})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(purpleBackground)" class="world-icon" :style="`--bg: url(${purpleBackground})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(candyBackground)" class="world-icon" :style="`--bg: url(${candyBackground})`"><i class="mdi mdi-earth"></i></button>
     </div>
   </div>
   <button v-if="cameraState.showGrid" @click="cameraState.showGrid = false"><i class="mdi mdi-grid"></i></button>
@@ -75,5 +87,10 @@ function selectWorld(worldScene){
 
   button.active{
     background-color: var(--bs-primary);
+  }
+
+  .world-icon{
+    background-image: var(--bg);
+    background-size: cover;
   }
 </style>

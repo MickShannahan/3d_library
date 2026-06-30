@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import { computed, onMounted, shallowRef, toRaw, useTemplateRef, watch } from 'vue';
 import { nextTick } from 'vue';
 import { cameraState } from '@/utils/CameraState';
-import { getMeshesCenter, getModelZoom, lerp, rotate } from '@/utils/3Dtransforms';
+import { getMeshesCenter, getMeshBox, lerp, rotate } from '@/utils/3Dtransforms';
 import { cropSquareFromCanvas } from '@/utils/CanvasUtils';
 import { logger } from '@/utils/Logger';
 import { Model } from '@/models/Model';
@@ -23,12 +23,13 @@ const { onRender } = useLoop()
 const showGrid = shallowRef(true)
 const showAxes = shallowRef(true)
 const showBackground = computed(()=> cameraState.showBackground)
+const backgroundTexture = computed(()=> cameraState.background)
 const targetPosition = shallowRef(new THREE.Vector3(10, 10, 10))
 const targetLookAt = shallowRef(new THREE.Vector3(0, 0, 0))
 const lerpCamera = shallowRef(true)
 
-watch(showBackground, (show)=>{
-  if(show){
+watch([showBackground, backgroundTexture], (show)=>{
+  if(show[0]){
     const loader = new THREE.TextureLoader()
     const texture = loader.load(cameraState.background ?? defaultBackground)
     scene.value.background = texture
@@ -86,13 +87,30 @@ async function snap360(focusModel: Model | PartMesh, shots: number = 8, hideOthe
 
   const focusCenter = getMeshesCenter(focusModel)
 
-  const zoomDistance = getModelZoom(focusModel, camera)
+  // Compute model bounding sphere via getMeshBox util
+  const meshBox = getMeshBox(focusModel)
+  const zoomSphere = meshBox.getBoundingSphere(new THREE.Sphere())
+  const zoomRadius = zoomSphere.radius
+
+  // Viewport-aware zoom: scale so the model fills the square crop at any window size.
+  // cropSquareFromCanvas crops Math.min(canvasW, canvasH), but the vertical-FOV formula
+  // only fills canvasH pixels — multiplying by (canvasH / cropDim) corrects for the gap.
+  const canvasW = renderer.domElement.width
+  const canvasH = renderer.domElement.height
+  const cropDim = Math.min(canvasW, canvasH)
+  const fovRad = camera.value.fov * (Math.PI / 180)
+  const viewDistance = (zoomRadius / Math.tan(fovRad / 2)) * (canvasH / cropDim)
+
+  // Proportional elevation: scales with the model so small and large models look consistent
+  const elevation = zoomRadius * 0.25
+  // Keep the true camera-to-center distance equal to viewDistance despite the elevation
+  const zoomDistance = Math.sqrt(Math.max(0, viewDistance * viewDistance - elevation * elevation))
 
   const rawControls = toRaw(orbitControls.value)
   const capturedImages = []
 
   rawControls.target.copy(focusCenter)
-  camera.value.position.set(focusCenter.x, focusCenter.y + 2, focusCenter.z + zoomDistance)
+  camera.value.position.set(focusCenter.x, focusCenter.y + elevation, focusCenter.z + zoomDistance)
   rawControls.update()
   await new Promise(res => setTimeout(res, 50))  
 
@@ -104,7 +122,7 @@ async function snap360(focusModel: Model | PartMesh, shots: number = 8, hideOthe
     const angle = rotate(deg)
     camera.value.position.set(
       focusCenter.x + zoomDistance * Math.sin(angle),
-      focusCenter.y + 2,
+      focusCenter.y + elevation,
       focusCenter.z + zoomDistance * Math.cos(angle)
     )
     rawControls.target.copy(focusCenter)

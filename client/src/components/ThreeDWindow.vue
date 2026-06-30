@@ -71,7 +71,7 @@ watch(()=> AppState.loadedMeshGroups.length, async (last)=>{
   <JobsPane :jobs="uploadJobs"/>
 
   <FilePicker type="area" class="flex-grow-1" @selectedFiles="meshService.addFilesToScene">
-    <TresCanvas :clear-color="cameraState.clearColor" :fps-limit="60" ref="three-canvas">
+    <TresCanvas :clear-color="cameraState.clearColor" :fps-limit="60" ref="three-canvas" :dpr="[.5,.75]" >
       <ThreeDCamera  ref="camera"/>
       <AnimatedGroup v-for="meshGroup in meshGroups" :meshGroup/>
       <StatsWindow/>
