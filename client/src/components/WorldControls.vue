@@ -8,6 +8,12 @@ import verdantGreenBackground from '../assets/img/blurryBgGreen.gif'
 import cityRedBackground from '../assets/img/blurryBgRed.gif'
 import purpleBackground from '../assets/img/blurryBgPurple.gif'
 import candyBackground from '../assets/img/blurryCandy.gif'
+import blurryBgBubbleGum from '../assets/img/blurryBgBubbleGum.gif'
+import blurryBgGloss from '../assets/img/blurryBgGloss.gif'
+import blurryBgGlossBeach from '../assets/img/blurryBgGlossBeach.gif'
+import blurryBgGrey from '../assets/img/blurryBgGrey.gif'
+import blurryBeachPeaches from '../assets/img/blurryBgPeaches.gif'
+import blurryBgRed2 from '../assets/img/blurryBgRed2.gif'
 
 
 
@@ -60,6 +66,12 @@ function selectWorld(worldScene){
       <button @click="selectWorld(cityRedBackground)" class="world-icon" :style="`--bg: url(${cityRedBackground})`"><i class="mdi mdi-earth"></i></button>
       <button @click="selectWorld(purpleBackground)" class="world-icon" :style="`--bg: url(${purpleBackground})`"><i class="mdi mdi-earth"></i></button>
       <button @click="selectWorld(candyBackground)" class="world-icon" :style="`--bg: url(${candyBackground})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(blurryBgBubbleGum)" class="world-icon" :style="`--bg: url(${blurryBgBubbleGum})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(blurryBgGloss)" class="world-icon" :style="`--bg: url(${blurryBgGloss})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(blurryBgGlossBeach)" class="world-icon" :style="`--bg: url(${blurryBgGlossBeach})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(blurryBeachPeaches)" class="world-icon" :style="`--bg: url(${blurryBeachPeaches})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(blurryBgRed2)" class="world-icon" :style="`--bg: url(${blurryBgRed2})`"><i class="mdi mdi-earth"></i></button>
+      <button @click="selectWorld(blurryBgGrey)" class="world-icon" :style="`--bg: url(${blurryBgGrey})`"><i class="mdi mdi-earth"></i></button>
     </div>
   </div>
   <button v-if="cameraState.showGrid" @click="cameraState.showGrid = false"><i class="mdi mdi-grid"></i></button>

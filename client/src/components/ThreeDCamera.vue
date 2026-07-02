@@ -33,7 +33,7 @@ watch([showBackground, backgroundTexture], (show)=>{
     const loader = new THREE.TextureLoader()
     const texture = loader.load(cameraState.background ?? defaultBackground)
     scene.value.background = texture
-    scene.value.backgroundIntensity = .12
+    scene.value.backgroundIntensity = .2
     scene.value.backgroundBlurriness = 1
   } else {
     scene.value.backgroundIntensity = 0
